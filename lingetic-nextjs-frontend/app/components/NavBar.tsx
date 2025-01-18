@@ -7,6 +7,11 @@ const Navbar = () => {
         <Link href="/" className="text-white text-2xl font-bold">
           Lingetic
         </Link>
+        <div className="space-x-4">
+          <Link href="/languages" className="text-white hover:text-blue-200">
+            Languages
+          </Link>
+        </div>
       </div>
     </nav>
   );
