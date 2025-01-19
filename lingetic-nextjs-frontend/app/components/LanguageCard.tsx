@@ -27,7 +27,7 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
         <h2 className="text-xl font-semibold mb-2">{name}</h2>
         <p className="text-skin-base mb-4">{description}</p>
         <Link
-          href={`/languages/${id}`}
+          href={`/languages/learn/${id}`}
           className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
         >
           Play!
