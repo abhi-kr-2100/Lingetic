@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 type AttemptResponse = {
@@ -32,6 +32,12 @@ export default function useUserAnswer(questionId: string) {
   const mutation = useMutation<AttemptResponse, Error, string>({
     mutationFn: (response: string) => attemptChallenge(questionId, response),
   });
+
+  // For a different question, start with a fresh internal state
+  useEffect(() => {
+    setAnswer("");
+    mutation.reset();
+  }, [questionId]);
 
   const checkAnswer = () => {
     mutation.mutate(answer);
