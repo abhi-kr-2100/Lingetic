@@ -16,20 +16,20 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
     useUserAnswer(question.id);
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6">
-      <p className="text-xl mb-4">{question.text}</p>
-      <p className="text-gray-600 mb-4">Hint: {question.hint}</p>
+    <div className="shadow-lg rounded-lg p-6">
+      <p className="text-skin-base text-xl mb-4">{question.text}</p>
+      <p className="text-skin-base mb-4">Hint: {question.hint}</p>
       <input
         type="text"
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded mb-4"
+        className="w-full p-2 border rounded mb-4"
         disabled={isChecked}
       />
       {!isChecked && (
         <button
           onClick={checkAnswer}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+          className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
         >
           Check
         </button>
@@ -38,7 +38,9 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
         <div>
           <p
             className={`mb-4 ${
-              result.status === "success" ? "text-green-600" : "text-red-600"
+              result.status === "success"
+                ? "text-skin-success"
+                : "text-skin-error"
             }`}
           >
             {result.status === "success" ? "Correct!" : "Incorrect."}

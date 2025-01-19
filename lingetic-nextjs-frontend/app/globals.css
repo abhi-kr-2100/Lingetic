@@ -4,6 +4,8 @@
 
 :root {
   --color-text-base: #374151;
+  --color-text-inverted: #ffffff;
   --color-text-error: #dc2626;
+  --color-text-success: #16a34a;
   --color-button-primary: #2563eb;
 }

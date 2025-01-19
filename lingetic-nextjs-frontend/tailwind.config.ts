@@ -8,10 +8,19 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      textColor: {
+        skin: {
+          base: 'var(--color-text-base)',
+          inverted: 'var(--color-text-inverted)',
+          error: 'var(--color-text-error)',
+          success: 'var(--color-text-success)',
+        }
       },
+      backgroundColor: {
+        skin: {
+          'button-primary': 'var(--color-button-primary)'
+        }
+      }
     },
   },
   plugins: [],
