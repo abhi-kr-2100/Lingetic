@@ -3,7 +3,8 @@
   "packages": [
     "git@latest",
     "nodejs@latest",
-    "graphite-cli@latest"
+    "graphite-cli@latest",
+    "neovim@latest"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"
