@@ -73,6 +73,54 @@
         }
       }
     },
+    "graphite-cli@latest": {
+      "last_modified": "2025-01-19T08:16:51Z",
+      "resolved": "github:NixOS/nixpkgs/50165c4f7eb48ce82bd063e1fb8047a0f515f8ce#graphite-cli",
+      "source": "devbox-search",
+      "version": "1.4.11",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/scwfvxw7xghh124jyjmwmh2ffmbp30q9-graphite-cli-1.4.11",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/scwfvxw7xghh124jyjmwmh2ffmbp30q9-graphite-cli-1.4.11"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/w0il2mr7l4vxw0glhpsp5l9y0kv6wp2q-graphite-cli-1.4.11",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/w0il2mr7l4vxw0glhpsp5l9y0kv6wp2q-graphite-cli-1.4.11"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/fq3zgsyaj4msdi2cw89jmrncgzd0rvr2-graphite-cli-1.4.11",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/fq3zgsyaj4msdi2cw89jmrncgzd0rvr2-graphite-cli-1.4.11"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/2cjrczjhvf1acv43wvyyzjqz7k0n7g8q-graphite-cli-1.4.11",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/2cjrczjhvf1acv43wvyyzjqz7k0n7g8q-graphite-cli-1.4.11"
+        }
+      }
+    },
     "nodejs@latest": {
       "last_modified": "2024-12-23T21:10:33Z",
       "plugin_version": "0.0.2",
