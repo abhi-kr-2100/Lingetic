@@ -11,13 +11,16 @@ const attemptChallenge = async (
   questionId: string,
   response: string
 ): Promise<AttemptResponse> => {
-  const res = await fetch("/api/challenge/attempt", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ questionId, response }),
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/challenge/attempt`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ questionId, response }),
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Unexpected internal error!");
@@ -29,26 +32,26 @@ const attemptChallenge = async (
 export default function useUserAnswer(questionId: string) {
   const [answer, setAnswer] = useState("");
 
-  const mutation = useMutation<AttemptResponse, Error, string>({
+  const attempChallengeMutation = useMutation<AttemptResponse, Error, string>({
     mutationFn: (response: string) => attemptChallenge(questionId, response),
   });
 
   // For a different question, start with a fresh internal state
   useEffect(() => {
     setAnswer("");
-    mutation.reset();
+    attempChallengeMutation.reset();
   }, [questionId]);
 
   const checkAnswer = () => {
-    mutation.mutate(answer);
+    attempChallengeMutation.mutate(answer);
   };
 
   return {
     answer,
     setAnswer,
     checkAnswer,
-    isChecked: mutation.isSuccess,
-    isError: mutation.isError,
-    result: mutation.data,
+    isChecked: attempChallengeMutation.isSuccess,
+    isError: attempChallengeMutation.isError,
+    result: attempChallengeMutation.data,
   };
 } 
