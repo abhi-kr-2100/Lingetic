@@ -1,5 +1,8 @@
 import { screen, fireEvent, waitFor } from "@testing-library/react";
-import { escapeRegex, renderWithQueryClient } from "@/test-helpers/helpers";
+import {
+  escapeRegex,
+  renderWithQueryClient,
+} from "@/utilities/testing-helpers";
 
 import { useState } from "react";
 
