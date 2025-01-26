@@ -171,6 +171,23 @@ describe("LearnPage", () => {
     expect(mockPush).toHaveBeenCalled();
   });
 
+  it("focuses the Next button after answer submission", async () => {
+    mockSuccessfulFetch();
+    renderWithQueryClient(<LearnPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/the cat/i)).toBeInTheDocument();
+    });
+
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "stretched" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /next/i })).toHaveFocus();
+    });
+  });
+
   it("shows a message when no questions are available", async () => {
     (global.fetch as jest.Mock).mockImplementation(() =>
       Promise.resolve({

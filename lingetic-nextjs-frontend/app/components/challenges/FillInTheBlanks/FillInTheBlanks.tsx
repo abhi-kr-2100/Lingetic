@@ -10,11 +10,20 @@ interface FillInTheBlanksProps {
     text: string;
     hint: string;
   };
+  onAnswerSubmit?: () => void;
 }
 
-export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
+export default function FillInTheBlanks({
+  question,
+  onAnswerSubmit,
+}: FillInTheBlanksProps) {
   const { answer, setAnswer, checkAnswer, isChecked, isError, result } =
     useUserAnswer(question.id);
+
+  const handleCheckAnswer = async () => {
+    await checkAnswer();
+    onAnswerSubmit?.();
+  };
 
   const [textBefore, textAfter] = question.text.split(/_+/);
 
@@ -44,8 +53,8 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
           ref={inputRef}
           onChange={(e) => setAnswer(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !isChecked) {
-              checkAnswer();
+            if (e.key === "Enter" && !isChecked) {
+              handleCheckAnswer();
             }
           }}
           className="p-2 border rounded w-40 text-center"
@@ -56,7 +65,7 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
       <p className="text-skin-base mb-4">Hint: {question.hint}</p>
       {!isChecked && (
         <button
-          onClick={checkAnswer}
+          onClick={handleCheckAnswer}
           className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
         >
           Check
