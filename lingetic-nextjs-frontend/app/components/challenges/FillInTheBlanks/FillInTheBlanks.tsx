@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import useUserAnswer from "./useUserAnswer";
 
 interface FillInTheBlanksProps {
@@ -17,6 +18,22 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
 
   const [textBefore, textAfter] = question.text.split(/_+/);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Focus the input field on first render, and also when the question
+    // changes.
+
+    if (!inputRef.current) {
+      return;
+    }
+
+    // The input field could be disabled due to a previous question. A disabled
+    // input field cannot be focused.
+    inputRef.current.disabled = false;
+    inputRef.current.focus();
+  }, [inputRef.current, question.id]);
+
   return (
     <div className="shadow-lg rounded-lg p-6">
       <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
@@ -24,6 +41,7 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
         <input
           type="text"
           value={answer}
+          ref={inputRef}
           onChange={(e) => setAnswer(e.target.value)}
           className="p-2 border rounded w-40 text-center"
           disabled={isChecked}

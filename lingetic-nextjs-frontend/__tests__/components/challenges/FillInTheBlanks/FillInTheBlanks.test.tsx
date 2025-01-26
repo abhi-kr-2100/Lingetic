@@ -177,6 +177,12 @@ describe("FillInTheBlanks", () => {
     });
   });
 
+  it("automatically focuses the input box on render", () => {
+    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
+    const input = screen.getByRole("textbox");
+    expect(input).toHaveFocus();
+  });
+
   describe("when question changes", () => {
     const TestComponent = () => {
       const [currentQuestion, setCurrentQuestion] = useState(mockQuestion);
@@ -264,6 +270,16 @@ describe("FillInTheBlanks", () => {
 
       fireEvent.click(screen.getByText("Change Question"));
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
+    });
+
+    it("should focus the input box when question changes", () => {
+      renderWithQueryClient(<TestComponent />);
+      const input = screen.getByRole("textbox");
+      input.blur();
+      expect(input).not.toHaveFocus();
+
+      fireEvent.click(screen.getByText("Change Question"));
+      expect(screen.getByRole("textbox")).toHaveFocus();
     });
   });
 });
