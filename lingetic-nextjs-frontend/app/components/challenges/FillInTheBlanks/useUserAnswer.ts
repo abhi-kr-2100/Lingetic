@@ -42,8 +42,13 @@ export default function useUserAnswer(questionId: string) {
     attempChallengeMutation.reset();
   }, [questionId]);
 
-  const checkAnswer = () => {
-    attempChallengeMutation.mutate(answer);
+  const checkAnswer = async () => {
+    try {
+      await attempChallengeMutation.mutateAsync(answer);
+    } catch (error) {
+      // Do nothing; isError has been set by the mutation, and can be checked
+      // to display an error message.
+    }
   };
 
   return {
