@@ -43,6 +43,10 @@ export default function useUserAnswer(questionId: string) {
   }, [questionId]);
 
   const checkAnswer = async () => {
+    if (attempChallengeMutation.isPending) {
+      return;
+    }
+
     try {
       await attempChallengeMutation.mutateAsync(answer);
     } catch (error) {
