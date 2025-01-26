@@ -4,7 +4,9 @@
     "git@latest",
     "nodejs@latest",
     "graphite-cli@latest",
-    "neovim@latest"
+    "neovim@latest",
+    "jdk@23.0.1+11",
+    "gradle@latest"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"
