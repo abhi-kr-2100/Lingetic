@@ -16,22 +16,35 @@ interface UseQuestionsParams {
 interface LoadingState {
   isLoading: true;
   isError: false;
+  hasQuestions: false;
 }
 
 interface ErrorState {
   isLoading: false;
   isError: true;
+  hasQuestions: false;
+}
+
+interface NoQuestionsState {
+  isLoading: false;
+  isError: false;
+  hasQuestions: false;
 }
 
 interface SuccessState {
   isLoading: false;
   isError: false;
+  hasQuestions: true;
   currentQuestion: Question;
   isLastQuestion: boolean;
   onNext: () => void;
 }
 
-type UseQuestionsResult = LoadingState | ErrorState | SuccessState;
+type UseQuestionsResult =
+  | LoadingState
+  | ErrorState
+  | NoQuestionsState
+  | SuccessState;
 
 export default function useQuestions({
   onFinish,
@@ -62,6 +75,7 @@ export default function useQuestions({
     return {
       isLoading: true,
       isError: false,
+      hasQuestions: false,
     };
   }
 
@@ -69,6 +83,15 @@ export default function useQuestions({
     return {
       isLoading: false,
       isError: true,
+      hasQuestions: false,
+    };
+  }
+
+  if (questions.length === 0) {
+    return {
+      isLoading: false,
+      isError: false,
+      hasQuestions: false,
     };
   }
 
@@ -83,6 +106,7 @@ export default function useQuestions({
   return {
     isLoading: false,
     isError: false,
+    hasQuestions: true,
     currentQuestion: questions[currentQuestionIndex],
     isLastQuestion: currentQuestionIndex === questions.length - 1,
     onNext,

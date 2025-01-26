@@ -170,4 +170,19 @@ describe("LearnPage", () => {
 
     expect(mockPush).toHaveBeenCalled();
   });
+
+  it("shows a message when no questions are available", async () => {
+    (global.fetch as jest.Mock).mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([]),
+      })
+    );
+
+    renderWithQueryClient(<LearnPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/no questions available/i)).toBeInTheDocument();
+    });
+  });
 });

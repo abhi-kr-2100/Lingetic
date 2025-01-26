@@ -36,6 +36,16 @@ export default function LearnPage() {
     );
   }
 
+  if (!result.hasQuestions) {
+    return (
+      <div className="container mx-auto p-4">
+        <p className="text-skin-base">
+          No questions available for this language.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-skin-base text-3xl font-bold mb-6">
