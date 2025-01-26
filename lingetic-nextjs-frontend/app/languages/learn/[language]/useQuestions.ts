@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-
-interface Question {
-  id: string;
-  type: "FillInTheBlanks";
-  text: string;
-  hint: string;
-}
+import { fetchQuestions, Question } from "@/utilities/api";
 
 interface UseQuestionsParams {
   onFinish: () => void;
@@ -112,15 +106,3 @@ export default function useQuestions({
     onNext,
   };
 }
-
-const fetchQuestions = async (language: string): Promise<Question[]> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions?language=${language}`
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch questions");
-  }
-
-  return res.json();
-};
