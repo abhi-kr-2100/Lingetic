@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import useUserAnswer from "./useUserAnswer";
 
 interface FillInTheBlanksProps {
@@ -9,26 +10,62 @@ interface FillInTheBlanksProps {
     text: string;
     hint: string;
   };
+  onAnswerSubmit?: () => void;
 }
 
-export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
+export default function FillInTheBlanks({
+  question,
+  onAnswerSubmit,
+}: FillInTheBlanksProps) {
   const { answer, setAnswer, checkAnswer, isChecked, isError, result } =
     useUserAnswer(question.id);
 
+  const handleCheckAnswer = async () => {
+    await checkAnswer();
+    onAnswerSubmit?.();
+  };
+
+  const [textBefore, textAfter] = question.text.split(/_+/);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Focus the input field on first render, and also when the question
+    // changes.
+
+    if (!inputRef.current) {
+      return;
+    }
+
+    // The input field could be disabled due to a previous question. A disabled
+    // input field cannot be focused.
+    inputRef.current.disabled = false;
+    inputRef.current.focus();
+  }, [inputRef.current, question.id]);
+
   return (
     <div className="shadow-lg rounded-lg p-6">
-      <p className="text-skin-base text-xl mb-4">{question.text}</p>
+      <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
+        <span>{textBefore}</span>
+        <input
+          type="text"
+          value={answer}
+          ref={inputRef}
+          onChange={(e) => setAnswer(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !isChecked) {
+              handleCheckAnswer();
+            }
+          }}
+          className="p-2 border rounded w-40 text-center"
+          disabled={isChecked}
+        />
+        <span>{textAfter}</span>
+      </div>
       <p className="text-skin-base mb-4">Hint: {question.hint}</p>
-      <input
-        type="text"
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        className="w-full p-2 border rounded mb-4"
-        disabled={isChecked}
-      />
       {!isChecked && (
         <button
-          onClick={checkAnswer}
+          onClick={handleCheckAnswer}
           className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
         >
           Check

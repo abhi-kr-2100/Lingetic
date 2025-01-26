@@ -22,9 +22,10 @@ describe("FillInTheBlanks", () => {
     (global.fetch as jest.Mock).mockClear();
   });
 
-  it("renders the question and hint", () => {
+  it("renders the question parts and hint", () => {
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
     expect(screen.getByText(/the cat/i)).toBeInTheDocument();
+    expect(screen.getByText(/on the windowsill./i)).toBeInTheDocument();
     expect(
       screen.getByText(new RegExp(escapeRegex(mockQuestion.hint)))
     ).toBeInTheDocument();
@@ -35,6 +36,23 @@ describe("FillInTheBlanks", () => {
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "stretched" } });
     expect(input).toHaveValue("stretched");
+  });
+
+  it("submits the answer when Enter key is pressed", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ status: "success", comment: "Great job!" }),
+    });
+
+    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "stretched" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+
+    await waitFor(() => {
+      expect(screen.getByText(/correct/i)).toBeInTheDocument();
+      expect(screen.getByText(/Great job\!/)).toBeInTheDocument();
+    });
   });
 
   it("submits the answer and shows correct feedback", async () => {
@@ -176,6 +194,12 @@ describe("FillInTheBlanks", () => {
     });
   });
 
+  it("automatically focuses the input box on render", () => {
+    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
+    const input = screen.getByRole("textbox");
+    expect(input).toHaveFocus();
+  });
+
   describe("when question changes", () => {
     const TestComponent = () => {
       const [currentQuestion, setCurrentQuestion] = useState(mockQuestion);
@@ -263,6 +287,16 @@ describe("FillInTheBlanks", () => {
 
       fireEvent.click(screen.getByText("Change Question"));
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
+    });
+
+    it("should focus the input box when question changes", () => {
+      renderWithQueryClient(<TestComponent />);
+      const input = screen.getByRole("textbox");
+      input.blur();
+      expect(input).not.toHaveFocus();
+
+      fireEvent.click(screen.getByText("Change Question"));
+      expect(screen.getByRole("textbox")).toHaveFocus();
     });
   });
 });
