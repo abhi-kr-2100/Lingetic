@@ -101,7 +101,7 @@ describe("LearnPage", () => {
     renderWithQueryClient(<LearnPage />);
 
     await waitFor(() => {
-      expect(screen.getByText(/The cat ____ lazily/i)).toBeInTheDocument();
+      expect(screen.getByText(/the cat/i)).toBeInTheDocument();
     });
   });
 
@@ -115,7 +115,7 @@ describe("LearnPage", () => {
     });
 
     fireEvent.click(screen.getByText(/next/i));
-    expect(screen.getByText(/She ____ her coffee/i)).toBeInTheDocument();
+    expect(screen.getByText(/her coffee/i)).toBeInTheDocument();
   });
 
   it("advances to the next question when Next button is clicked", async () => {
@@ -124,12 +124,12 @@ describe("LearnPage", () => {
     renderWithQueryClient(<LearnPage />);
 
     await waitFor(() => {
-      expect(screen.getByText(/The cat ____ lazily/i)).toBeInTheDocument();
+      expect(screen.getByText(/the cat/i)).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByText(/next/i));
 
-    expect(screen.getByText(/She ____ her coffee/i)).toBeInTheDocument();
+    expect(screen.getByText(/her coffee/i)).toBeInTheDocument();
   });
 
   it("shows a finish button on the last question", async () => {

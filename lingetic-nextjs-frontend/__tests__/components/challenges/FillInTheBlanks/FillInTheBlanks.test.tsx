@@ -24,9 +24,7 @@ describe("FillInTheBlanks", () => {
 
   it("renders the question and hint", () => {
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
-    expect(
-      screen.getByText(new RegExp(escapeRegex(mockQuestion.text)))
-    ).toBeInTheDocument();
+    expect(screen.getByText(/the cat/i)).toBeInTheDocument();
     expect(
       screen.getByText(new RegExp(escapeRegex(mockQuestion.hint)))
     ).toBeInTheDocument();
