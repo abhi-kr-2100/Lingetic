@@ -22,9 +22,10 @@ describe("FillInTheBlanks", () => {
     (global.fetch as jest.Mock).mockClear();
   });
 
-  it("renders the question and hint", () => {
+  it("renders the question parts and hint", () => {
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
     expect(screen.getByText(/the cat/i)).toBeInTheDocument();
+    expect(screen.getByText(/on the windowsill./i)).toBeInTheDocument();
     expect(
       screen.getByText(new RegExp(escapeRegex(mockQuestion.hint)))
     ).toBeInTheDocument();

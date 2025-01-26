@@ -15,17 +15,22 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
   const { answer, setAnswer, checkAnswer, isChecked, isError, result } =
     useUserAnswer(question.id);
 
+  const [textBefore, textAfter] = question.text.split(/_+/);
+
   return (
     <div className="shadow-lg rounded-lg p-6">
-      <p className="text-skin-base text-xl mb-4">{question.text}</p>
+      <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
+        <span>{textBefore}</span>
+        <input
+          type="text"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          className="p-2 border rounded w-40 text-center"
+          disabled={isChecked}
+        />
+        <span>{textAfter}</span>
+      </div>
       <p className="text-skin-base mb-4">Hint: {question.hint}</p>
-      <input
-        type="text"
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        className="w-full p-2 border rounded mb-4"
-        disabled={isChecked}
-      />
       {!isChecked && (
         <button
           onClick={checkAnswer}
