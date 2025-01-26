@@ -38,6 +38,23 @@ describe("FillInTheBlanks", () => {
     expect(input).toHaveValue("stretched");
   });
 
+  it("submits the answer when Enter key is pressed", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ status: "success", comment: "Great job!" }),
+    });
+
+    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "stretched" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+
+    await waitFor(() => {
+      expect(screen.getByText(/correct/i)).toBeInTheDocument();
+      expect(screen.getByText(/Great job\!/)).toBeInTheDocument();
+    });
+  });
+
   it("submits the answer and shows correct feedback", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,

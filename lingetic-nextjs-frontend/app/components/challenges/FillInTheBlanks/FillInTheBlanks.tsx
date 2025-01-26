@@ -43,6 +43,11 @@ export default function FillInTheBlanks({ question }: FillInTheBlanksProps) {
           value={answer}
           ref={inputRef}
           onChange={(e) => setAnswer(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !isChecked) {
+              checkAnswer();
+            }
+          }}
           className="p-2 border rounded w-40 text-center"
           disabled={isChecked}
         />
