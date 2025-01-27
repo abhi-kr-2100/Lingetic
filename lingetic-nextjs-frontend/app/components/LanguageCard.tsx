@@ -15,7 +15,7 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
   description,
   image,
 }) => {
-  validate_props_or_die({ id, name, description, image });
+  validatePropsOrDie({ id, name, description, image });
 
   return (
     <div className="shadow-lg rounded-lg overflow-hidden">
@@ -40,7 +40,7 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
   );
 };
 
-function validate_props_or_die(
+function validatePropsOrDie(
   props: LanguageCardProps
 ): asserts props is LanguageCardProps {
   assert(props.id?.trim()?.length > 0, "id is required");
