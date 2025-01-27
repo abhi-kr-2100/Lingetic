@@ -18,7 +18,7 @@ export default function FillInTheBlanks({
   question,
   onAnswerSubmit,
 }: FillInTheBlanksProps) {
-  validate_question_or_die(question);
+  validateQuestionOrDie(question);
 
   const { answer, setAnswer, checkAnswer, isChecked, isError, result } =
     useUserAnswer(question.id);
@@ -96,7 +96,7 @@ export default function FillInTheBlanks({
   );
 }
 
-function validate_question_or_die(
+function validateQuestionOrDie(
   question: any
 ): asserts question is FillInTheBlanksProps["question"] {
   assert(question != null, "question is null or undefined");
