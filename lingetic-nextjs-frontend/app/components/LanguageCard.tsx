@@ -1,3 +1,4 @@
+import assert from "@/utilities/assert";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,6 +15,8 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
   description,
   image,
 }) => {
+  validate_props_or_die({ id, name, description, image });
+
   return (
     <div className="shadow-lg rounded-lg overflow-hidden">
       <Image
@@ -36,5 +39,12 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
     </div>
   );
 };
+
+function validate_props_or_die(
+  props: LanguageCardProps
+): asserts props is LanguageCardProps {
+  assert(props.id?.trim()?.length > 0, "id is required");
+  assert(props.name?.trim()?.length > 0, "name is required");
+}
 
 export default LanguageCard;

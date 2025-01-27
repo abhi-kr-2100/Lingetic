@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { attemptQuestion, AttemptResponse } from "@/utilities/api";
+import assert from "@/utilities/assert";
 
 export default function useUserAnswer(questionId: string) {
+  assert(questionId?.trim()?.length > 0, "questionId is required");
+
   const [answer, setAnswer] = useState("");
 
   const attempChallengeMutation = useMutation<AttemptResponse, Error, string>({
