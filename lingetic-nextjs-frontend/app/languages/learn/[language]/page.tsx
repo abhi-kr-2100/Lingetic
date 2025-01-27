@@ -5,14 +5,17 @@ import { useRef } from "react";
 
 import FillInTheBlanks from "@/app/components/challenges/FillInTheBlanks/FillInTheBlanks";
 import useQuestions from "./useQuestions";
+import assert from "@/utilities/assert";
 
 type LearnPageParams = {
   language: string;
 };
 
 export default function LearnPage() {
-  const router = useRouter();
   const { language } = useParams<LearnPageParams>();
+  assert(language?.trim()?.length > 0, "language is required");
+
+  const router = useRouter();
   const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   const result = useQuestions({
@@ -53,8 +56,8 @@ export default function LearnPage() {
       <h1 className="text-skin-base text-3xl font-bold mb-6">
         Learning {language}
       </h1>
-      <FillInTheBlanks 
-        question={result.currentQuestion} 
+      <FillInTheBlanks
+        question={result.currentQuestion}
         onAnswerSubmit={() => nextButtonRef.current?.focus()}
       />
       <button

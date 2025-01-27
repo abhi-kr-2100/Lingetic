@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchQuestions, Question } from "@/utilities/api";
+import assert from "@/utilities/assert";
 
 interface UseQuestionsParams {
   onFinish: () => void;
@@ -44,6 +45,8 @@ export default function useQuestions({
   onFinish,
   language,
 }: UseQuestionsParams): UseQuestionsResult {
+  assert(language?.trim()?.length > 0, "language is required");
+
   const {
     data: questions = [],
     isLoading,

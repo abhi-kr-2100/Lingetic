@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import useUserAnswer from "./useUserAnswer";
+import assert from "@/utilities/assert";
 
 interface FillInTheBlanksProps {
   question: {
@@ -17,6 +18,8 @@ export default function FillInTheBlanks({
   question,
   onAnswerSubmit,
 }: FillInTheBlanksProps) {
+  validate_question_or_die(question);
+
   const { answer, setAnswer, checkAnswer, isChecked, isError, result } =
     useUserAnswer(question.id);
 
@@ -90,5 +93,21 @@ export default function FillInTheBlanks({
       )}
       {isError && <p>An error occurred! Please try again after some time.</p>}
     </div>
+  );
+}
+
+function validate_question_or_die(
+  question: any
+): asserts question is FillInTheBlanksProps["question"] {
+  assert(question != null, "question is null or undefined");
+  assert(question.id?.trim()?.length > 0, "question.id is empty");
+  assert(
+    question.type === "FillInTheBlanks",
+    "question.type is not FillInTheBlanks"
+  );
+  assert(question.text?.trim()?.length > 0, "question.text is empty");
+  assert(
+    question.text.includes("_"),
+    "question.text does not contain any blank"
   );
 }
