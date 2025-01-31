@@ -1,0 +1,53 @@
+class Endpoint {
+  host: String
+  port: Int
+  url: String = "http://\(host):\(port)"
+}
+
+endpoints {
+  api = new Endpoint {
+    host = "localhost"
+    port = 8080
+  }
+  
+  frontend = new Endpoint {
+    host = "localhost"
+    port = 3000
+  }
+}
+
+springConfig {
+  server {
+    port = endpoints.api.port
+  }
+
+  spring {
+    application {
+      name = "lingetic"
+    }
+
+    web {
+      cors {
+        ["allowed-origins"] = endpoints.frontend.url
+      }
+    }
+  }
+}
+
+nextJsConfig {
+  NEXT_PUBLIC_API_BASE_URL = endpoints.api.url
+  PORT = endpoints.frontend.port
+}
+
+output {
+  files {
+    ["lingetic-spring-backend/config/application.properties"] {
+      value = springConfig
+      renderer = new PropertiesRenderer {}
+    }
+    
+    ["lingetic-nextjs-frontend/.env"] {
+      value = nextJsConfig
+    }
+  }
+}

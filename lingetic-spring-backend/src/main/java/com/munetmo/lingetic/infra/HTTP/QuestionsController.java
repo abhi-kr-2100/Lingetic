@@ -8,6 +8,7 @@ import com.munetmo.lingetic.core.DTOs.Attempt.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "${spring.web.cors.allowed-origins}")
 @RestController
 @RequestMapping("/questions")
 public class QuestionsController {
