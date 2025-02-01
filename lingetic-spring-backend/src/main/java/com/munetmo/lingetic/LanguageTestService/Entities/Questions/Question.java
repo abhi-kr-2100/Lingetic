@@ -6,7 +6,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.UserResponses.UserRespo
 
 public sealed interface Question permits FillInTheBlanksQuestion {
     public String getID();
-    public String getType();
+    public QuestionType getType();
     public QuestionDTO toDTO();
     public Assessment assess(UserResponse userResponse);
 }

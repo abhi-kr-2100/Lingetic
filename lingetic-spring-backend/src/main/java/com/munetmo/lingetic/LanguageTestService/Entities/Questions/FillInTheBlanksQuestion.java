@@ -8,7 +8,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.UserResponses.UserRespo
 
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
-    private final static String type = "FillInTheBlanks";
+    private final static QuestionType type = QuestionType.FillInTheBlanks;
 
     public final String questionText;
     public final String hint;
@@ -27,7 +27,7 @@ public final class FillInTheBlanksQuestion implements Question {
     }
 
     @Override
-    public String getType() {
+    public QuestionType getType() {
         return type;
     }
 
