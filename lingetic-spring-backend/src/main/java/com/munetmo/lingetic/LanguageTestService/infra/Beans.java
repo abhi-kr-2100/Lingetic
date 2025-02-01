@@ -20,7 +20,7 @@ public class Beans {
     }
 
     @Bean
-    public AttemptQuestionUseCase attemptQuestionUseCase() {
-        return new AttemptQuestionUseCase();
+    public AttemptQuestionUseCase attemptQuestionUseCase(QuestionRepository questionRepository) {
+        return new AttemptQuestionUseCase(questionRepository);
     }
 }

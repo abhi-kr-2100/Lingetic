@@ -29,7 +29,7 @@ public class QuestionsController {
     }
 
     @PostMapping("/attempt")
-    public ResponseEntity<AttemptResponse> attemptQuestion(@RequestBody AttemptRequest request) {
+    public ResponseEntity<AttemptResponse> attemptQuestion(@RequestBody AttemptRequest request) throws Exception {
         var response = attemptQuestionUseCase.execute(request);
         return ResponseEntity.ok(response);
     }
