@@ -26,9 +26,4 @@ public final class FillInTheBlanksQuestion implements Question {
     public QuestionType getQuestionType() {
         return questionType;
     }
-
-    @Override
-    public FillInTheBlanksQuestionDTO toDTO() {
-        return new FillInTheBlanksQuestionDTO(getID(), questionText, hint);
-    }
 }
