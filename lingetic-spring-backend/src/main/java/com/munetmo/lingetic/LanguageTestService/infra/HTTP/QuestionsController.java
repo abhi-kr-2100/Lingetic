@@ -1,4 +1,4 @@
-package com.munetmo.lingetic.infra.http;
+package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
