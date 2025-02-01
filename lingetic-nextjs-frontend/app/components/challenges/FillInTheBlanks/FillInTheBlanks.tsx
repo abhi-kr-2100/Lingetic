@@ -28,7 +28,7 @@ export default function FillInTheBlanks({
     isChecked,
     isError,
     result,
-  } = useUserAnswer(question.id);
+  } = useUserAnswer(question.id, question.type);
 
   const handleCheckAnswer = async () => {
     await checkAnswer();
@@ -86,16 +86,16 @@ export default function FillInTheBlanks({
         <div>
           <p
             className={`mb-4 ${
-              result.status === "Success"
+              result.attemptStatus === "Success"
                 ? "text-skin-success"
                 : "text-skin-error"
             }`}
           >
-            {result.status === "Success" ? "Correct!" : "Incorrect."}
+            {result.attemptStatus === "Success" ? "Correct!" : "Incorrect."}
             {result.comment && ` ${result.comment}`}
           </p>
-          {result.status === "Failure" && result.answer && (
-            <p>Correct answer: {result.answer}</p>
+          {result.attemptStatus === "Failure" && result.correctAnswer && (
+            <p>Correct answer: {result.correctAnswer}</p>
           )}
         </div>
       )}
