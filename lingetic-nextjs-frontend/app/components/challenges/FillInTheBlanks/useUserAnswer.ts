@@ -1,15 +1,20 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { attemptQuestion, AttemptResponse } from "@/utilities/api";
+import {
+  attemptQuestion,
+  AttemptResponse,
+  QuestionType,
+} from "@/utilities/api";
 import assert from "@/utilities/assert";
 
-export default function useUserAnswer(questionId: string) {
+export default function useUserAnswer(questionId: string, type: QuestionType) {
   assert(questionId?.trim()?.length > 0, "questionId is required");
 
   const [answer, setAnswer] = useState("");
 
   const attempChallengeMutation = useMutation<AttemptResponse, Error, string>({
-    mutationFn: (response: string) => attemptQuestion(questionId, response),
+    mutationFn: (response: string) =>
+      attemptQuestion(questionId, type, response),
   });
 
   // For a different question, start with a fresh internal state

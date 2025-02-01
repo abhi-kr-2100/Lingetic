@@ -1,10 +1,11 @@
 package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 
+import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.*;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO;
 
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;

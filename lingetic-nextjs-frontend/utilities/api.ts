@@ -6,8 +6,12 @@ async function fetchOrThrow<T>(url: string, options?: RequestInit): Promise<T> {
   throw new Error(response.statusText);
 }
 
+export type QuestionType = "FillInTheBlanks";
+export type AttemptStatus = "Success" | "Failure";
+
 export async function attemptQuestion(
   questionID: string,
+  type: QuestionType,
   userResponse: string
 ): Promise<AttemptResponse> {
   return await fetchOrThrow(
@@ -17,7 +21,7 @@ export async function attemptQuestion(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ questionID, userResponse }),
+      body: JSON.stringify({ questionID, type, userResponse }),
     }
   );
 }
@@ -31,7 +35,7 @@ export async function fetchQuestions(language: string): Promise<Question[]> {
 }
 
 export type AttemptResponse = {
-  status: "Success" | "Failure";
+  attemptStatus: AttemptStatus;
   comment?: string;
   answer?: string;
 };

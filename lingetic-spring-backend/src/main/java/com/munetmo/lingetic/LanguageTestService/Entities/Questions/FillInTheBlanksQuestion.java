@@ -1,10 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.Questions;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.FillInTheBlanksQuestionDTO;
-import com.munetmo.lingetic.LanguageTestService.Entities.Assessments.FillInTheBlanksAssessment;
-import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
-import com.munetmo.lingetic.LanguageTestService.Entities.UserResponses.FillInTheBlanksUserResponse;
-import com.munetmo.lingetic.LanguageTestService.Entities.UserResponses.UserResponse;
 
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
@@ -34,16 +30,5 @@ public final class FillInTheBlanksQuestion implements Question {
     @Override
     public FillInTheBlanksQuestionDTO toDTO() {
         return new FillInTheBlanksQuestionDTO(getID(), questionText, hint);
-    }
-
-    @Override
-    public FillInTheBlanksAssessment assess(UserResponse userResponse) {
-        assert(userResponse.getType().equals(getType()));
-
-        var typedUserResponse = (FillInTheBlanksUserResponse)userResponse;
-        if (typedUserResponse.getAnswer().equals(answer)) {
-            return new FillInTheBlanksAssessment(AttemptStatus.Success, "Good job!", answer);
-        }
-        return new FillInTheBlanksAssessment(AttemptStatus.Failure, "Try again!", answer);
     }
 }
