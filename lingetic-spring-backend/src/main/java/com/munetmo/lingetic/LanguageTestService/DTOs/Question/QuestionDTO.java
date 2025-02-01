@@ -1,4 +1,4 @@
-package com.munetmo.lingetic.core.DTOs.Question;
+package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
 public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
     public String getID();

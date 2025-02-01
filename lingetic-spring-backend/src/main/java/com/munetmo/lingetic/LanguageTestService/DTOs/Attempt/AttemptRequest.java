@@ -1,4 +1,4 @@
-package com.munetmo.lingetic.core.DTOs.Attempt;
+package com.munetmo.lingetic.LanguageTestService.DTOs.Attempt;
 
 import java.util.Objects;
 

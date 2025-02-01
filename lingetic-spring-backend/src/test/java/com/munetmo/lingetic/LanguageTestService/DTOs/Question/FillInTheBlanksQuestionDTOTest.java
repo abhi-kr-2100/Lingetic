@@ -1,4 +1,4 @@
-package com.munetmo.lingetic.core.DTOs.Question;
+package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

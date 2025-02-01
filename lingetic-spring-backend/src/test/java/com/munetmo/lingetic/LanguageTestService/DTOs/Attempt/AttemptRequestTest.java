@@ -1,4 +1,4 @@
-package com.munetmo.lingetic.core.DTOs.Attempt;
+package com.munetmo.lingetic.LanguageTestService.DTOs.Attempt;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
