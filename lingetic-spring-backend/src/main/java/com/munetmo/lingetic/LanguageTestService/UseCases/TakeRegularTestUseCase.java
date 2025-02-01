@@ -14,6 +14,6 @@ public class TakeRegularTestUseCase {
     }
 
     public List<QuestionDTO> execute() {
-        return questionRepository.getAllQuestions().stream().map(Question::toDTO).toList();
+        return questionRepository.getAllQuestions().stream().map(QuestionDTO::fromQuestion).toList();
     }
 }
