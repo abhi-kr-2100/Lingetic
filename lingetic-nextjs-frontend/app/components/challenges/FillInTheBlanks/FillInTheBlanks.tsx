@@ -3,14 +3,10 @@
 import { useEffect, useRef } from "react";
 import useUserAnswer from "./useUserAnswer";
 import assert from "@/utilities/assert";
+import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
 
 interface FillInTheBlanksProps {
-  question: {
-    id: string;
-    type: "FillInTheBlanks";
-    text: string;
-    hint: string;
-  };
+  question: FillInTheBlanksQuestion;
   onAnswerSubmit?: () => void;
 }
 
@@ -28,7 +24,7 @@ export default function FillInTheBlanks({
     isChecked,
     isError,
     result,
-  } = useUserAnswer(question.id, question.type);
+  } = useUserAnswer(question.id);
 
   const handleCheckAnswer = async () => {
     await checkAnswer();

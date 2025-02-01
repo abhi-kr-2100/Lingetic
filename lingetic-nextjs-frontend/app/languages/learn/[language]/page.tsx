@@ -6,6 +6,7 @@ import { useRef } from "react";
 import FillInTheBlanks from "@/app/components/challenges/FillInTheBlanks/FillInTheBlanks";
 import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
+import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 
 type LearnPageParams = {
   language: string;
@@ -56,10 +57,9 @@ export default function LearnPage() {
       <h1 className="text-skin-base text-3xl font-bold mb-6">
         Learning {language}
       </h1>
-      <FillInTheBlanks
-        question={result.currentQuestion}
-        onAnswerSubmit={() => nextButtonRef.current?.focus()}
-      />
+      {renderQuestion(result.currentQuestion, () =>
+        nextButtonRef.current?.focus()
+      )}
       <button
         ref={nextButtonRef}
         type="button"
@@ -71,3 +71,17 @@ export default function LearnPage() {
     </div>
   );
 }
+
+const renderQuestion = (question: Question, onAnswerSubmit: () => void) => {
+  switch (question.type) {
+    case "FillInTheBlanks":
+      return (
+        <FillInTheBlanks
+          question={question as FillInTheBlanksQuestion}
+          onAnswerSubmit={onAnswerSubmit}
+        />
+      );
+    default:
+      assert(false, `Unknown question type: ${question.type}`);
+  }
+};

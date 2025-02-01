@@ -7,6 +7,10 @@ import {
 import { useState } from "react";
 
 import FillInTheBlanks from "@/app/components/challenges/FillInTheBlanks/FillInTheBlanks";
+import type {
+  FillInTheBlanksAttemptResponse,
+  FillInTheBlanksQuestion,
+} from "@/utilities/api-types";
 
 global.fetch = jest.fn();
 
@@ -15,7 +19,7 @@ const mockQuestion = {
   type: "FillInTheBlanks" as const,
   text: "The cat ____ lazily on the windowsill.",
   hint: "straighten or extend one's body",
-};
+} as FillInTheBlanksQuestion;
 
 describe("FillInTheBlanks", () => {
   beforeEach(() => {
@@ -42,7 +46,12 @@ describe("FillInTheBlanks", () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: () =>
-        Promise.resolve({ attemptStatus: "Success", comment: "Great job!" }),
+        Promise.resolve({
+          attemptStatus: "Success",
+          comment: "Great job!",
+          correctAnswer: "stretched",
+          questionType: "FillInTheBlanks",
+        } as FillInTheBlanksAttemptResponse),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -60,7 +69,12 @@ describe("FillInTheBlanks", () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: () =>
-        Promise.resolve({ attemptStatus: "Success", comment: "Great job!" }),
+        Promise.resolve({
+          attemptStatus: "Success",
+          comment: "Great job!",
+          correctAnswer: "stretched",
+          questionType: "FillInTheBlanks",
+        } as FillInTheBlanksAttemptResponse),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -82,7 +96,8 @@ describe("FillInTheBlanks", () => {
           attemptStatus: "Failure",
           comment: "Try again.",
           correctAnswer: "stretched",
-        }),
+          questionType: "FillInTheBlanks",
+        } as FillInTheBlanksAttemptResponse),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -100,7 +115,12 @@ describe("FillInTheBlanks", () => {
   it("submits the answer and does not show undefined feedback when there is no feedback", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ attemptStatus: "Failure" }),
+      json: () =>
+        Promise.resolve({
+          attemptStatus: "Failure",
+          correctAnswer: "stretched",
+          questionType: "FillInTheBlanks",
+        } as FillInTheBlanksAttemptResponse),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -114,28 +134,16 @@ describe("FillInTheBlanks", () => {
     });
   });
 
-  it("submits the answer and does not show feedback when feedback is null", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ attemptStatus: "Failure", comment: null }),
-    });
-
-    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "stretched" } });
-    fireEvent.click(screen.getByText("Check"));
-
-    await waitFor(() => {
-      expect(screen.getByText(/incorrect/i)).toBeInTheDocument();
-      expect(screen.queryByText(/null/i)).not.toBeInTheDocument();
-    });
-  });
-
   it("submits the answer and does not show feedback when feedback is blank", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: () =>
-        Promise.resolve({ attemptStatus: "Failure", comment: "\t\n   " }),
+        Promise.resolve({
+          attemptStatus: "Failure",
+          comment: "\t\n   ",
+          correctAnswer: "stretched",
+          questionType: "FillInTheBlanks",
+        } as FillInTheBlanksAttemptResponse),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -152,7 +160,13 @@ describe("FillInTheBlanks", () => {
   it("does not allow checking twice", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ attemptStatus: "Success" }),
+      json: () =>
+        Promise.resolve({
+          attemptStatus: "Success",
+          comment: "Great job!",
+          correctAnswer: "stretched",
+          questionType: "FillInTheBlanks",
+        } as FillInTheBlanksAttemptResponse),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -234,7 +248,13 @@ describe("FillInTheBlanks", () => {
     it("should make the check button visible again", async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ attemptStatus: "Success" }),
+        json: () =>
+          Promise.resolve({
+            attemptStatus: "Success",
+            comment: "Good job!",
+            correctAnswer: "test answer",
+            questionType: "FillInTheBlanks",
+          } as FillInTheBlanksAttemptResponse),
       });
 
       renderWithQueryClient(<TestComponent />);
@@ -254,7 +274,12 @@ describe("FillInTheBlanks", () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: () =>
-          Promise.resolve({ attemptStatus: "Success", comment: "Great job!" }),
+          Promise.resolve({
+            attemptStatus: "Success",
+            comment: "Great job!",
+            correctAnswer: "test answer",
+            questionType: "FillInTheBlanks",
+          } as FillInTheBlanksAttemptResponse),
       });
 
       renderWithQueryClient(<TestComponent />);
