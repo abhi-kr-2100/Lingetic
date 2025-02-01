@@ -1,4 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Attempt;
 
-public record AttemptResponse(String status, String comment, String answer) {
+import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
+
+public record AttemptResponse(AttemptStatus status, String comment, String answer) {
 }

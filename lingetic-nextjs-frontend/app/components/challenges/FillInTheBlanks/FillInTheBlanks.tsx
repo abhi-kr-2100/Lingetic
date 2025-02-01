@@ -86,15 +86,15 @@ export default function FillInTheBlanks({
         <div>
           <p
             className={`mb-4 ${
-              result.status === "success"
+              result.status === "Success"
                 ? "text-skin-success"
                 : "text-skin-error"
             }`}
           >
-            {result.status === "success" ? "Correct!" : "Incorrect."}
+            {result.status === "Success" ? "Correct!" : "Incorrect."}
             {result.comment && ` ${result.comment}`}
           </p>
-          {result.status === "failure" && result.answer && (
+          {result.status === "Failure" && result.answer && (
             <p>Correct answer: {result.answer}</p>
           )}
         </div>

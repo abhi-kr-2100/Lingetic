@@ -41,7 +41,7 @@ describe("FillInTheBlanks", () => {
   it("submits the answer when Enter key is pressed", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ status: "success", comment: "Great job!" }),
+      json: () => Promise.resolve({ status: "Success", comment: "Great job!" }),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -58,7 +58,7 @@ describe("FillInTheBlanks", () => {
   it("submits the answer and shows correct feedback", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ status: "success", comment: "Great job!" }),
+      json: () => Promise.resolve({ status: "Success", comment: "Great job!" }),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -77,7 +77,7 @@ describe("FillInTheBlanks", () => {
       ok: true,
       json: () =>
         Promise.resolve({
-          status: "failure",
+          status: "Failure",
           comment: "Try again.",
           answer: "stretched",
         }),
@@ -98,7 +98,7 @@ describe("FillInTheBlanks", () => {
   it("submits the answer and does not show undefined feedback when there is no feedback", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ status: "failure" }),
+      json: () => Promise.resolve({ status: "Failure" }),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -115,7 +115,7 @@ describe("FillInTheBlanks", () => {
   it("submits the answer and does not show feedback when feedback is null", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ status: "failure", comment: null }),
+      json: () => Promise.resolve({ status: "Failure", comment: null }),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -132,7 +132,7 @@ describe("FillInTheBlanks", () => {
   it("submits the answer and does not show feedback when feedback is blank", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ status: "failure", comment: "\t\n   " }),
+      json: () => Promise.resolve({ status: "Failure", comment: "\t\n   " }),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -149,7 +149,7 @@ describe("FillInTheBlanks", () => {
   it("does not allow checking twice", async () => {
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ status: "success" }),
+      json: () => Promise.resolve({ status: "Success" }),
     });
 
     renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
@@ -231,7 +231,7 @@ describe("FillInTheBlanks", () => {
     it("should make the check button visible again", async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ status: "success" }),
+        json: () => Promise.resolve({ status: "Success" }),
       });
 
       renderWithQueryClient(<TestComponent />);
@@ -251,7 +251,7 @@ describe("FillInTheBlanks", () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: () =>
-          Promise.resolve({ status: "success", comment: "Great job!" }),
+          Promise.resolve({ status: "Success", comment: "Great job!" }),
       });
 
       renderWithQueryClient(<TestComponent />);

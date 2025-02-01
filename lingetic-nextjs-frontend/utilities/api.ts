@@ -31,7 +31,7 @@ export async function fetchQuestions(language: string): Promise<Question[]> {
 }
 
 export type AttemptResponse = {
-  status: "success" | "failure";
+  status: "Success" | "Failure";
   comment?: string;
   answer?: string;
 };
