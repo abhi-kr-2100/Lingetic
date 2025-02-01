@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchQuestions, Question } from "@/utilities/api";
+import { fetchQuestions } from "@/utilities/api";
 import assert from "@/utilities/assert";
+import type { Question } from "@/utilities/api-types";
 
 interface UseQuestionsParams {
   onFinish: () => void;

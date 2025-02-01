@@ -1,3 +1,5 @@
+import type { AttemptResponse, Question, AttemptRequest } from "./api-types";
+
 async function fetchOrThrow<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options);
   if (response.ok) {
@@ -6,14 +8,9 @@ async function fetchOrThrow<T>(url: string, options?: RequestInit): Promise<T> {
   throw new Error(response.statusText);
 }
 
-export type QuestionType = "FillInTheBlanks";
-export type AttemptStatus = "Success" | "Failure";
-
-export async function attemptQuestion(
-  questionID: string,
-  type: QuestionType,
-  userResponse: string
-): Promise<AttemptResponse> {
+export async function attemptQuestion<T extends AttemptResponse>(
+  attemptRequest: AttemptRequest
+): Promise<T> {
   return await fetchOrThrow(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions/attempt`,
     {
@@ -21,7 +18,7 @@ export async function attemptQuestion(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ questionID, type, userResponse }),
+      body: JSON.stringify(attemptRequest),
     }
   );
 }
@@ -32,17 +29,4 @@ export async function fetchQuestions(language: string): Promise<Question[]> {
   return await fetchOrThrow(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions?language=${encodedLanguage}`
   );
-}
-
-export type AttemptResponse = {
-  attemptStatus: AttemptStatus;
-  comment?: string;
-  answer?: string;
-};
-
-export interface Question {
-  id: string;
-  type: "FillInTheBlanks";
-  text: string;
-  hint: string;
 }

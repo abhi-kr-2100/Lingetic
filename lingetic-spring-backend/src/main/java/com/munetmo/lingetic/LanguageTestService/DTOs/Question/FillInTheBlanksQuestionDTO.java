@@ -4,7 +4,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import java.util.Objects;
 
 public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
-    public static final QuestionType type = QuestionType.FillInTheBlanks;
+    public static final QuestionType questionType = QuestionType.FillInTheBlanks;
     public final String id;
     public final String text;
     public final String hint;
@@ -32,7 +32,7 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
     }
 
     @Override
-    public QuestionType getType() {
-        return type;
+    public QuestionType getQuestionType() {
+        return questionType;
     }
 }

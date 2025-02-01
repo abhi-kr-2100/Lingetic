@@ -14,7 +14,7 @@ public class FillInTheBlanksQuestionDTOTest {
                 "This is a hint");
 
         assertEquals("q123", question.getID());
-        assertEquals(QuestionType.FillInTheBlanks, question.getType());
+        assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals("Fill in: ___", question.text);
         assertEquals("This is a hint", question.hint);
     }
@@ -55,7 +55,7 @@ public class FillInTheBlanksQuestionDTOTest {
                 null);
 
         assertEquals("q123", question.getID());
-        assertEquals(QuestionType.FillInTheBlanks, question.getType());
+        assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals("Fill in: ___", question.text);
         assertEquals("", question.hint);
     }
@@ -68,7 +68,7 @@ public class FillInTheBlanksQuestionDTOTest {
                 "");
 
         assertEquals("q123", question.getID());
-        assertEquals(QuestionType.FillInTheBlanks, question.getType());
+        assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals("Fill in: ___", question.text);
         assertEquals("", question.hint);
     }
