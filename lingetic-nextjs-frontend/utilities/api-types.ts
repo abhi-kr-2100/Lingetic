@@ -27,6 +27,5 @@ export interface AttemptResponse {
 }
 
 export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
-  comment: string;
   correctAnswer: string;
 }

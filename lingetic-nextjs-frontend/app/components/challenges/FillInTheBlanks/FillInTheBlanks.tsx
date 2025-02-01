@@ -88,7 +88,6 @@ export default function FillInTheBlanks({
             }`}
           >
             {result.attemptStatus === "Success" ? "Correct!" : "Incorrect."}
-            {result.comment && ` ${result.comment}`}
           </p>
           {result.attemptStatus === "Failure" && result.correctAnswer && (
             <p>Correct answer: {result.correctAnswer}</p>
