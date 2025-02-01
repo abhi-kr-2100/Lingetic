@@ -1,4 +1,4 @@
-package com.munetmo.lingetic.core.DTOs.Question;
+package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
 import java.util.Objects;
 
@@ -20,7 +20,7 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
         }
 
         hint = Objects.requireNonNullElse(hint, "");
-        
+
         this.id = id;
         this.text = text;
         this.hint = hint;
