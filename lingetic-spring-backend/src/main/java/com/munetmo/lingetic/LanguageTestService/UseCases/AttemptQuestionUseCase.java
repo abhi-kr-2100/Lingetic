@@ -24,9 +24,9 @@ public class AttemptQuestionUseCase {
             var typedRequest = (FillInTheBlanksAttemptRequest) request;
 
             if (typedQuestion.answer.equals(typedRequest.userResponse)) {
-                return new FillInTheBlanksAttemptResponse(AttemptStatus.Success, "Good job!", typedQuestion.answer);
+                return new FillInTheBlanksAttemptResponse(AttemptStatus.Success, typedQuestion.answer);
             } else {
-                return new FillInTheBlanksAttemptResponse(AttemptStatus.Failure, "Try again!", typedQuestion.answer);
+                return new FillInTheBlanksAttemptResponse(AttemptStatus.Failure, typedQuestion.answer);
             }
         }
 

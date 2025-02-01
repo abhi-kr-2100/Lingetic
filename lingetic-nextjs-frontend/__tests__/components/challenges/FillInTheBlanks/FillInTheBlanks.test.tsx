@@ -48,7 +48,6 @@ describe("FillInTheBlanks", () => {
       json: () =>
         Promise.resolve({
           attemptStatus: "Success",
-          comment: "Great job!",
           correctAnswer: "stretched",
           questionType: "FillInTheBlanks",
         } as FillInTheBlanksAttemptResponse),
@@ -61,99 +60,7 @@ describe("FillInTheBlanks", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/correct/i)).toBeInTheDocument();
-      expect(screen.getByText(/Great job\!/)).toBeInTheDocument();
-    });
-  });
-
-  it("submits the answer and shows correct feedback", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          attemptStatus: "Success",
-          comment: "Great job!",
-          correctAnswer: "stretched",
-          questionType: "FillInTheBlanks",
-        } as FillInTheBlanksAttemptResponse),
-    });
-
-    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "stretched" } });
-    fireEvent.click(screen.getByText("Check"));
-
-    await waitFor(() => {
-      expect(screen.getByText(/correct/i)).toBeInTheDocument();
-      expect(screen.getByText(/Great job\!/)).toBeInTheDocument();
-    });
-  });
-
-  it("submits the answer and shows incorrect feedback with correct answer", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          attemptStatus: "Failure",
-          comment: "Try again.",
-          correctAnswer: "stretched",
-          questionType: "FillInTheBlanks",
-        } as FillInTheBlanksAttemptResponse),
-    });
-
-    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "jumped" } });
-    fireEvent.click(screen.getByText("Check"));
-
-    await waitFor(() => {
-      expect(screen.getByText(/incorrect/i)).toBeInTheDocument();
-      expect(screen.getByText(/Try again\./)).toBeInTheDocument();
-      expect(screen.getByText(/stretched/)).toBeInTheDocument();
-    });
-  });
-
-  it("submits the answer and does not show undefined feedback when there is no feedback", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          attemptStatus: "Failure",
-          correctAnswer: "stretched",
-          questionType: "FillInTheBlanks",
-        } as FillInTheBlanksAttemptResponse),
-    });
-
-    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "stretched" } });
-    fireEvent.click(screen.getByText("Check"));
-
-    await waitFor(() => {
-      expect(screen.getByText(/incorrect/i)).toBeInTheDocument();
-      expect(screen.queryByText(/undefined/i)).not.toBeInTheDocument();
-    });
-  });
-
-  it("submits the answer and does not show feedback when feedback is blank", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          attemptStatus: "Failure",
-          comment: "\t\n   ",
-          correctAnswer: "stretched",
-          questionType: "FillInTheBlanks",
-        } as FillInTheBlanksAttemptResponse),
-    });
-
-    renderWithQueryClient(<FillInTheBlanks question={mockQuestion} />);
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "stretched" } });
-    fireEvent.click(screen.getByText("Check"));
-
-    await waitFor(() => {
-      expect(screen.getByText(/incorrect/i)).toBeInTheDocument();
-      expect(screen.queryByText(new RegExp("\t\n   "))).not.toBeInTheDocument();
+      expect(screen.queryByText(/Great job!/)).not.toBeInTheDocument();
     });
   });
 
@@ -163,7 +70,6 @@ describe("FillInTheBlanks", () => {
       json: () =>
         Promise.resolve({
           attemptStatus: "Success",
-          comment: "Great job!",
           correctAnswer: "stretched",
           questionType: "FillInTheBlanks",
         } as FillInTheBlanksAttemptResponse),
@@ -251,7 +157,6 @@ describe("FillInTheBlanks", () => {
         json: () =>
           Promise.resolve({
             attemptStatus: "Success",
-            comment: "Good job!",
             correctAnswer: "test answer",
             questionType: "FillInTheBlanks",
           } as FillInTheBlanksAttemptResponse),
@@ -270,13 +175,12 @@ describe("FillInTheBlanks", () => {
       expect(screen.getByText("Check")).toBeInTheDocument();
     });
 
-    it("should clear answer status and feedback", async () => {
+    it("should clear answer status", async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: () =>
           Promise.resolve({
             attemptStatus: "Success",
-            comment: "Great job!",
             correctAnswer: "test answer",
             questionType: "FillInTheBlanks",
           } as FillInTheBlanksAttemptResponse),
@@ -290,12 +194,10 @@ describe("FillInTheBlanks", () => {
 
       await waitFor(() => {
         expect(screen.getByText(/correct/i)).toBeInTheDocument();
-        expect(screen.getByText(/Great job!/)).toBeInTheDocument();
       });
 
       fireEvent.click(screen.getByText("Change Question"));
       expect(screen.queryByText(/correct/i)).not.toBeInTheDocument();
-      expect(screen.queryByText(/Great job!/)).not.toBeInTheDocument();
     });
 
     it("should clear error state", async () => {
