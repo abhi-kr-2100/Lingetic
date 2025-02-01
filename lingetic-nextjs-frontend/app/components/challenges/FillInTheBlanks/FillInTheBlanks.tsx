@@ -20,8 +20,15 @@ export default function FillInTheBlanks({
 }: FillInTheBlanksProps) {
   validateQuestionOrDie(question);
 
-  const { answer, setAnswer, checkAnswer, isChecked, isError, result } =
-    useUserAnswer(question.id);
+  const {
+    answer,
+    setAnswer,
+    checkAnswer,
+    isChecking,
+    isChecked,
+    isError,
+    result,
+  } = useUserAnswer(question.id);
 
   const handleCheckAnswer = async () => {
     await checkAnswer();
@@ -61,13 +68,14 @@ export default function FillInTheBlanks({
             }
           }}
           className="p-2 border rounded w-40 text-center"
-          disabled={isChecked}
+          disabled={isChecked || isChecking}
         />
         <span>{textAfter}</span>
       </div>
       <p className="text-skin-base mb-4">Hint: {question.hint}</p>
       {!isChecked && (
         <button
+          disabled={isChecking}
           onClick={handleCheckAnswer}
           className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
         >

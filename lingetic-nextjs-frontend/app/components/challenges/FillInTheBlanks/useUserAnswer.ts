@@ -35,6 +35,7 @@ export default function useUserAnswer(questionId: string) {
     answer,
     setAnswer,
     checkAnswer,
+    isChecking: attempChallengeMutation.isPending,
     isChecked: attempChallengeMutation.isSuccess,
     isError: attempChallengeMutation.isError,
     result: attempChallengeMutation.data,
