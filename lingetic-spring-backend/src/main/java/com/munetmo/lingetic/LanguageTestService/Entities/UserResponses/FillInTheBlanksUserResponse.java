@@ -1,7 +1,9 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.UserResponses;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
+
 public final class FillInTheBlanksUserResponse implements UserResponse {
-    private static final String type = "FillInTheBlanks";
+    private static final QuestionType type = QuestionType.FillInTheBlanks;
     private final String answer;
 
     public FillInTheBlanksUserResponse(String answer) {
@@ -9,7 +11,7 @@ public final class FillInTheBlanksUserResponse implements UserResponse {
     }
 
     @Override
-    public String getType() {
+    public QuestionType getType() {
         return type;
     }
 

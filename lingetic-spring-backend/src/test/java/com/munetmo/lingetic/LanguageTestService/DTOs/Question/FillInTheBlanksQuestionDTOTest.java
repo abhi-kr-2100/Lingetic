@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +14,7 @@ public class FillInTheBlanksQuestionDTOTest {
                 "This is a hint");
 
         assertEquals("q123", question.getID());
-        assertEquals("FillInTheBlanks", question.getType());
+        assertEquals(QuestionType.FillInTheBlanks, question.getType());
         assertEquals("Fill in: ___", question.text);
         assertEquals("This is a hint", question.hint);
     }
@@ -54,7 +55,7 @@ public class FillInTheBlanksQuestionDTOTest {
                 null);
 
         assertEquals("q123", question.getID());
-        assertEquals("FillInTheBlanks", question.getType());
+        assertEquals(QuestionType.FillInTheBlanks, question.getType());
         assertEquals("Fill in: ___", question.text);
         assertEquals("", question.hint);
     }
@@ -67,7 +68,7 @@ public class FillInTheBlanksQuestionDTOTest {
                 "");
 
         assertEquals("q123", question.getID());
-        assertEquals("FillInTheBlanks", question.getType());
+        assertEquals(QuestionType.FillInTheBlanks, question.getType());
         assertEquals("Fill in: ___", question.text);
         assertEquals("", question.hint);
     }

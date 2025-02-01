@@ -2,9 +2,10 @@ package com.munetmo.lingetic.LanguageTestService.Entities.Assessments;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 
 public final class FillInTheBlanksAssessment implements Assessment {
-    private final static String type = "FillInTheBlanks";
+    private final static QuestionType type = QuestionType.FillInTheBlanks;
     private final AttemptStatus status;
     private final String comment;
     public final String answer;
@@ -16,7 +17,7 @@ public final class FillInTheBlanksAssessment implements Assessment {
     }
 
     @Override
-    public String getType() {
+    public QuestionType getType() {
         return type;
     }
 
