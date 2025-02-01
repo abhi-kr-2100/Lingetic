@@ -17,11 +17,11 @@ public class AttemptRequestDeserializer extends JsonDeserializer<AttemptRequest>
         var mapper = (ObjectMapper)parser.getCodec();
         var root = (JsonNode)mapper.readTree(parser);
 
-        if (!root.has("type")) {
+        if (!root.has("questionType")) {
             throw new IllegalArgumentException("AttemptRequest must have a type");
         }
 
-        var typeAsStr = root.get("type").asText();
+        var typeAsStr = root.get("questionType").asText();
         var type = QuestionType.valueOf(typeAsStr);
         if (type == QuestionType.FillInTheBlanks) {
             var questionID = root.get("questionID").asText();

@@ -20,7 +20,7 @@ export default function useUserAnswer(questionID: string) {
     mutationFn: (userResponse: string) => {
       const attemptRequest = {
         questionID,
-        type: "FillInTheBlanks",
+        questionType: "FillInTheBlanks",
         userResponse,
       } as FillInTheBlanksAttemptRequest;
 

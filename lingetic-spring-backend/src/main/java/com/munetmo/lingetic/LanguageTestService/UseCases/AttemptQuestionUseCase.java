@@ -9,8 +9,6 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlan
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 
-import java.util.Objects;
-
 public class AttemptQuestionUseCase {
     private QuestionRepository questionRepository;
 
@@ -21,7 +19,7 @@ public class AttemptQuestionUseCase {
     public AttemptResponse execute(AttemptRequest request) throws Exception {
         var question = questionRepository.getQuestionByID(request.getQuestionID());
 
-        if (question.getType() == QuestionType.FillInTheBlanks) {
+        if (question.getQuestionType() == QuestionType.FillInTheBlanks) {
             var typedQuestion = (FillInTheBlanksQuestion) question;
             var typedRequest = (FillInTheBlanksAttemptRequest) request;
 

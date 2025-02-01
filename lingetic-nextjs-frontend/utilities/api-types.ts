@@ -3,17 +3,17 @@ type AttemptStatus = "Success" | "Failure";
 
 export interface Question {
   id: string;
-  type: QuestionType;
+  questionType: QuestionType;
 }
 
 export interface FillInTheBlanksQuestion extends Question {
-  type: "FillInTheBlanks";
+  questionType: "FillInTheBlanks";
   text: string;
   hint: string;
 }
 
 export interface AttemptRequest {
-  type: QuestionType;
+  questionType: QuestionType;
   questionID: string;
 }
 

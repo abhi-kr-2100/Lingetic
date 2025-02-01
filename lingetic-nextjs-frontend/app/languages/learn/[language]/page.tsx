@@ -73,7 +73,7 @@ export default function LearnPage() {
 }
 
 const renderQuestion = (question: Question, onAnswerSubmit: () => void) => {
-  switch (question.type) {
+  switch (question.questionType) {
     case "FillInTheBlanks":
       return (
         <FillInTheBlanks
@@ -82,6 +82,6 @@ const renderQuestion = (question: Question, onAnswerSubmit: () => void) => {
         />
       );
     default:
-      assert(false, `Unknown question type: ${question.type}`);
+      assert(false, `Unknown question type: ${question.questionType}`);
   }
 };

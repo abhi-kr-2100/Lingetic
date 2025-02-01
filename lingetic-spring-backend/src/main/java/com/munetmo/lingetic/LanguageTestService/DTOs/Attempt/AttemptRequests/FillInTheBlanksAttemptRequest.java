@@ -6,7 +6,7 @@ import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptReque
 
 @JsonDeserialize(using = AttemptRequestDeserializer.class)
 public final class FillInTheBlanksAttemptRequest implements AttemptRequest {
-    private static final QuestionType type = QuestionType.FillInTheBlanks;
+    private static final QuestionType questionType = QuestionType.FillInTheBlanks;
     private final String questionID;
     public final String userResponse;
 
@@ -16,8 +16,8 @@ public final class FillInTheBlanksAttemptRequest implements AttemptRequest {
     }
 
     @Override
-    public QuestionType getType() {
-        return type;
+    public QuestionType getQuestionType() {
+        return questionType;
     }
 
     @Override

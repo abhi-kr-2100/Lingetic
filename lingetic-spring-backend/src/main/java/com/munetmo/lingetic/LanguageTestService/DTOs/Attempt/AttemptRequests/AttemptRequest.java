@@ -6,6 +6,6 @@ import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptReque
 
 @JsonDeserialize(using = AttemptRequestDeserializer.class)
 public sealed interface AttemptRequest permits FillInTheBlanksAttemptRequest {
-    public QuestionType getType();
+    public QuestionType getQuestionType();
     public String getQuestionID();
 }

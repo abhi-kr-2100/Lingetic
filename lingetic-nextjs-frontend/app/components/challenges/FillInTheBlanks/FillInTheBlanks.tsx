@@ -106,8 +106,8 @@ function validateQuestionOrDie(
   assert(question != null, "question is null or undefined");
   assert(question.id?.trim()?.length > 0, "question.id is empty");
   assert(
-    question.type === "FillInTheBlanks",
-    "question.type is not FillInTheBlanks"
+    question.questionType === "FillInTheBlanks",
+    "question.questionType is not FillInTheBlanks"
   );
   assert(question.text?.trim()?.length > 0, "question.text is empty");
   assert(

@@ -16,7 +16,7 @@ global.fetch = jest.fn();
 
 const mockQuestion = {
   id: "1",
-  type: "FillInTheBlanks" as const,
+  questionType: "FillInTheBlanks" as const,
   text: "The cat ____ lazily on the windowsill.",
   hint: "straighten or extend one's body",
 } as FillInTheBlanksQuestion;

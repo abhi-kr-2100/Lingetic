@@ -23,31 +23,31 @@ const mockSuccessfulFetch = () => {
 const mockQuestions = [
   {
     id: "1",
-    type: "FillInTheBlanks" as const,
+    questionType: "FillInTheBlanks" as const,
     text: "The cat ____ lazily on the windowsill.",
     hint: "straighten or extend one's body",
   } as FillInTheBlanksQuestion,
   {
     id: "2",
-    type: "FillInTheBlanks" as const,
+    questionType: "FillInTheBlanks" as const,
     text: "She ____ her coffee every morning.",
     hint: "to drink",
   } as FillInTheBlanksQuestion,
   {
     id: "3",
-    type: "FillInTheBlanks" as const,
+    questionType: "FillInTheBlanks" as const,
     text: "The children ____ in the park yesterday.",
     hint: "to have fun or recreation",
   } as FillInTheBlanksQuestion,
   {
     id: "4",
-    type: "FillInTheBlanks" as const,
+    questionType: "FillInTheBlanks" as const,
     text: "He ____ the piano beautifully.",
     hint: "to create music with an instrument",
   } as FillInTheBlanksQuestion,
   {
     id: "5",
-    type: "FillInTheBlanks" as const,
+    questionType: "FillInTheBlanks" as const,
     text: "They ____ dinner at 7 PM.",
     hint: "to consume food",
   } as FillInTheBlanksQuestion,
