@@ -7,6 +7,7 @@ import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTh
 import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
+import QuestionProps from "@/app/components/questions/QuestionProps";
 
 type LearnPageParams = {
   language: string;
@@ -72,16 +73,21 @@ export default function LearnPage() {
   );
 }
 
+const questionTypeToComponentMap = {
+  FillInTheBlanks: (props: QuestionProps) => (
+    <FillInTheBlanks
+      question={props.question as FillInTheBlanksQuestion}
+      onAnswerSubmit={props.onAnswerSubmit}
+    />
+  ),
+};
+
 const renderQuestion = (question: Question, onAnswerSubmit: () => void) => {
-  switch (question.questionType) {
-    case "FillInTheBlanks":
-      return (
-        <FillInTheBlanks
-          question={question as FillInTheBlanksQuestion}
-          onAnswerSubmit={onAnswerSubmit}
-        />
-      );
-    default:
-      assert(false, `Unknown question type: ${question.questionType}`);
-  }
+  assert(
+    questionTypeToComponentMap.hasOwnProperty(question.questionType),
+    "Invalid question type"
+  );
+
+  const Component = questionTypeToComponentMap[question.questionType];
+  return <Component question={question} onAnswerSubmit={onAnswerSubmit} />;
 };
