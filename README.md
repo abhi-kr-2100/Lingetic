@@ -17,4 +17,4 @@
 
 Lingetic © 2024 by Abhishek Kumar is licensed under CC BY-NC-ND 4.0. To view a copy of this license, visit [https://creativecommons.org/licenses/by-nc-nd/4.0/](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
-[![Built with Devbox](https://www.jetify.com/img/devbox/shield_moon.svg)](https://www.jetify.com/devbox/docs/contributor-quickstart/)
+[![Built with Devbox](https://www.jetify.com/img/devbox/shield_moon.svg)](https://www.jetify.com/devbox/docs/contributor-quickstart/) ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/abhi-kr-2100/Lingetic)
