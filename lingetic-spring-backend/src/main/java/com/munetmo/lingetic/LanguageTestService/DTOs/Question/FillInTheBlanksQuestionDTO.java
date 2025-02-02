@@ -3,13 +3,10 @@ package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import java.util.Objects;
 
-public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
+public record FillInTheBlanksQuestionDTO(String id, String text, String hint) implements QuestionDTO {
     public static final QuestionType questionType = QuestionType.FillInTheBlanks;
-    public final String id;
-    public final String text;
-    public final String hint;
 
-    public FillInTheBlanksQuestionDTO(String id, String text, String hint) {
+    public FillInTheBlanksQuestionDTO {
         Objects.requireNonNull(id, "id must not be null");
         if (id.isBlank()) {
             throw new IllegalArgumentException("id must not be blank");
@@ -22,9 +19,6 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
 
         hint = Objects.requireNonNullElse(hint, "");
 
-        this.id = id;
-        this.text = text;
-        this.hint = hint;
     }
 
     public String getID() {

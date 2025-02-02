@@ -1,7 +1,5 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.Questions;
 
-import com.munetmo.lingetic.LanguageTestService.DTOs.Question.FillInTheBlanksQuestionDTO;
-
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;

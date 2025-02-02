@@ -17,13 +17,13 @@ public class AttemptQuestionUseCase {
     }
 
     public AttemptResponse execute(AttemptRequest request) throws Exception {
-        var question = questionRepository.getQuestionByID(request.getQuestionID());
+        var question = questionRepository.getQuestionByID(request.questionID());
 
         if (question.getQuestionType() == QuestionType.FillInTheBlanks) {
             var typedQuestion = (FillInTheBlanksQuestion) question;
             var typedRequest = (FillInTheBlanksAttemptRequest) request;
 
-            if (typedQuestion.answer.equals(typedRequest.userResponse)) {
+            if (typedQuestion.answer.equals(typedRequest.userResponse())) {
                 return new FillInTheBlanksAttemptResponse(AttemptStatus.Success, typedQuestion.answer);
             } else {
                 return new FillInTheBlanksAttemptResponse(AttemptStatus.Failure, typedQuestion.answer);

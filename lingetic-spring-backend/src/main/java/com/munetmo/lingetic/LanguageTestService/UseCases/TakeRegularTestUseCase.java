@@ -3,7 +3,6 @@ package com.munetmo.lingetic.LanguageTestService.UseCases;
 import java.util.List;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.*;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 
 public class TakeRegularTestUseCase {
