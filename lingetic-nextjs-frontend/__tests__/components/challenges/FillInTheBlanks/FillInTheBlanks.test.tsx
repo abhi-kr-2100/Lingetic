@@ -6,7 +6,7 @@ import {
 
 import { useState } from "react";
 
-import FillInTheBlanks from "@/app/components/challenges/FillInTheBlanks/FillInTheBlanks";
+import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
 import type {
   FillInTheBlanksAttemptResponse,
   FillInTheBlanksQuestion,

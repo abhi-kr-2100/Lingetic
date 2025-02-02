@@ -3,7 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useRef } from "react";
 
-import FillInTheBlanks from "@/app/components/challenges/FillInTheBlanks/FillInTheBlanks";
+import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
 import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
