@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import useUserAnswer from "./useUserAnswer";
 import assert from "@/utilities/assert";
+import useUserAnswer from "./useUserAnswer";
+import type QuestionProps from "../QuestionProps";
 import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
 
-interface FillInTheBlanksProps {
+interface FillInTheBlanksProps extends QuestionProps {
   question: FillInTheBlanksQuestion;
-  onAnswerSubmit?: () => void;
 }
 
 export default function FillInTheBlanks({
