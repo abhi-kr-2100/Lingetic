@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptRequestDeserializer;
@@ -11,5 +12,11 @@ public record FillInTheBlanksAttemptRequest(String questionID, String userRespon
     @Override
     public QuestionType getQuestionType() {
         return questionType;
+    }
+
+    public static FillInTheBlanksAttemptRequest fromJsonNode(JsonNode node) {
+        var questionID = node.get("questionID").asText();
+        var userResponse = node.get("userResponse").asText();
+        return new FillInTheBlanksAttemptRequest(questionID, userResponse);
     }
 }
