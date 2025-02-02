@@ -82,12 +82,21 @@ const questionTypeToComponentMap = {
   ),
 };
 
-const renderQuestion = (question: Question, onAnswerSubmit: () => void) => {
+const renderQuestion = (question: Question, onAnswerSubmit?: () => void) => {
+  validateQuestionOrDie(question);
+
+  const Component = questionTypeToComponentMap[question.questionType];
+  return <Component question={question} onAnswerSubmit={onAnswerSubmit} />;
+};
+
+const validateQuestionOrDie = (question: any) => {
+  assert(question != null, "question is null or undefined");
+  assert(
+    question.questionType != null,
+    "question.questionType is null or undefined"
+  );
   assert(
     questionTypeToComponentMap.hasOwnProperty(question.questionType),
     "Invalid question type"
   );
-
-  const Component = questionTypeToComponentMap[question.questionType];
-  return <Component question={question} onAnswerSubmit={onAnswerSubmit} />;
 };

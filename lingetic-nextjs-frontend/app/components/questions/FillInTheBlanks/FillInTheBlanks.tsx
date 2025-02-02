@@ -101,7 +101,7 @@ export default function FillInTheBlanks({
 
 function validateQuestionOrDie(
   question: any
-): asserts question is FillInTheBlanksProps["question"] {
+): asserts question is FillInTheBlanksQuestion {
   assert(question != null, "question is null or undefined");
   assert(question.id?.trim()?.length > 0, "question.id is empty");
   assert(
@@ -112,5 +112,9 @@ function validateQuestionOrDie(
   assert(
     question.text.includes("_"),
     "question.text does not contain any blank"
+  );
+  assert(
+    question.text.match(/_+/g).length === 1,
+    "question.text contains more than one blank"
   );
 }
