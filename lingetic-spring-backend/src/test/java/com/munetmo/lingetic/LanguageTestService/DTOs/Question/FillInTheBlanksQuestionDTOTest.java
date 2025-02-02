@@ -15,36 +15,28 @@ public class FillInTheBlanksQuestionDTOTest {
 
         assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-        assertEquals("Fill in: ___", question.text);
-        assertEquals("This is a hint", question.hint);
+        assertEquals("Fill in: ___", question.text());
+        assertEquals("This is a hint", question.hint());
     }
 
     @Test
     void shouldThrowExceptionWhenIdIsNull() {
-        assertThrows(NullPointerException.class, () -> {
-            new FillInTheBlanksQuestionDTO(null, "Fill in: ___", "This is a hint");
-        });
+        assertThrows(NullPointerException.class, () -> new FillInTheBlanksQuestionDTO(null, "Fill in: ___", "This is a hint"));
     }
 
     @Test
     void shouldThrowExceptionWhenIdIsBlank() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new FillInTheBlanksQuestionDTO("", "Fill in: ___", "This is a hint");
-        });
+        assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO("", "Fill in: ___", "This is a hint"));
     }
 
     @Test
     void shouldThrowExceptionWhenTextIsNull() {
-        assertThrows(NullPointerException.class, () -> {
-            new FillInTheBlanksQuestionDTO("q123", null, "This is a hint");
-        });
+        assertThrows(NullPointerException.class, () -> new FillInTheBlanksQuestionDTO("q123", null, "This is a hint"));
     }
 
     @Test
     void shouldThrowExceptionWhenTextIsBlank() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new FillInTheBlanksQuestionDTO("q123", "", "This is a hint");
-        });
+        assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO("q123", "", "This is a hint"));
     }
 
     @Test
@@ -56,8 +48,8 @@ public class FillInTheBlanksQuestionDTOTest {
 
         assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-        assertEquals("Fill in: ___", question.text);
-        assertEquals("", question.hint);
+        assertEquals("Fill in: ___", question.text());
+        assertEquals("", question.hint());
     }
 
     @Test
@@ -69,7 +61,7 @@ public class FillInTheBlanksQuestionDTOTest {
 
         assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-        assertEquals("Fill in: ___", question.text);
-        assertEquals("", question.hint);
+        assertEquals("Fill in: ___", question.text());
+        assertEquals("", question.hint());
     }
 }

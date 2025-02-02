@@ -6,9 +6,9 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 public final class FillInTheBlanksAttemptResponse implements AttemptResponse {
     private static final QuestionType questionType = QuestionType.FillInTheBlanks;
     private final AttemptStatus attemptStatus;
-    public final String correctAnswer;
+    private final String correctAnswer;
 
-    public FillInTheBlanksAttemptResponse(AttemptStatus attemptStatus, String correctAnswer) {
+    public FillInTheBlanksAttemptResponse(AttemptStatus attemptStatus,  String correctAnswer) {
         this.attemptStatus = attemptStatus;
         this.correctAnswer = correctAnswer;
     }
@@ -21,5 +21,9 @@ public final class FillInTheBlanksAttemptResponse implements AttemptResponse {
     @Override
     public AttemptStatus getAttemptStatus() {
         return attemptStatus;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
     }
 }

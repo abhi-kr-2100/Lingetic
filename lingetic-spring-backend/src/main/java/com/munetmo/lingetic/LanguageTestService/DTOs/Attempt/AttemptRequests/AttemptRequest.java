@@ -1,11 +1,26 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptRequestDeserializer;
 
 @JsonDeserialize(using = AttemptRequestDeserializer.class)
 public sealed interface AttemptRequest permits FillInTheBlanksAttemptRequest {
-    public QuestionType getQuestionType();
-    public String getQuestionID();
+    QuestionType getQuestionType();
+    String getQuestionID();
+
+    static AttemptRequest fromJsonNode(JsonNode node) {
+        if (!node.has("questionType")) {
+            throw new IllegalArgumentException("AttemptRequest must have a type");
+        }
+
+        var typeAsStr = node.get("questionType").asText();
+        var type = QuestionType.valueOf(typeAsStr);
+        
+        return switch (type) {
+            case FillInTheBlanks -> FillInTheBlanksAttemptRequest.fromJsonNode(node);
+            default -> throw new IllegalArgumentException("Invalid question type");
+        };
+    }
 }

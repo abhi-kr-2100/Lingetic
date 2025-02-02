@@ -3,10 +3,11 @@
 import { useRouter, useParams } from "next/navigation";
 import { useRef } from "react";
 
-import FillInTheBlanks from "@/app/components/challenges/FillInTheBlanks/FillInTheBlanks";
+import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
 import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
+import QuestionProps from "@/app/components/questions/QuestionProps";
 
 type LearnPageParams = {
   language: string;
@@ -72,16 +73,30 @@ export default function LearnPage() {
   );
 }
 
-const renderQuestion = (question: Question, onAnswerSubmit: () => void) => {
-  switch (question.questionType) {
-    case "FillInTheBlanks":
-      return (
-        <FillInTheBlanks
-          question={question as FillInTheBlanksQuestion}
-          onAnswerSubmit={onAnswerSubmit}
-        />
-      );
-    default:
-      assert(false, `Unknown question type: ${question.questionType}`);
-  }
+const questionTypeToComponentMap = {
+  FillInTheBlanks: (props: QuestionProps) => (
+    <FillInTheBlanks
+      question={props.question as FillInTheBlanksQuestion}
+      onAnswerSubmit={props.onAnswerSubmit}
+    />
+  ),
+};
+
+const renderQuestion = (question: Question, onAnswerSubmit?: () => void) => {
+  validateQuestionOrDie(question);
+
+  const Component = questionTypeToComponentMap[question.questionType];
+  return <Component question={question} onAnswerSubmit={onAnswerSubmit} />;
+};
+
+const validateQuestionOrDie = (question: any) => {
+  assert(question != null, "question is null or undefined");
+  assert(
+    question.questionType != null,
+    "question.questionType is null or undefined"
+  );
+  assert(
+    questionTypeToComponentMap.hasOwn(question.questionType),
+    "Invalid question type"
+  );
 };

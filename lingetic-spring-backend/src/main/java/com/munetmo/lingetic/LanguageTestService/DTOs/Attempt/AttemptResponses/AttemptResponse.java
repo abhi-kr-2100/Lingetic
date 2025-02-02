@@ -4,6 +4,6 @@ import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 
 public sealed interface AttemptResponse permits FillInTheBlanksAttemptResponse {
-    public QuestionType getQuestionType();
-    public AttemptStatus getAttemptStatus();
+    QuestionType getQuestionType();
+    AttemptStatus getAttemptStatus();
 }

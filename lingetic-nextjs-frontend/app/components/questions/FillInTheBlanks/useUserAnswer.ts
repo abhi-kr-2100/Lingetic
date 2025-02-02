@@ -35,6 +35,8 @@ export default function useUserAnswer(questionID: string) {
   }, [questionID]);
 
   const checkAnswer = async () => {
+    // Prevents race conditions where the user might click the button multiple
+    // times. Do nothing if the mutation is already fired.
     if (attemptChallengeMutation.isPending) {
       return;
     }

@@ -5,10 +5,10 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 
 public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
-    public String getID();
-    public QuestionType getQuestionType();
+    String getID();
+    QuestionType getQuestionType();
 
-    public static QuestionDTO fromQuestion(Question question) {
+    static QuestionDTO fromQuestion(Question question) {
         switch (question.getQuestionType()) {
             case FillInTheBlanks -> {
                 var typedQuestion = (FillInTheBlanksQuestion)question;
