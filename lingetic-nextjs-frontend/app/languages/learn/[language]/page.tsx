@@ -96,7 +96,7 @@ const validateQuestionOrDie = (question: any) => {
     "question.questionType is null or undefined"
   );
   assert(
-    questionTypeToComponentMap.hasOwnProperty(question.questionType),
+    questionTypeToComponentMap.hasOwn(question.questionType),
     "Invalid question type"
   );
 };

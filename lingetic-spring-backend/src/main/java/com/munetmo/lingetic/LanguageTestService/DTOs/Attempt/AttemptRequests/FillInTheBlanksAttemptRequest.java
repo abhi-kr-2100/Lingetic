@@ -6,8 +6,15 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptRequestDeserializer;
 
 @JsonDeserialize(using = AttemptRequestDeserializer.class)
-public record FillInTheBlanksAttemptRequest(String questionID, String userResponse) implements AttemptRequest {
+public final class FillInTheBlanksAttemptRequest implements AttemptRequest {
     private static final QuestionType questionType = QuestionType.FillInTheBlanks;
+    private final String questionID;
+    private final String userResponse;
+
+    public FillInTheBlanksAttemptRequest(String questionID, String userResponse) {
+        this.questionID = questionID;
+        this.userResponse = userResponse;
+    }
 
     @Override
     public QuestionType getQuestionType() {
@@ -18,5 +25,14 @@ public record FillInTheBlanksAttemptRequest(String questionID, String userRespon
         var questionID = node.get("questionID").asText();
         var userResponse = node.get("userResponse").asText();
         return new FillInTheBlanksAttemptRequest(questionID, userResponse);
+    }
+
+    @Override
+    public String getQuestionID() {
+        return questionID;
+    }
+
+    public String getUserResponse() {
+        return userResponse;
     }
 }

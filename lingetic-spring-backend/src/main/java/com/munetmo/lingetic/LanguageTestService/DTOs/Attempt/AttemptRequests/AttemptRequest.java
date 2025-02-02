@@ -8,7 +8,7 @@ import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptReque
 @JsonDeserialize(using = AttemptRequestDeserializer.class)
 public sealed interface AttemptRequest permits FillInTheBlanksAttemptRequest {
     QuestionType getQuestionType();
-    String questionID();
+    String getQuestionID();
 
     static AttemptRequest fromJsonNode(JsonNode node) {
         if (!node.has("questionType")) {

@@ -38,7 +38,7 @@ public final class FillInTheBlanksQuestion implements Question {
         }
         
         return new FillInTheBlanksAttemptResponse(
-            typedRequest.userResponse().equals(answer) ? AttemptStatus.Success : AttemptStatus.Failure,
+            typedRequest.getUserResponse().equals(answer) ? AttemptStatus.Success : AttemptStatus.Failure,
             answer
         );
     }
