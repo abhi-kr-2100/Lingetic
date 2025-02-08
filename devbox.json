@@ -6,7 +6,8 @@
     "graphite-cli@latest",
     "neovim@latest",
     "jdk@23.0.1+11",
-    "gradle@latest"
+    "gradle@latest",
+    "pnpm@latest"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"
