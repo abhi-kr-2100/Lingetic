@@ -9,7 +9,7 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
-    export JAVA_HOME=${pkgs.jdk23}
+    export JAVA_HOME=${pkgs.jdk23}/lib/openjdk
     export PATH=${pkgs.jdk23}/bin:$PATH
 
     echo "Node.js version: $(node --version)"
