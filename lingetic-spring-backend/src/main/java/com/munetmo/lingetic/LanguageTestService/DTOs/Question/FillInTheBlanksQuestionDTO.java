@@ -3,22 +3,24 @@ package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import java.util.Objects;
 
-public record FillInTheBlanksQuestionDTO(String id, String text, String hint) implements QuestionDTO {
+public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
     public static final QuestionType questionType = QuestionType.FillInTheBlanks;
+    private final String id;
+    public final String text;
+    public final String hint;
 
-    public FillInTheBlanksQuestionDTO {
-        Objects.requireNonNull(id, "id must not be null");
-        if (id.isBlank()) {
-            throw new IllegalArgumentException("id must not be blank");
+    public FillInTheBlanksQuestionDTO(String id, String text, String hint) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("id must not be blank or null");
         }
 
-        Objects.requireNonNull(text, "text must not be null");
-        if (text.isBlank()) {
+        if (text == null || text.isBlank()) {
             throw new IllegalArgumentException("text must not be blank");
         }
 
-        hint = Objects.requireNonNullElse(hint, "");
-
+        this.id = id;
+        this.text = text;
+        this.hint = Objects.requireNonNullElse(hint, "");
     }
 
     public String getID() {
@@ -28,5 +30,13 @@ public record FillInTheBlanksQuestionDTO(String id, String text, String hint) im
     @Override
     public QuestionType getQuestionType() {
         return questionType;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getHint() {
+        return hint;
     }
 }

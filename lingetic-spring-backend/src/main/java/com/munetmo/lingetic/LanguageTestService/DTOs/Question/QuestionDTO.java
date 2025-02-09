@@ -9,12 +9,15 @@ public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
     QuestionType getQuestionType();
 
     static QuestionDTO fromQuestion(Question question) {
-        switch (question.getQuestionType()) {
+        if (question == null) {
+            throw new IllegalArgumentException("question cannot be null.");
+        }
+
+        return switch (question.getQuestionType()) {
             case FillInTheBlanks -> {
                 var typedQuestion = (FillInTheBlanksQuestion)question;
-                return new FillInTheBlanksQuestionDTO(question.getID(), typedQuestion.questionText, typedQuestion.hint);
+                yield new FillInTheBlanksQuestionDTO(typedQuestion.getID(), typedQuestion.questionText, typedQuestion.hint);
             }
-            default -> throw new IllegalArgumentException("Unsupported question type");
-        }
+        };
     }
 }

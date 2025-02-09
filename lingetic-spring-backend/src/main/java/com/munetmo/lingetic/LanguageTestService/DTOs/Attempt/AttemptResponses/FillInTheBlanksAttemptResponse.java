@@ -8,7 +8,15 @@ public final class FillInTheBlanksAttemptResponse implements AttemptResponse {
     private final AttemptStatus attemptStatus;
     private final String correctAnswer;
 
-    public FillInTheBlanksAttemptResponse(AttemptStatus attemptStatus,  String correctAnswer) {
+    public FillInTheBlanksAttemptResponse(AttemptStatus attemptStatus, String correctAnswer) {
+        if (attemptStatus == null) {
+            throw new IllegalArgumentException("attemptStatus cannot be null");
+        }
+
+        if (correctAnswer == null || correctAnswer.isBlank()) {
+            throw new IllegalArgumentException("correctAnswer cannot be null or blank.");
+        }
+
         this.attemptStatus = attemptStatus;
         this.correctAnswer = correctAnswer;
     }
