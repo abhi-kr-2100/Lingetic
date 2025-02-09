@@ -15,32 +15,40 @@ public class FillInTheBlanksQuestionDTOTest {
 
         assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-        assertEquals("Fill in: ___", question.text());
-        assertEquals("This is a hint", question.hint());
+        assertEquals("Fill in: ___", question.getText());
+        assertEquals("This is a hint", question.getHint());
     }
 
     @Test
     void shouldThrowExceptionWhenIdIsNull() {
-        assertThrows(NullPointerException.class, () -> new FillInTheBlanksQuestionDTO(null, "Fill in: ___", "This is a hint"));
+        var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
+                null, "Fill in: ___", "This is a hint"));
+        assertTrue(exception.getMessage().contains("id"));
     }
 
     @Test
     void shouldThrowExceptionWhenIdIsBlank() {
-        assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO("", "Fill in: ___", "This is a hint"));
+        var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
+                "", "Fill in: ___", "This is a hint"));
+        assertTrue(exception.getMessage().contains("id"));
     }
 
     @Test
-    void shouldThrowExceptionWhenTextIsNull() {
-        assertThrows(NullPointerException.class, () -> new FillInTheBlanksQuestionDTO("q123", null, "This is a hint"));
+    void shouldThrowExceptionWhenGetTextIsNull() {
+        var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
+                "q123", null, "This is a hint"));
+        assertTrue(exception.getMessage().contains("text"));
     }
 
     @Test
-    void shouldThrowExceptionWhenTextIsBlank() {
-        assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO("q123", "", "This is a hint"));
+    void shouldThrowExceptionWhenGetTextIsBlank() {
+        var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
+                "q123", "", "This is a hint"));
+        assertTrue(exception.getMessage().contains("text"));
     }
 
     @Test
-    void shouldCreateQuestionDTOWithoutHint() {
+    void shouldCreateQuestionDTOWithoutGetHint() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
                 "Fill in: ___",
@@ -48,12 +56,12 @@ public class FillInTheBlanksQuestionDTOTest {
 
         assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-        assertEquals("Fill in: ___", question.text());
-        assertEquals("", question.hint());
+        assertEquals("Fill in: ___", question.getText());
+        assertEquals("", question.getHint());
     }
 
     @Test
-    void shouldCreateQuestionDTOWithEmptyHint() {
+    void shouldCreateQuestionDTOWithEmptyGetHint() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
                 "Fill in: ___",
@@ -61,7 +69,7 @@ public class FillInTheBlanksQuestionDTOTest {
 
         assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-        assertEquals("Fill in: ___", question.text());
-        assertEquals("", question.hint());
+        assertEquals("Fill in: ___", question.getText());
+        assertEquals("", question.getHint());
     }
 }

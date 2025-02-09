@@ -12,15 +12,14 @@ public sealed interface AttemptRequest permits FillInTheBlanksAttemptRequest {
 
     static AttemptRequest fromJsonNode(JsonNode node) {
         if (!node.has("questionType")) {
-            throw new IllegalArgumentException("AttemptRequest must have a type");
+            throw new IllegalArgumentException("AttemptRequest must have a questionType");
         }
 
         var typeAsStr = node.get("questionType").asText();
         var type = QuestionType.valueOf(typeAsStr);
-        
+
         return switch (type) {
             case FillInTheBlanks -> FillInTheBlanksAttemptRequest.fromJsonNode(node);
-            default -> throw new IllegalArgumentException("Invalid question type");
         };
     }
 }
