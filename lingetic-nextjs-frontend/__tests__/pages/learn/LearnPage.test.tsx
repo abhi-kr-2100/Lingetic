@@ -1,7 +1,9 @@
-import { screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, waitFor } from "@testing-library/react";
 import LearnPage from "@/app/languages/learn/[language]/page";
 import { renderWithQueryClient } from "@/utilities/testing-helpers";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
+
+global.fetch = jest.fn();
 
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -9,13 +11,131 @@ jest.mock("next/navigation", () => ({
   useParams: () => ({ language: "spanish" }),
 }));
 
-global.fetch = jest.fn();
+describe("LearnPage", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("shows loading text when loading", async () => {
+    mockForeverPendingFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    expect(await findByText(/loading/i)).toBeInTheDocument();
+  });
+
+  it("shows error text when there is a network error", async () => {
+    mockNetworkErrorFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    expect(await findByText(/failed/i)).toBeInTheDocument();
+  });
+
+  it("shows error when request resolves unsuccessfully", async () => {
+    mockServerErrorFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    expect(await findByText(/failed/i)).toBeInTheDocument();
+  });
+
+  it("shows the current question when loaded successfully", async () => {
+    mockSuccessfulFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    expect(await findByText(/the cat/i)).toBeInTheDocument();
+  });
+
+  it("shows a next button when not on the last question", async () => {
+    mockSuccessfulFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    expect(await findByText(/next/i)).toBeInTheDocument();
+  });
+
+  it("advances to the next question when Next button is clicked", async () => {
+    mockSuccessfulFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    const nextBtn = await findByText(/next/i);
+    fireEvent.click(nextBtn);
+
+    expect(await findByText(/her coffee/i)).toBeInTheDocument();
+  });
+
+  it("shows a finish button on the last question", async () => {
+    mockSuccessfulFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    await navigateToLastQuestion(findByText);
+
+    expect(await findByText(/finish/i)).toBeInTheDocument();
+  });
+
+  it("redirects when finish button is clicked", async () => {
+    mockSuccessfulFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    await navigateToLastQuestion(findByText);
+    const finishBtn = await findByText(/finish/i);
+    fireEvent.click(finishBtn);
+
+    expect(mockPush).toHaveBeenCalled();
+  });
+
+  it("focuses the Next button after answer submission", async () => {
+    mockSuccessfulFetch();
+    const { findByRole } = renderWithQueryClient(<LearnPage />);
+
+    const input = await findByRole("textbox");
+    fireEvent.change(input, { target: { value: "stretched" } });
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+
+    await waitFor(async () =>
+      expect(await findByRole("button", { name: /next/i })).toHaveFocus()
+    );
+  });
+
+  it("shows a message when no questions are available", async () => {
+    mockEmptyFetch();
+    const { findByText } = renderWithQueryClient(<LearnPage />);
+
+    expect(await findByText(/no questions available/i)).toBeInTheDocument();
+  });
+});
 
 const mockSuccessfulFetch = () => {
   (global.fetch as jest.Mock).mockImplementation(() =>
     Promise.resolve({
       ok: true,
       json: () => Promise.resolve(mockQuestions),
+    })
+  );
+};
+
+const mockNetworkErrorFetch = () => {
+  (global.fetch as jest.Mock).mockImplementation(() =>
+    Promise.reject("Network Error")
+  );
+};
+
+const mockServerErrorFetch = () => {
+  (global.fetch as jest.Mock).mockImplementation(() =>
+    Promise.resolve({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+    })
+  );
+};
+
+const mockForeverPendingFetch = () => {
+  (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
+};
+
+const mockEmptyFetch = () => {
+  (global.fetch as jest.Mock).mockImplementation(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve([]),
     })
   );
 };
@@ -53,154 +173,11 @@ const mockQuestions = [
   } as FillInTheBlanksQuestion,
 ] as Question[];
 
-describe("LearnPage", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("shows loading text when loading", async () => {
-    // Mock a pending promise that never resolves to simulate loading state
-    (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
-
-    renderWithQueryClient(<LearnPage />);
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
-  });
-
-  it("shows error text when there is an error", async () => {
-    // Mock a failed fetch
-    (global.fetch as jest.Mock).mockImplementation(() =>
-      Promise.reject("API Error")
-    );
-
-    renderWithQueryClient(<LearnPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/failed/i)).toBeInTheDocument();
-    });
-  });
-
-  it("shows error when request resolves unsuccessfully", async () => {
-    (global.fetch as jest.Mock).mockImplementation(() =>
-      Promise.resolve({
-        ok: false,
-        status: 400,
-        statusText: "Bad Request",
-      })
-    );
-
-    renderWithQueryClient(<LearnPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/failed/i)).toBeInTheDocument();
-    });
-  });
-
-  it("shows the current question when loaded successfully", async () => {
-    // Mock a successful fetch
-    mockSuccessfulFetch();
-
-    renderWithQueryClient(<LearnPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/the cat/i)).toBeInTheDocument();
-    });
-  });
-
-  it("shows a next button when not on the last question", async () => {
-    mockSuccessfulFetch();
-
-    renderWithQueryClient(<LearnPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/next/i)).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByText(/next/i));
-    expect(screen.getByText(/her coffee/i)).toBeInTheDocument();
-  });
-
-  it("advances to the next question when Next button is clicked", async () => {
-    mockSuccessfulFetch();
-
-    renderWithQueryClient(<LearnPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/the cat/i)).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByText(/next/i));
-
-    expect(screen.getByText(/her coffee/i)).toBeInTheDocument();
-  });
-
-  it("shows a finish button on the last question", async () => {
-    mockSuccessfulFetch();
-
-    renderWithQueryClient(<LearnPage />);
-
-    // Click through all questions except the last one
-    for (let i = 0; i < mockQuestions.length - 1; i++) {
-      await waitFor(() => {
-        expect(screen.getByText(/next/i)).toBeInTheDocument();
-      });
-      fireEvent.click(screen.getByText(/next/i));
-    }
-
-    await waitFor(() => {
-      expect(screen.getByText(/finish/i)).toBeInTheDocument();
-    });
-  });
-
-  it("redirects when finish button is clicked", async () => {
-    mockSuccessfulFetch();
-
-    renderWithQueryClient(<LearnPage />);
-
-    // Click through all questions to get to the last one
-    for (let i = 0; i < mockQuestions.length - 1; i++) {
-      await waitFor(() => {
-        expect(screen.getByText(/next/i)).toBeInTheDocument();
-      });
-      fireEvent.click(screen.getByText(/next/i));
-    }
-
-    await waitFor(() => {
-      expect(screen.getByText(/finish/i)).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByText(/finish/i));
-
-    expect(mockPush).toHaveBeenCalled();
-  });
-
-  it("focuses the Next button after answer submission", async () => {
-    mockSuccessfulFetch();
-    renderWithQueryClient(<LearnPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/the cat/i)).toBeInTheDocument();
-    });
-
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "stretched" } });
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /next/i })).toHaveFocus();
-    });
-  });
-
-  it("shows a message when no questions are available", async () => {
-    (global.fetch as jest.Mock).mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve([]),
-      })
-    );
-
-    renderWithQueryClient(<LearnPage />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/no questions available/i)).toBeInTheDocument();
-    });
-  });
-});
+async function navigateToLastQuestion(
+  findByText: (text: RegExp) => Promise<HTMLElement>
+) {
+  for (let i = 0; i < mockQuestions.length - 1; i++) {
+    const nextBtn = await findByText(/next/i);
+    fireEvent.click(nextBtn);
+  }
+}
