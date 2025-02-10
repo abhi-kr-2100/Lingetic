@@ -6,13 +6,17 @@ import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundExcep
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 
 public class AttemptQuestionUseCase {
-    private QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
 
     public AttemptQuestionUseCase(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
     }
 
     public AttemptResponse execute(AttemptRequest request) throws QuestionNotFoundException {
+        if (request == null) {
+            throw new IllegalArgumentException("Attempt request cannot be null");
+        }
+
         var question = questionRepository.getQuestionByID(request.getQuestionID());
         return question.assessAttempt(request);
     }
