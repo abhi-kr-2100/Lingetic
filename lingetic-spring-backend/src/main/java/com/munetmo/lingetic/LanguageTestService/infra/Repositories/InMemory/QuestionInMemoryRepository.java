@@ -3,6 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
+import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 
 import java.util.List;
 
@@ -71,12 +72,11 @@ public class QuestionInMemoryRepository implements QuestionRepository {
     );
 
     @Override
-    public Question getQuestionByID(String id) throws Exception {
+    public Question getQuestionByID(String id) throws QuestionNotFoundException {
         var foundQuestion = QUESTIONS.stream().filter(q -> q.getID().equals(id)).findFirst().orElse(null);
         if (foundQuestion == null) {
-            throw new Exception("Question not found.");
+            throw new QuestionNotFoundException("Question with ID %s not found.".formatted(id));
         }
-
         return foundQuestion;
     }
 
