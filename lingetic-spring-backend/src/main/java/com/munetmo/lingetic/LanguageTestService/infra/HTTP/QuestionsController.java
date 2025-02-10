@@ -1,8 +1,8 @@
 package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
-import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +31,12 @@ public class QuestionsController {
     }
 
     @PostMapping("/attempt")
-    public ResponseEntity<AttemptResponse> attemptQuestion(@RequestBody AttemptRequest request) throws QuestionNotFoundException {
-        var response = attemptQuestionUseCase.execute(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> attemptQuestion(@RequestBody AttemptRequest request) {
+        try {
+            var response = attemptQuestionUseCase.execute(request);
+            return ResponseEntity.ok(response);
+        } catch (QuestionNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Question not found");
+        }
     }
 }
