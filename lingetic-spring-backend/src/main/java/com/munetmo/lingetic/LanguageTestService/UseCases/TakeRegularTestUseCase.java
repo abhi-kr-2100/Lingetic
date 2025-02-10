@@ -6,13 +6,18 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Question.*;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 
 public class TakeRegularTestUseCase {
-    private QuestionRepository questionRepository;
+    public static final int limit = 10;
+
+    private final QuestionRepository questionRepository;
 
     public TakeRegularTestUseCase(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
     }
 
     public List<QuestionDTO> execute() {
-        return questionRepository.getAllQuestions().stream().map(QuestionDTO::fromQuestion).toList();
+        return questionRepository.getAllQuestions().stream()
+            .limit(limit)
+            .map(QuestionDTO::fromQuestion)
+            .toList();
     }
 }
