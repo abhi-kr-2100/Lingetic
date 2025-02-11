@@ -25,5 +25,10 @@ public class Beans {
     public QuestionToReviewRepository questionToReviewRepository(QuestionRepository questionRepository) {
         return new QuestionToReviewInMemoryRepository(questionRepository);
     }
+
+    @Bean
+    public AttemptQuestionUseCase attemptQuestionUseCase(
+            QuestionRepository questionRepository, QuestionToReviewRepository questionToReviewRepository) {
+        return new AttemptQuestionUseCase(questionRepository, questionToReviewRepository);
     }
 }
