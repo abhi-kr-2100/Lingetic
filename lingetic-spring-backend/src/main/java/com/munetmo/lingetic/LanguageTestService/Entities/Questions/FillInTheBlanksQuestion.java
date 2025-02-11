@@ -16,24 +16,24 @@ public final class FillInTheBlanksQuestion implements Question {
     public final String answer;
 
     public FillInTheBlanksQuestion(String id, String language, String questionText, String hint, String answer) {
-        if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("ID cannot be null or blank");
+        if (id.isBlank()) {
+            throw new IllegalArgumentException("ID cannot be blank");
         }
 
-        if (language == null || language.isBlank()) {
-            throw new IllegalArgumentException("Language cannot be null or blank");
+        if (language.isBlank()) {
+            throw new IllegalArgumentException("Language cannot be blank");
         }
 
-        if (questionText == null || questionText.isBlank()) {
-            throw new IllegalArgumentException("Question text cannot be null or blank");
+        if (questionText.isBlank()) {
+            throw new IllegalArgumentException("Question text cannot be blank");
         }
 
         if (!questionText.matches("^[^_]*_+[^_]*$")) {
             throw new IllegalArgumentException("Question text must contain exactly one blank");
         }
 
-        if (answer == null || answer.isBlank()) {
-            throw new IllegalArgumentException("Answer cannot be null or blank");
+        if (answer.isBlank()) {
+            throw new IllegalArgumentException("Answer cannot be blank");
         }
 
         this.id = id;

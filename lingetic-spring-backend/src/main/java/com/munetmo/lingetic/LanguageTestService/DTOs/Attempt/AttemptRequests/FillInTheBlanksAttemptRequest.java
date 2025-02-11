@@ -16,11 +16,8 @@ public final class FillInTheBlanksAttemptRequest implements AttemptRequest {
     private final String userResponse;
 
     public FillInTheBlanksAttemptRequest(String questionID, String userResponse) {
-        if (questionID == null || questionID.isBlank()) {
-            throw new IllegalArgumentException("questionID cannot be null.");
-        }
-        if (userResponse == null) {
-            throw new IllegalArgumentException("userResponse cannot be null.");
+        if (questionID.isBlank()) {
+            throw new IllegalArgumentException("questionID cannot be blank.");
         }
 
         this.questionID = questionID;
@@ -33,10 +30,6 @@ public final class FillInTheBlanksAttemptRequest implements AttemptRequest {
     }
 
     public static FillInTheBlanksAttemptRequest fromJsonNode(JsonNode node) {
-        if (node == null) {
-            throw new IllegalArgumentException("node cannot be null.");
-        }
-
         var questionID = node.get("questionID");
         if (questionID == null) {
             throw new InputMismatchException("questionID is required.");

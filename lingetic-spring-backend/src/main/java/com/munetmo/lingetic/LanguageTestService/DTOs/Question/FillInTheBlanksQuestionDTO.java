@@ -1,6 +1,8 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Objects;
 
 public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
@@ -10,16 +12,16 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
     public final String text;
     public final String hint;
 
-    public FillInTheBlanksQuestionDTO(String id, String language, String text, String hint) {
-        if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("id must not be blank or null");
+    public FillInTheBlanksQuestionDTO(String id, String language, String text, @Nullable String hint) {
+        if (id.isBlank()) {
+            throw new IllegalArgumentException("id must not be blank");
         }
 
-        if (language == null || language.isBlank()) {
-            throw new IllegalArgumentException("language must not be blank or null");
+        if (language.isBlank()) {
+            throw new IllegalArgumentException("language must not be blank");
         }
 
-        if (text == null || text.isBlank()) {
+        if (text.isBlank()) {
             throw new IllegalArgumentException("text must not be blank");
         }
 
@@ -29,6 +31,7 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
         this.hint = Objects.requireNonNullElse(hint, "");
     }
 
+    @Override
     public String getID() {
         return id;
     }
@@ -46,6 +49,7 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
         return hint;
     }
 
+    @Override
     public String getLanguage() {
         return language;
     }

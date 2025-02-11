@@ -22,6 +22,7 @@ class AttemptRequestTest {
             IllegalArgumentException.class,
             () -> AttemptRequest.fromJsonNode(node)
         );
+        assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("questionType"));
     }
 
@@ -36,6 +37,7 @@ class AttemptRequestTest {
         var node = objectMapper.readTree(json);
         
         var exception = assertThrows(IllegalArgumentException.class, () -> AttemptRequest.fromJsonNode(node));
+        assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("ExampleInvalidType"));
     }
 

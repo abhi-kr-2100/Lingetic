@@ -25,9 +25,4 @@ class QuestionDTOTest {
         assertEquals("Fill in: ___", ((FillInTheBlanksQuestionDTO) dto).getText());
         assertEquals("This is a hint", ((FillInTheBlanksQuestionDTO) dto).getHint());
     }
-
-    @Test
-    void shouldThrowIllegalArgumentExceptionIfPassedQuestionIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> QuestionDTO.fromQuestion(null));
-    }
 }

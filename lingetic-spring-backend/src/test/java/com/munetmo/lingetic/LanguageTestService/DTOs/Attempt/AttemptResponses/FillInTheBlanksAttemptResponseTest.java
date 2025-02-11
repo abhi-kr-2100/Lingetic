@@ -17,29 +17,12 @@ class FillInTheBlanksAttemptResponseTest {
     }
 
     @Test
-    void constructorShouldThrowExceptionWhenAttemptStatusIsNull() {
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> new FillInTheBlanksAttemptResponse(null, "test answer")
-        );
-        assertTrue(exception.getMessage().contains("attemptStatus"));
-    }
-
-    @Test
-    void constructorShouldThrowExceptionWhenCorrectAnswerIsNull() {
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> new FillInTheBlanksAttemptResponse(AttemptStatus.Success, null)
-        );
-        assertTrue(exception.getMessage().contains("correctAnswer"));
-    }
-
-    @Test
     void constructorShouldThrowExceptionWhenCorrectAnswerIsBlank() {
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> new FillInTheBlanksAttemptResponse(AttemptStatus.Success, "")
         );
+        assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("correctAnswer"));
     }
 }

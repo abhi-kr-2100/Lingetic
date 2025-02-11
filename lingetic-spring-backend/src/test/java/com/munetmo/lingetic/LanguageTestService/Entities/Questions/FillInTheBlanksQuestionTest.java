@@ -36,25 +36,11 @@ class FillInTheBlanksQuestionTest {
         );
     }
 
-    @Test
-    void constructorShouldThrowExceptionWhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion(null, "en", "Fill in the ___", "hint", "answer")
-        );
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "   ", "\t", "\n", "No blank here", "Multiple___ ___blanks", "Wrong blank --"})
     void constructorShouldThrowExceptionWhenQuestionTextIsInvalid(String questionText) {
         assertThrows(IllegalArgumentException.class, () ->
             new FillInTheBlanksQuestion("id", "en", questionText, "hint", "answer")
-        );
-    }
-
-    @Test
-    void constructorShouldThrowExceptionWhenQuestionTextIsNull() {
-        assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", "en", null, "hint", "answer")
         );
     }
 
@@ -66,25 +52,11 @@ class FillInTheBlanksQuestionTest {
         );
     }
 
-    @Test
-    void constructorShouldThrowExceptionWhenAnswerIsNull() {
-        assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", "en", "Fill in the ___", "hint", null)
-        );
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenLanguageIsInvalid(String language) {
         assertThrows(IllegalArgumentException.class, () ->
             new FillInTheBlanksQuestion("id", language, "Fill in the ___", "hint", "answer")
-        );
-    }
-
-    @Test
-    void constructorShouldThrowExceptionWhenLanguageIsNull() {
-        assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", null, "Fill in the ___", "hint", "answer")
         );
     }
 

@@ -13,30 +13,13 @@ class FillInTheBlanksAttemptRequestTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void constructorShouldThrowExceptionWhenQuestionIDIsNull() {
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> new FillInTheBlanksAttemptRequest(null, "answer")
-        );
-        assertTrue(exception.getMessage().contains("questionID"));
-    }
-
-    @Test
     void constructorShouldThrowExceptionWhenQuestionIDIsBlank() {
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> new FillInTheBlanksAttemptRequest("", "answer")
         );
+        assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("questionID"));
-    }
-
-    @Test
-    void constructorShouldThrowExceptionWhenUserResponseIsNull() {
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> new FillInTheBlanksAttemptRequest("123", null)
-        );
-        assertTrue(exception.getMessage().contains("userResponse"));
     }
 
     @Test
@@ -49,15 +32,6 @@ class FillInTheBlanksAttemptRequestTest {
     }
 
     @Test
-    void fromJsonNodeShouldThrowExceptionWhenNodeIsNull() {
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> FillInTheBlanksAttemptRequest.fromJsonNode(null)
-        );
-        assertTrue(exception.getMessage().contains("node"));
-    }
-
-    @Test
     void fromJsonNodeShouldThrowExceptionWhenQuestionIDIsMissing() throws JsonProcessingException {
         var json = """
             {
@@ -65,11 +39,12 @@ class FillInTheBlanksAttemptRequestTest {
             }
             """;
         var node = objectMapper.readTree(json);
-        
+
         var exception = assertThrows(
             InputMismatchException.class,
             () -> FillInTheBlanksAttemptRequest.fromJsonNode(node)
         );
+        assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("questionID"));
     }
 
@@ -86,6 +61,7 @@ class FillInTheBlanksAttemptRequestTest {
             InputMismatchException.class,
             () -> FillInTheBlanksAttemptRequest.fromJsonNode(node)
         );
+        assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("userResponse"));
     }
 

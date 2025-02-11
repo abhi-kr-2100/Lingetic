@@ -13,10 +13,6 @@ public class AttemptQuestionUseCase {
     }
 
     public AttemptResponse execute(AttemptRequest request) throws QuestionNotFoundException {
-        if (request == null) {
-            throw new IllegalArgumentException("Attempt request cannot be null");
-        }
-
         var question = questionRepository.getQuestionByID(request.getQuestionID());
         return question.assessAttempt(request);
     }
