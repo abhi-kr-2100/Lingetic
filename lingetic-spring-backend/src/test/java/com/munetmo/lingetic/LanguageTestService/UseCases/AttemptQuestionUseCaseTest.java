@@ -6,6 +6,7 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.At
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +14,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AttemptQuestionUseCaseTest {
     private AttemptQuestionUseCase attemptQuestionUseCase;
+    private QuestionInMemoryRepository questionRepository;
 
     @BeforeEach
     void setUp() {
-        var questionRepository = new QuestionInMemoryRepository();
+        questionRepository = new QuestionInMemoryRepository();
         attemptQuestionUseCase = new AttemptQuestionUseCase(questionRepository);
+
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(
+            "1",
+            "en",
+            "The cat ____ lazily on the windowsill.",
+            "straighten or extend one's body",
+            "stretched"
+        ));
     }
 
     @Test

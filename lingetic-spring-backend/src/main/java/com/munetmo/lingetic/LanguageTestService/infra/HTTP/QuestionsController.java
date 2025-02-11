@@ -26,7 +26,7 @@ public class QuestionsController {
 
     @GetMapping
     public ResponseEntity<List<QuestionDTO>> getQuestions(@RequestParam String language) {
-        var questions = takeRegularTestUseCase.execute();
+        var questions = takeRegularTestUseCase.execute(language);
         return ResponseEntity.ok(questions);
     }
 

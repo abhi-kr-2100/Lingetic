@@ -6,5 +6,6 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.At
 public sealed interface Question permits FillInTheBlanksQuestion {
     String getID();
     QuestionType getQuestionType();
+    String getLanguage();
     AttemptResponse assessAttempt(AttemptRequest request);
 }

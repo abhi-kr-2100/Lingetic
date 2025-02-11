@@ -8,15 +8,20 @@ import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
+    private final String language;
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
 
     public final String questionText;
     public final String hint;
     public final String answer;
 
-    public FillInTheBlanksQuestion(String id, String questionText, String hint, String answer) {
+    public FillInTheBlanksQuestion(String id, String language, String questionText, String hint, String answer) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be null or blank");
+        }
+
+        if (language == null || language.isBlank()) {
+            throw new IllegalArgumentException("Language cannot be null or blank");
         }
 
         if (questionText == null || questionText.isBlank()) {
@@ -32,6 +37,7 @@ public final class FillInTheBlanksQuestion implements Question {
         }
 
         this.id = id;
+        this.language = language;
         this.questionText = questionText;
         this.hint = hint;
         this.answer = answer;
@@ -45,6 +51,11 @@ public final class FillInTheBlanksQuestion implements Question {
     @Override
     public QuestionType getQuestionType() {
         return questionType;
+    }
+
+    @Override
+    public String getLanguage() {
+        return language;
     }
 
     @Override
