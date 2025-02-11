@@ -6,12 +6,17 @@ import java.util.Objects;
 public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
     public static final QuestionType questionType = QuestionType.FillInTheBlanks;
     private final String id;
+    private final String language;
     public final String text;
     public final String hint;
 
-    public FillInTheBlanksQuestionDTO(String id, String text, String hint) {
+    public FillInTheBlanksQuestionDTO(String id, String language, String text, String hint) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("id must not be blank or null");
+        }
+
+        if (language == null || language.isBlank()) {
+            throw new IllegalArgumentException("language must not be blank or null");
         }
 
         if (text == null || text.isBlank()) {
@@ -19,6 +24,7 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
         }
 
         this.id = id;
+        this.language = language;
         this.text = text;
         this.hint = Objects.requireNonNullElse(hint, "");
     }
@@ -38,5 +44,9 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
 
     public String getHint() {
         return hint;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

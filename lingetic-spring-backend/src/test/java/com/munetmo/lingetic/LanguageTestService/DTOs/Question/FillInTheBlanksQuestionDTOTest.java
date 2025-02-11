@@ -10,6 +10,7 @@ public class FillInTheBlanksQuestionDTOTest {
     void shouldCreateQuestionDTO() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
+                "en",
                 "Fill in: ___",
                 "This is a hint");
 
@@ -22,35 +23,50 @@ public class FillInTheBlanksQuestionDTOTest {
     @Test
     void shouldThrowExceptionWhenIdIsNull() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                null, "Fill in: ___", "This is a hint"));
+                null, "en", "Fill in: ___", "This is a hint"));
         assertTrue(exception.getMessage().contains("id"));
     }
 
     @Test
     void shouldThrowExceptionWhenIdIsBlank() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "", "Fill in: ___", "This is a hint"));
+                "", "en", "Fill in: ___", "This is a hint"));
         assertTrue(exception.getMessage().contains("id"));
     }
 
     @Test
     void shouldThrowExceptionWhenGetTextIsNull() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "q123", null, "This is a hint"));
+                "q123", "en", null, "This is a hint"));
         assertTrue(exception.getMessage().contains("text"));
     }
 
     @Test
     void shouldThrowExceptionWhenGetTextIsBlank() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "q123", "", "This is a hint"));
+                "q123", "en", "", "This is a hint"));
         assertTrue(exception.getMessage().contains("text"));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenLanguageIsNull() {
+        var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
+                "q123", null, "Fill in: ___", "This is a hint"));
+        assertTrue(exception.getMessage().contains("language"));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenLanguageIsBlank() {
+        var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
+                "q123", "", "Fill in: ___", "This is a hint"));
+        assertTrue(exception.getMessage().contains("language"));
     }
 
     @Test
     void shouldCreateQuestionDTOWithoutGetHint() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
+                "en",
                 "Fill in: ___",
                 null);
 
@@ -64,6 +80,7 @@ public class FillInTheBlanksQuestionDTOTest {
     void shouldCreateQuestionDTOWithEmptyGetHint() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
+                "en",
                 "Fill in: ___",
                 "");
 

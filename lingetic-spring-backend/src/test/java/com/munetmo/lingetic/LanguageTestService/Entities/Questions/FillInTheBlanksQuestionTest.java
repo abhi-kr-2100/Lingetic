@@ -13,13 +13,15 @@ class FillInTheBlanksQuestionTest {
     @Test
     void constructorShouldCreateValidObjectWithCorrectValues() {
         var id = "test-id";
+        var language = "en";
         var questionText = "Fill in the ___";
         var hint = "test hint";
         var answer = "blank";
 
-        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, questionText, hint, answer);
+        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer);
 
         assertEquals(id, question.getID());
+        assertEquals(language, question.getLanguage());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals(questionText, question.questionText);
         assertEquals(hint, question.hint);
@@ -30,14 +32,14 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenIdIsInvalid(String id) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion(id, "Fill in the ___", "hint", "answer")
+            new FillInTheBlanksQuestion(id, "en", "Fill in the ___", "hint", "answer")
         );
     }
 
     @Test
     void constructorShouldThrowExceptionWhenIdIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion(null, "Fill in the ___", "hint", "answer")
+            new FillInTheBlanksQuestion(null, "en", "Fill in the ___", "hint", "answer")
         );
     }
 
@@ -45,14 +47,14 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n", "No blank here", "Multiple___ ___blanks", "Wrong blank --"})
     void constructorShouldThrowExceptionWhenQuestionTextIsInvalid(String questionText) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", questionText, "hint", "answer")
+            new FillInTheBlanksQuestion("id", "en", questionText, "hint", "answer")
         );
     }
 
     @Test
     void constructorShouldThrowExceptionWhenQuestionTextIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", null, "hint", "answer")
+            new FillInTheBlanksQuestion("id", "en", null, "hint", "answer")
         );
     }
 
@@ -60,21 +62,36 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenAnswerIsInvalid(String answer) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", "Fill in the ___", "hint", answer)
+            new FillInTheBlanksQuestion("id", "en", "Fill in the ___", "hint", answer)
         );
     }
 
     @Test
     void constructorShouldThrowExceptionWhenAnswerIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", "Fill in the ___", "hint", null)
+            new FillInTheBlanksQuestion("id", "en", "Fill in the ___", "hint", null)
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {" ", "   ", "\t", "\n"})
+    void constructorShouldThrowExceptionWhenLanguageIsInvalid(String language) {
+        assertThrows(IllegalArgumentException.class, () ->
+            new FillInTheBlanksQuestion("id", language, "Fill in the ___", "hint", "answer")
+        );
+    }
+
+    @Test
+    void constructorShouldThrowExceptionWhenLanguageIsNull() {
+        assertThrows(IllegalArgumentException.class, () ->
+            new FillInTheBlanksQuestion("id", null, "Fill in the ___", "hint", "answer")
         );
     }
 
     @Test
     void assessAttemptShouldReturnSuccessForCorrectAnswer() {
         var question = new FillInTheBlanksQuestion(
-            "id", "Fill in the ___", "hint", "correct"
+            "id", "en", "Fill in the ___", "hint", "correct"
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), question.answer);
 
@@ -87,7 +104,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void assessAttemptShouldReturnFailureForIncorrectAnswer() {
         var question = new FillInTheBlanksQuestion(
-            "id", "Fill in the ___", "hint", "correct"
+            "id", "en", "Fill in the ___", "hint", "correct"
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong");
 

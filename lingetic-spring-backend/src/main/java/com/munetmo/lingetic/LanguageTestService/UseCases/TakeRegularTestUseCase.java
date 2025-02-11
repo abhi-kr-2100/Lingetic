@@ -14,6 +14,13 @@ public class TakeRegularTestUseCase {
         this.questionRepository = questionRepository;
     }
 
+    public List<QuestionDTO> execute(String language) {
+        return questionRepository.getQuestionsByLanguage(language).stream()
+            .limit(limit)
+            .map(QuestionDTO::fromQuestion)
+            .toList();
+    }
+
     public List<QuestionDTO> execute() {
         return questionRepository.getAllQuestions().stream()
             .limit(limit)

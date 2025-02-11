@@ -10,7 +10,8 @@ class QuestionDTOTest {
     @Test
     void shouldConvertFillInTheBlanksQuestionToDTO() {
         FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
-            "q123", 
+            "q123",
+            "en",
             "Fill in: ___", 
             "This is a hint",
             "test answer"

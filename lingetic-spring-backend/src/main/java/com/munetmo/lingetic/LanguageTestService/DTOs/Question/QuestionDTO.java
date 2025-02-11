@@ -7,6 +7,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
     String getID();
     QuestionType getQuestionType();
+    String getLanguage();
 
     static QuestionDTO fromQuestion(Question question) {
         if (question == null) {
@@ -16,7 +17,12 @@ public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
         return switch (question.getQuestionType()) {
             case FillInTheBlanks -> {
                 var typedQuestion = (FillInTheBlanksQuestion)question;
-                yield new FillInTheBlanksQuestionDTO(typedQuestion.getID(), typedQuestion.questionText, typedQuestion.hint);
+                yield new FillInTheBlanksQuestionDTO(
+                    typedQuestion.getID(),
+                    typedQuestion.getLanguage(),
+                    typedQuestion.questionText,
+                    typedQuestion.hint
+                );
             }
         };
     }
