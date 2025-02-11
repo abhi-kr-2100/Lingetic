@@ -61,11 +61,4 @@ class AttemptQuestionUseCaseTest {
             attemptQuestionUseCase.execute(request);
         });
     }
-
-    @Test
-    void shouldThrowIllegalArgumentExceptionForNullRequest() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            attemptQuestionUseCase.execute(null);
-        });
-    }
 }

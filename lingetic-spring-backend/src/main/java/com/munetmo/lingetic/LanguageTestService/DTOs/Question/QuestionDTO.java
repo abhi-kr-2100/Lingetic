@@ -10,10 +10,6 @@ public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
     String getLanguage();
 
     static QuestionDTO fromQuestion(Question question) {
-        if (question == null) {
-            throw new IllegalArgumentException("question cannot be null.");
-        }
-
         return switch (question.getQuestionType()) {
             case FillInTheBlanks -> {
                 var typedQuestion = (FillInTheBlanksQuestion)question;
