@@ -25,13 +25,25 @@ public class QuestionsController {
     private AttemptQuestionUseCase attemptQuestionUseCase;
 
     @GetMapping
-    public ResponseEntity<List<QuestionDTO>> getQuestions(@RequestParam String language) {
+    public ResponseEntity<?> getQuestions(@RequestParam String language) {
+        if (language == null || language.isBlank()) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Language parameter cannot be null or empty");
+        }
+
         var questions = takeRegularTestUseCase.execute(language);
         return ResponseEntity.ok(questions);
     }
 
     @PostMapping("/attempt")
     public ResponseEntity<?> attemptQuestion(@RequestBody AttemptRequest request) {
+        if (request == null) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Attempt request cannot be null");
+        }
+
         try {
             var response = attemptQuestionUseCase.execute(request);
             return ResponseEntity.ok(response);
