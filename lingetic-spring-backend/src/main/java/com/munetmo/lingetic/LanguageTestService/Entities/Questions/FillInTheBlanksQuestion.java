@@ -5,6 +5,9 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.Fil
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.FillInTheBlanksAttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
@@ -15,7 +18,7 @@ public final class FillInTheBlanksQuestion implements Question {
     public final String hint;
     public final String answer;
 
-    public FillInTheBlanksQuestion(String id, String language, String questionText, String hint, String answer) {
+    public FillInTheBlanksQuestion(String id, String language, String questionText, @Nullable String hint, String answer) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -39,7 +42,7 @@ public final class FillInTheBlanksQuestion implements Question {
         this.id = id;
         this.language = language;
         this.questionText = questionText;
-        this.hint = hint;
+        this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
     }
 
