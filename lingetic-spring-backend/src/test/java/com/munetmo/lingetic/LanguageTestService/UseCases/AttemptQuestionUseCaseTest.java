@@ -6,8 +6,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
-import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionToReviewInMemoryRepository;
-import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionToReviewRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionReviewInMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,13 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class AttemptQuestionUseCaseTest {
     private AttemptQuestionUseCase attemptQuestionUseCase;
     private QuestionInMemoryRepository questionRepository;
-    private QuestionToReviewRepository questionToReviewRepository;
+    private QuestionReviewInMemoryRepository questionReviewRepository;
 
     @BeforeEach
     void setUp() {
-        questionRepository = new QuestionInMemoryRepository();
-        questionToReviewRepository = new QuestionToReviewInMemoryRepository(questionRepository);
-        attemptQuestionUseCase = new AttemptQuestionUseCase(questionRepository, questionToReviewRepository);
+        questionReviewRepository = new QuestionReviewInMemoryRepository();
+        questionRepository = new QuestionInMemoryRepository(questionReviewRepository);
+        questionReviewRepository.setQuestionRepository(questionRepository);
+        attemptQuestionUseCase = new AttemptQuestionUseCase(questionRepository, questionReviewRepository);
 
         questionRepository.addQuestion(new FillInTheBlanksQuestion(
             "1",
@@ -74,7 +74,7 @@ class AttemptQuestionUseCaseTest {
 
         attemptQuestionUseCase.execute(request);
 
-        var review = questionToReviewRepository.getReviewByQuestionIDOrCreate(questionId);
+        var review = questionReviewRepository.getReviewByQuestionIDOrCreate(questionId);
         var diff = Duration.between(before, review.getNextReviewInstant());
         assertTrue(diff.toDays() >= 1);
     }
@@ -87,7 +87,7 @@ class AttemptQuestionUseCaseTest {
 
         attemptQuestionUseCase.execute(request);
 
-        var review = questionToReviewRepository.getReviewByQuestionIDOrCreate(questionId);
+        var review = questionReviewRepository.getReviewByQuestionIDOrCreate(questionId);
         var diff = Duration.between(before, review.getNextReviewInstant());
         assertTrue(diff.toSeconds() <= 1);
     }

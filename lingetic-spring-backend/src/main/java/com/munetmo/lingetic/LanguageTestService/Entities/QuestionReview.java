@@ -3,7 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.Entities;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public class QuestionToReview {
+public class QuestionReview {
     // The SM-2 algorithm doesn't define an upper limit for the value of repetitions. However, since computer memory is
     // finite, a high value has been chosen.
     private final static int MAX_REPETITIONS_VALUE = 1000;
@@ -17,7 +17,7 @@ public class QuestionToReview {
     private int interval;
     private Instant nextReviewInstant;
 
-    public QuestionToReview(String id, String questionID, String language) {
+    public QuestionReview(String id, String questionID, String language) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("id cannot be blank");
         }

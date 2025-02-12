@@ -4,6 +4,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionWithIDAlreadyExistsException;
+import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +13,11 @@ import java.util.Map;
 
 public class QuestionInMemoryRepository implements QuestionRepository {
     private final Map<String, Question> questions;
+    private final QuestionReviewRepository questionReviewRepository;
 
-    public QuestionInMemoryRepository() {
+    public QuestionInMemoryRepository(QuestionReviewRepository questionReviewRepository) {
         questions = new HashMap<>();
+        this.questionReviewRepository = questionReviewRepository;
     }
 
     @Override
@@ -44,6 +47,15 @@ public class QuestionInMemoryRepository implements QuestionRepository {
     public List<Question> getQuestionsByLanguage(String language) {
         return questions.values().stream()
             .filter(q -> q.getLanguage().equals(language))
+            .toList();
+    }
+
+    @Override
+    public List<Question> getUnreviewedQuestions(String language, int limit) {
+        var reviewedQuestions = questionReviewRepository.getAllReviews();
+        return getQuestionsByLanguage(language).stream()
+            .filter(q -> reviewedQuestions.stream().noneMatch(r -> r.questionID.equals(q.getID())))
+            .limit(limit)
             .toList();
     }
 }

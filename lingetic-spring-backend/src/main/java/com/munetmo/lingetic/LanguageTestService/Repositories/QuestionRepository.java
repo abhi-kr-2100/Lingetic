@@ -11,4 +11,5 @@ public interface QuestionRepository {
     List<Question> getAllQuestions();
     List<Question> getQuestionsByLanguage(String language);
     void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException;
+    List<Question> getUnreviewedQuestions(String language, int limit);
 }
