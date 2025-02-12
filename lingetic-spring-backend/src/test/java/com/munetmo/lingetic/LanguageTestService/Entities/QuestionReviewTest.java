@@ -7,14 +7,14 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 
-class QuestionToReviewTest {
+class QuestionReviewTest {
     @Test
     void constructorShouldCreateValidInstance() {
         String id = "testId";
         String questionId = "testQuestionId";
         String language = "en";
         
-        var question = new QuestionToReview(id, questionId, language);
+        var question = new QuestionReview(id, questionId, language);
         
         assertEquals(id, question.id);
         assertEquals(questionId, question.questionID);
@@ -24,24 +24,24 @@ class QuestionToReviewTest {
     @Test
     void constructorShouldThrowExceptionForBlankId() {
         assertThrows(IllegalArgumentException.class, 
-            () -> new QuestionToReview(" ", "questionId", "en"));
+            () -> new QuestionReview(" ", "questionId", "en"));
     }
 
     @Test
     void constructorShouldThrowExceptionForBlankQuestionId() {
         assertThrows(IllegalArgumentException.class, 
-            () -> new QuestionToReview("id", "", "en"));
+            () -> new QuestionReview("id", "", "en"));
     }
 
     @Test
     void constructorShouldThrowExceptionForBlankLanguage() {
         assertThrows(IllegalArgumentException.class, 
-            () -> new QuestionToReview("id", "questionId", "    "));
+            () -> new QuestionReview("id", "questionId", "    "));
     }
 
     @Test
     void lowQualityShouldSetNextReviewInstantToARecentInstant() {
-        var question = new QuestionToReview("id2", "qid2", "en");
+        var question = new QuestionReview("id2", "qid2", "en");
         Instant before = Instant.now();
 
         question.review(2);
@@ -54,7 +54,7 @@ class QuestionToReviewTest {
 
     @Test
     void highQualityShouldSetNextReviewInstantToADistantInstant() {
-        var question = new QuestionToReview("id3", "qid3", "en");
+        var question = new QuestionReview("id3", "qid3", "en");
         Instant before = Instant.now();
 
         question.review(5);
@@ -66,7 +66,7 @@ class QuestionToReviewTest {
 
     @Test
     void invalidQualityShouldThrowException() {
-        var question = new QuestionToReview("id4", "qid4", "en");
+        var question = new QuestionReview("id4", "qid4", "en");
 
         assertThrows(IllegalArgumentException.class, () -> question.review(-1));
         assertThrows(IllegalArgumentException.class, () -> question.review(6));

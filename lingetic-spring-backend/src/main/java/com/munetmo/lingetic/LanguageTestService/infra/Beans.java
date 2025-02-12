@@ -1,34 +1,37 @@
 package com.munetmo.lingetic.LanguageTestService.infra;
 
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
-import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionToReviewRepository;
+import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
-import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionToReviewInMemoryRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionReviewInMemoryRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Beans {
     @Bean
-    public TakeRegularTestUseCase takeRegularTestUseCase(QuestionRepository questionRepository) {
-        return new TakeRegularTestUseCase(questionRepository);
+    public TakeRegularTestUseCase takeRegularTestUseCase(
+            QuestionRepository questionRepository, QuestionReviewRepository questionReviewRepository) {
+        return new TakeRegularTestUseCase(questionRepository, questionReviewRepository);
     }
 
     @Bean
-    public QuestionRepository questionRepository() {
-        return new QuestionInMemoryRepository();
+    public QuestionRepository questionRepository(QuestionReviewRepository questionReviewRepository) {
+        return new QuestionInMemoryRepository(questionReviewRepository);
     }
 
     @Bean
-    public QuestionToReviewRepository questionToReviewRepository(QuestionRepository questionRepository) {
-        return new QuestionToReviewInMemoryRepository(questionRepository);
+    public QuestionReviewRepository questionReviewRepository(QuestionRepository questionRepository) {
+        var questionReviewRepository = new QuestionReviewInMemoryRepository();
+        questionReviewRepository.setQuestionRepository(questionRepository);
+        return questionReviewRepository;
     }
 
     @Bean
     public AttemptQuestionUseCase attemptQuestionUseCase(
-            QuestionRepository questionRepository, QuestionToReviewRepository questionToReviewRepository) {
-        return new AttemptQuestionUseCase(questionRepository, questionToReviewRepository);
+            QuestionRepository questionRepository, QuestionReviewRepository questionReviewRepository) {
+        return new AttemptQuestionUseCase(questionRepository, questionReviewRepository);
     }
 }
