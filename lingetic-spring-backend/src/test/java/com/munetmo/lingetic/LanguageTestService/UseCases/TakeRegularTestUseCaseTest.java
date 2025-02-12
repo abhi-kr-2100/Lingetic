@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
+import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionReviewInMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,16 +17,19 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlan
 
 class TakeRegularTestUseCaseTest {
     private TakeRegularTestUseCase useCase;
-    private QuestionInMemoryRepository repository;
+    private QuestionRepository questionRepository;
+    private QuestionReviewInMemoryRepository questionReviewRepository;
 
     @BeforeEach
     void setUp() {
-        repository = new QuestionInMemoryRepository();
-        useCase = new TakeRegularTestUseCase(repository);
+        questionReviewRepository = new QuestionReviewInMemoryRepository();
+        questionRepository = new QuestionInMemoryRepository(questionReviewRepository);
+        questionReviewRepository.setQuestionRepository(questionRepository);
+        useCase = new TakeRegularTestUseCase(questionRepository, questionReviewRepository);
     }
 
     private void addTestQuestions(int count) {
-        IntStream.rangeClosed(1, count).forEach(i -> repository.addQuestion(new FillInTheBlanksQuestion(
+        IntStream.rangeClosed(1, count).forEach(i -> questionRepository.addQuestion(new FillInTheBlanksQuestion(
                 String.valueOf(i),
                 "en",
                 "Question " + i + ": He ____ to school.",
@@ -33,12 +38,32 @@ class TakeRegularTestUseCaseTest {
         )));
     }
 
+    private void reviewNQuestions(int n, int quality, int startIdx) {
+        var questions = questionRepository.getAllQuestions();
+        for (var question : questions) {
+            if (startIdx > 0) {
+                --startIdx;
+                continue;
+            }
+
+            if (n <= 0) {
+                break;
+            }
+
+            var questionReview = questionReviewRepository.getReviewByQuestionIDOrCreate(question.getID());
+            questionReview.review(quality);
+            questionReviewRepository.update(questionReview);
+
+            --n;
+        }
+    }
+
     @Test
     void shouldReturnAllQuestionsWhenLessThanLimit() {
         int questionsCount = TakeRegularTestUseCase.limit - 5;
         addTestQuestions(questionsCount);
 
-        List<QuestionDTO> result = useCase.execute();
+        List<QuestionDTO> result = useCase.execute("en");
 
         assertEquals(questionsCount, result.size());
         assertTrue(result.stream().allMatch(Objects::nonNull));
@@ -49,7 +74,7 @@ class TakeRegularTestUseCaseTest {
         int questionsCount = TakeRegularTestUseCase.limit + 5;
         addTestQuestions(questionsCount);
 
-        List<QuestionDTO> result = useCase.execute();
+        List<QuestionDTO> result = useCase.execute("en");
 
         assertEquals(TakeRegularTestUseCase.limit, result.size());
         assertTrue(result.stream().allMatch(Objects::nonNull));
@@ -57,21 +82,89 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldReturnEmptyListWhenNoQuestionsExist() {
-        List<QuestionDTO> result = useCase.execute();
+        List<QuestionDTO> result = useCase.execute("en");
 
         assertTrue(result.isEmpty());
     }
 
     @Test
     void shouldOnlyReturnQuestionsInRequestedLanguage() {
-        repository.addQuestion(new FillInTheBlanksQuestion("1", "en", "He ____ to school.", "motion verb", "walks"));
-        repository.addQuestion(new FillInTheBlanksQuestion("2", "es", "El ____ a la escuela.", "verbo de movimiento", "camina"));
-        repository.addQuestion(new FillInTheBlanksQuestion("3", "en", "She ____ fast.", "motion verb", "runs"));
-        repository.addQuestion(new FillInTheBlanksQuestion("4", "fr", "Il ____ à l'école.", "verbe de mouvement", "marche"));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("1", "en", "He ____ to school.", "motion verb", "walks"));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("2", "es", "El ____ a la escuela.", "verbo de movimiento", "camina"));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("3", "en", "She ____ fast.", "motion verb", "runs"));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("4", "fr", "Il ____ à l'école.", "verbe de mouvement", "marche"));
 
         List<QuestionDTO> result = useCase.execute("en");
 
         assertEquals(2, result.size());
         assertTrue(result.stream().allMatch(q -> q.getLanguage().equals("en")));
+    }
+
+    @Test
+    void shouldReturnNewQuestionsIfNoQuestionsToReview() {
+        addTestQuestions(TakeRegularTestUseCase.limit);
+
+        var result = useCase.execute("en");
+
+        assertEquals(TakeRegularTestUseCase.limit, result.size());
+    }
+
+    @Test
+    void shouldReturnQuestionsScheduledForReview() {
+        addTestQuestions(TakeRegularTestUseCase.limit);
+        var reviewedQuestion = new FillInTheBlanksQuestion("rq1", "en", "He ____ to school.", "motion verb", "walks");
+        questionRepository.addQuestion(reviewedQuestion);
+        var questionReview = questionReviewRepository.getReviewByQuestionIDOrCreate(reviewedQuestion.getID());
+        questionReview.review(1);
+        questionReviewRepository.update(questionReview);
+
+        var result = useCase.execute("en");
+
+        assertTrue(result.stream().anyMatch(q -> q.getID().equals(reviewedQuestion.getID())));
+    }
+
+    @Test
+    void shouldNotReturnDuplicateQuestions() {
+        addTestQuestions(TakeRegularTestUseCase.limit);
+        reviewNQuestions(TakeRegularTestUseCase.limit / 2, 1, 0);
+
+        var result = useCase.execute("en");
+
+        assertEquals(TakeRegularTestUseCase.limit, result.stream().map(QuestionDTO::getID).distinct().count());
+    }
+
+    @Test
+    void shouldNotReturnQuestionsScheduledForLaterIfNewerQuestionsExist() {
+        addTestQuestions(TakeRegularTestUseCase.limit * 2);
+        reviewNQuestions(TakeRegularTestUseCase.limit / 2, 5, 0);
+        var reviewedQuestionIDs = questionReviewRepository.getAllReviews()
+                .stream()
+                .map(r -> r.questionID)
+                .toList();
+
+        var result = useCase.execute("en");
+
+        assertFalse(result.stream().anyMatch(q -> reviewedQuestionIDs.contains(q.getID())));
+    }
+
+    @Test
+    void shouldReturnQuestionsScheduledForLaterIfNoNewerQuestionsExist() {
+        addTestQuestions(TakeRegularTestUseCase.limit);
+        reviewNQuestions(TakeRegularTestUseCase.limit, 5, 0);
+
+        var result = useCase.execute("en");
+
+        assertEquals(TakeRegularTestUseCase.limit, result.size());
+    }
+
+    @Test
+    void shouldReturnAMixOfScheduledNewAndReviewQuestionsIfNoneFulfillTheLimitAlone() {
+        addTestQuestions(TakeRegularTestUseCase.limit / 2);
+        reviewNQuestions(1, 1, 0);
+        reviewNQuestions(1, 5, 1);
+
+        var result = useCase.execute("en");
+
+        assertEquals(TakeRegularTestUseCase.limit / 2, result.size());
     }
 }
