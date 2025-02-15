@@ -23,10 +23,8 @@ public class Beans {
     }
 
     @Bean
-    public QuestionReviewRepository questionReviewRepository(QuestionRepository questionRepository) {
-        var questionReviewRepository = new QuestionReviewInMemoryRepository();
-        questionReviewRepository.setQuestionRepository(questionRepository);
-        return questionReviewRepository;
+    public QuestionReviewRepository questionReviewRepository() {
+        return new QuestionReviewInMemoryRepository();
     }
 
     @Bean

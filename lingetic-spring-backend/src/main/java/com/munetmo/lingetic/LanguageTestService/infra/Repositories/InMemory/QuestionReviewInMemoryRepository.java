@@ -1,35 +1,20 @@
 package com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory;
 
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionReview;
-import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public class QuestionReviewInMemoryRepository implements QuestionReviewRepository {
     private final List<QuestionReview> reviews;
-    @Nullable
-    private QuestionRepository questionRepository;
 
     public QuestionReviewInMemoryRepository() {
         this.reviews = new ArrayList<>();
     }
 
-    public void setQuestionRepository(QuestionRepository questionRepository) {
-        if (questionRepository == null) {
-            throw new IllegalArgumentException("questionRepository cannot be null");
-        }
-
-        this.questionRepository = questionRepository;
-    }
-
     @Override
     public List<QuestionReview> getTopQuestionsToReview(String language, int limit) {
-        if (questionRepository == null) {
-            throw new IllegalStateException("questionRepository must be set before using this repository");
-        }
-
         var questionReviews = reviews.stream()
             .filter(review -> review.language.equals(language))
             .sorted(Comparator.comparing(QuestionReview::getNextReviewInstant))
@@ -57,23 +42,18 @@ public class QuestionReviewInMemoryRepository implements QuestionReviewRepositor
     }
 
     @Override
-    public QuestionReview getReviewByQuestionIDOrCreate(String questionID) {
-        if (questionRepository == null) {
-            throw new IllegalStateException("questionRepository must be set before using this repository");
-        }
-
+    public QuestionReview getReviewForQuestionOrCreateNew(Question question) {
         var questionReview = reviews.stream()
-                .filter(review -> review.questionID.equals(questionID))
+                .filter(review -> review.questionID.equals(question.getID()))
                 .findFirst()
                 .orElseGet(() -> {
-                    if (questionRepository != null) { // this test is required by NullAway
-                        var question = questionRepository.getQuestionByID(questionID);
-                        var newReview = new QuestionReview(UUID.randomUUID().toString(), questionID, question.getLanguage());
-                        addReview(newReview);
-                        return newReview;
-                    }
-
-                    throw new IllegalStateException("questionRepository must be set before using this repository");
+                    var newReview = new QuestionReview(
+                        UUID.randomUUID().toString(), 
+                        question.getID(), 
+                        question.getLanguage()
+                    );
+                    addReview(newReview);
+                    return newReview;
                 });
 
         return questionReview;

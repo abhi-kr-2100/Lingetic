@@ -24,7 +24,6 @@ class AttemptQuestionUseCaseTest {
     void setUp() {
         questionReviewRepository = new QuestionReviewInMemoryRepository();
         questionRepository = new QuestionInMemoryRepository(questionReviewRepository);
-        questionReviewRepository.setQuestionRepository(questionRepository);
         attemptQuestionUseCase = new AttemptQuestionUseCase(questionRepository, questionReviewRepository);
 
         questionRepository.addQuestion(new FillInTheBlanksQuestion(
@@ -68,26 +67,38 @@ class AttemptQuestionUseCaseTest {
 
     @Test
     void shouldUpdateReviewWithHighScoreOnSuccessfulAttempt() throws QuestionNotFoundException {
-        var questionId = "1";
-        var request = new FillInTheBlanksAttemptRequest(questionId, "stretched");
+        var question = new FillInTheBlanksQuestion(
+            "1",
+            "en",
+            "The cat ____ lazily on the windowsill.",
+            "straighten or extend one's body",
+            "stretched"
+        );
+        var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
         var before = Instant.now();
 
         attemptQuestionUseCase.execute(request);
 
-        var review = questionReviewRepository.getReviewByQuestionIDOrCreate(questionId);
+        var review = questionReviewRepository.getReviewForQuestionOrCreateNew(question);
         var diff = Duration.between(before, review.getNextReviewInstant());
         assertTrue(diff.toDays() >= 1);
     }
 
     @Test
     void shouldUpdateReviewWithLowScoreOnFailedAttempt() throws QuestionNotFoundException {
-        var questionId = "1";
-        var request = new FillInTheBlanksAttemptRequest(questionId, "wrong answer");
+        var question = new FillInTheBlanksQuestion(
+            "1",
+            "en",
+            "The cat ____ lazily on the windowsill.",
+            "straighten or extend one's body",
+            "stretched"
+        );
+        var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");
         var before = Instant.now();
 
         attemptQuestionUseCase.execute(request);
 
-        var review = questionReviewRepository.getReviewByQuestionIDOrCreate(questionId);
+        var review = questionReviewRepository.getReviewForQuestionOrCreateNew(question);
         var diff = Duration.between(before, review.getNextReviewInstant());
         assertTrue(diff.toSeconds() <= 1);
     }
