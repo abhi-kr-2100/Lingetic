@@ -2,22 +2,15 @@ import LanguageCard from "../components/LanguageCard";
 
 const languages = [
   {
-    id: "turkish",
-    name: "Turkish",
-    description: "Learn Turkish, the language of Turkey and Northern Cyprus.",
+    id: "English",
+    name: "English",
+    description: "Learn English, the most widely spoken language in the world.",
     image: undefined,
   },
   {
-    id: "spanish",
-    name: "Spanish",
-    description: "Learn Spanish, one of the world's most spoken languages.",
-    image: undefined,
-  },
-  {
-    id: "finnish",
-    name: "Finnish",
-    description:
-      "Learn Finnish, the language of Finland and its unique culture.",
+    id: "DummyLanguage",
+    name: "Random",
+    description: "Hmmm..",
     image: undefined,
   },
 ];

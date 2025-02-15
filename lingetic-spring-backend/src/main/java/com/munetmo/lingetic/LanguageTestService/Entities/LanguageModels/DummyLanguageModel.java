@@ -1,9 +1,11 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+
 public final class DummyLanguageModel implements LanguageModel {
     @Override
-    public String getLanguage() {
-        return "dummy";
+    public Language getLanguage() {
+        return Language.DummyLanguage;
     }
 
     @Override

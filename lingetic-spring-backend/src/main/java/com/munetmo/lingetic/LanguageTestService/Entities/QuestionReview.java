@@ -10,22 +10,19 @@ public class QuestionReview {
 
     public final String id;
     public final String questionID;
-    public final String language;
+    public final Language language;
 
     private int repetitions;
     private double easeFactor;
     private int interval;
     private Instant nextReviewInstant;
 
-    public QuestionReview(String id, String questionID, String language) {
+    public QuestionReview(String id, String questionID, Language language) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("id cannot be blank");
         }
         if (questionID.isBlank()) {
             throw new IllegalArgumentException("questionID cannot be blank");
-        }
-        if (language.isBlank()) {
-            throw new IllegalArgumentException("language cannot be blank");
         }
 
         this.id = id;

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.*;
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 
@@ -22,7 +23,7 @@ public class TakeRegularTestUseCase {
         this.questionReviewRepository = questionReviewRepository;
     }
 
-    public List<QuestionDTO> execute(String language) {
+    public List<QuestionDTO> execute(Language language) {
         var now = Instant.now();
 
         var questionReviews = questionReviewRepository.getTopQuestionsToReview(language, limit);

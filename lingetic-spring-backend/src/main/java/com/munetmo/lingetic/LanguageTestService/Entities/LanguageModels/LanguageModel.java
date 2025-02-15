@@ -1,16 +1,20 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+
+import java.util.Collections;
 import java.util.Map;
 
 public sealed interface LanguageModel permits DummyLanguageModel, EnglishLanguageModel {
-    String getLanguage();
+    Language getLanguage();
     boolean areEquivalent(String s1, String s2);
 
-    public static LanguageModel getLanguageModel(String language) {
-        var models = Map.of(
-            "english", (LanguageModel) new EnglishLanguageModel()
-        );
+    static final DummyLanguageModel dummyLanguageModelInstance = new DummyLanguageModel();
+    static final Map<Language, LanguageModel> languageModelInstances = Collections.unmodifiableMap(Map.of(
+        Language.English, new EnglishLanguageModel()
+    ));
 
-        return models.getOrDefault(language, new DummyLanguageModel());
+    public static LanguageModel getLanguageModel(Language language) {
+        return languageModelInstances.getOrDefault(language, dummyLanguageModelInstance);
     }
 }

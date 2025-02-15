@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ class QuestionDTOTest {
     void shouldConvertFillInTheBlanksQuestionToDTO() {
         FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
             "q123",
-            "en",
+            Language.English,
             "Fill in: ___", 
             "This is a hint",
             "test answer"

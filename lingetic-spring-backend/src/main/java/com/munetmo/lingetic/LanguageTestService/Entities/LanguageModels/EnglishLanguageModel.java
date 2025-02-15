@@ -1,12 +1,14 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+
 import java.util.Arrays;
 import java.util.Locale;
 
 public final class EnglishLanguageModel implements LanguageModel {
     @Override
-    public String getLanguage() {
-        return "english";
+    public Language getLanguage() {
+        return Language.English;
     }
 
     @Override

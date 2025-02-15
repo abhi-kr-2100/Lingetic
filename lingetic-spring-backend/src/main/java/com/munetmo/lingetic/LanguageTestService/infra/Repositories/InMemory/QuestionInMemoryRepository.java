@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
@@ -44,14 +45,14 @@ public class QuestionInMemoryRepository implements QuestionRepository {
     }
 
     @Override
-    public List<Question> getQuestionsByLanguage(String language) {
+    public List<Question> getQuestionsByLanguage(Language language) {
         return questions.values().stream()
             .filter(q -> q.getLanguage().equals(language))
             .toList();
     }
 
     @Override
-    public List<Question> getUnreviewedQuestions(String language, int limit) {
+    public List<Question> getUnreviewedQuestions(Language language, int limit) {
         var reviewedQuestions = questionReviewRepository.getAllReviews();
         return getQuestionsByLanguage(language).stream()
             .filter(q -> reviewedQuestions.stream().noneMatch(r -> r.questionID.equals(q.getID())))

@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ class EnglishLanguageModelTest {
 
     @Test
     void getLanguageShouldReturnEnglish() {
-        assertEquals("english", model.getLanguage());
+        assertEquals(Language.English, model.getLanguage());
     }
 
     @Test
