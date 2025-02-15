@@ -17,13 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AttemptQuestionUseCaseTest {
     private AttemptQuestionUseCase attemptQuestionUseCase;
-    private QuestionInMemoryRepository questionRepository;
     private QuestionReviewInMemoryRepository questionReviewRepository;
 
     @BeforeEach
     void setUp() {
         questionReviewRepository = new QuestionReviewInMemoryRepository();
-        questionRepository = new QuestionInMemoryRepository(questionReviewRepository);
+        QuestionInMemoryRepository questionRepository = new QuestionInMemoryRepository(questionReviewRepository);
         attemptQuestionUseCase = new AttemptQuestionUseCase(questionRepository, questionReviewRepository);
 
         questionRepository.addQuestion(new FillInTheBlanksQuestion(

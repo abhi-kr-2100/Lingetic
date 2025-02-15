@@ -2,8 +2,6 @@ package com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptRequestDeserializer;
 
