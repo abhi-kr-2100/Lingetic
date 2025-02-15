@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +11,7 @@ public class FillInTheBlanksQuestionDTOTest {
     void shouldCreateQuestionDTO() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
-                "en",
+                Language.English,
                 "Fill in: ___",
                 "This is a hint");
 
@@ -23,7 +24,7 @@ public class FillInTheBlanksQuestionDTOTest {
     @Test
     void shouldThrowExceptionWhenIdIsBlank() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "", "en", "Fill in: ___", "This is a hint"));
+                "", Language.English, "Fill in: ___", "This is a hint"));
         assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("id"));
     }
@@ -31,24 +32,16 @@ public class FillInTheBlanksQuestionDTOTest {
     @Test
     void shouldThrowExceptionWhenGetTextIsBlank() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "q123", "en", "", "This is a hint"));
+                "q123", Language.English, "", "This is a hint"));
         assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("text"));
     }
-
-   @Test
-   void shouldThrowExceptionWhenLanguageIsBlank() {
-        var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "q123", "", "Fill in: ___", "This is a hint"));
-        assertNotNull(exception.getMessage());
-        assertTrue(exception.getMessage().contains("language"));
-   }
 
     @Test
     void shouldCreateQuestionDTOWithoutGetHint() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
-                "en",
+                Language.English,
                 "Fill in: ___",
                 null);
 
@@ -62,7 +55,7 @@ public class FillInTheBlanksQuestionDTOTest {
     void shouldCreateQuestionDTOWithEmptyGetHint() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
                 "q123",
-                "en",
+                Language.English,
                 "Fill in: ___",
                 "");
 

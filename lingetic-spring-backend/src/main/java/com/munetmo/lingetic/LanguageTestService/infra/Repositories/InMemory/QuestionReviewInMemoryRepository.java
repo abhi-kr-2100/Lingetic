@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionReview;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
@@ -14,7 +15,7 @@ public class QuestionReviewInMemoryRepository implements QuestionReviewRepositor
     }
 
     @Override
-    public List<QuestionReview> getTopQuestionsToReview(String language, int limit) {
+    public List<QuestionReview> getTopQuestionsToReview(Language language, int limit) {
         var questionReviews = reviews.stream()
             .filter(review -> review.language.equals(language))
             .sorted(Comparator.comparing(QuestionReview::getNextReviewInstant))

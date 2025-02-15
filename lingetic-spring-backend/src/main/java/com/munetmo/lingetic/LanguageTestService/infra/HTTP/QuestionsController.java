@@ -1,6 +1,7 @@
 package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,16 @@ public class QuestionsController {
                 .body("Language parameter cannot be null or empty");
         }
 
-        var questions = takeRegularTestUseCase.execute(language);
+        Language languageEnum;
+        try {
+            languageEnum = Language.valueOf(language);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Invalid language: " + language);
+        }
+
+        var questions = takeRegularTestUseCase.execute(languageEnum);
         return ResponseEntity.ok(questions);
     }
 

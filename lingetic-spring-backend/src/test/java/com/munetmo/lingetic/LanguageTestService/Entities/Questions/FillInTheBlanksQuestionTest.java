@@ -3,6 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.Entities.Questions;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.FillInTheBlanksAttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.FillInTheBlanksAttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -13,7 +14,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void constructorShouldCreateValidObjectWithCorrectValues() {
         var id = "test-id";
-        var language = "en";
+        var language = Language.English;
         var questionText = "Fill in the ___";
         var hint = "test hint";
         var answer = "blank";
@@ -32,7 +33,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenIdIsInvalid(String id) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion(id, "en", "Fill in the ___", "hint", "answer")
+            new FillInTheBlanksQuestion(id, Language.English, "Fill in the ___", "hint", "answer")
         );
     }
 
@@ -40,7 +41,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n", "No blank here", "Multiple___ ___blanks", "Wrong blank --"})
     void constructorShouldThrowExceptionWhenQuestionTextIsInvalid(String questionText) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", "en", questionText, "hint", "answer")
+            new FillInTheBlanksQuestion("id", Language.English, questionText, "hint", "answer")
         );
     }
 
@@ -48,22 +49,14 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenAnswerIsInvalid(String answer) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", "en", "Fill in the ___", "hint", answer)
-        );
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {" ", "   ", "\t", "\n"})
-    void constructorShouldThrowExceptionWhenLanguageIsInvalid(String language) {
-        assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", language, "Fill in the ___", "hint", "answer")
+            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", answer)
         );
     }
 
     @Test
     void assessAttemptShouldReturnSuccessForCorrectAnswer() {
         var question = new FillInTheBlanksQuestion(
-            "id", "en", "Fill in the ___", "hint", "correct"
+            "id", Language.English, "Fill in the ___", "hint", "correct"
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), question.answer);
 
@@ -76,7 +69,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void assessAttemptShouldReturnFailureForIncorrectAnswer() {
         var question = new FillInTheBlanksQuestion(
-            "id", "en", "Fill in the ___", "hint", "correct"
+            "id", Language.English, "Fill in the ___", "hint", "correct"
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong");
 

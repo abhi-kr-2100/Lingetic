@@ -3,6 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.UseCases;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.FillInTheBlanksAttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
+import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
@@ -27,7 +28,7 @@ class AttemptQuestionUseCaseTest {
 
         questionRepository.addQuestion(new FillInTheBlanksQuestion(
             "1",
-            "en",
+            Language.English,
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched"
@@ -68,7 +69,7 @@ class AttemptQuestionUseCaseTest {
     void shouldUpdateReviewWithHighScoreOnSuccessfulAttempt() throws QuestionNotFoundException {
         var question = new FillInTheBlanksQuestion(
             "1",
-            "en",
+            Language.English,
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched"
@@ -87,7 +88,7 @@ class AttemptQuestionUseCaseTest {
     void shouldUpdateReviewWithLowScoreOnFailedAttempt() throws QuestionNotFoundException {
         var question = new FillInTheBlanksQuestion(
             "1",
-            "en",
+            Language.English,
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched"
