@@ -5,6 +5,7 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.Fil
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.FillInTheBlanksAttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
+import com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels.LanguageModel;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
@@ -67,8 +68,13 @@ public final class FillInTheBlanksQuestion implements Question {
             throw new IllegalArgumentException("Invalid request type");
         }
 
+        var areEquivalent = LanguageModel.getLanguageModel(language).areEquivalent(
+            typedRequest.getUserResponse(),
+            answer
+        );
+
         return new FillInTheBlanksAttemptResponse(
-            typedRequest.getUserResponse().equals(answer) ? AttemptStatus.Success : AttemptStatus.Failure,
+            areEquivalent ? AttemptStatus.Success : AttemptStatus.Failure,
             answer
         );
     }
