@@ -24,7 +24,6 @@ class TakeRegularTestUseCaseTest {
     void setUp() {
         questionReviewRepository = new QuestionReviewInMemoryRepository();
         questionRepository = new QuestionInMemoryRepository(questionReviewRepository);
-        questionReviewRepository.setQuestionRepository(questionRepository);
         useCase = new TakeRegularTestUseCase(questionRepository, questionReviewRepository);
     }
 
@@ -50,7 +49,7 @@ class TakeRegularTestUseCaseTest {
                 break;
             }
 
-            var questionReview = questionReviewRepository.getReviewByQuestionIDOrCreate(question.getID());
+            var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(question);
             questionReview.review(quality);
             questionReviewRepository.update(questionReview);
 
@@ -114,7 +113,7 @@ class TakeRegularTestUseCaseTest {
         addTestQuestions(TakeRegularTestUseCase.limit);
         var reviewedQuestion = new FillInTheBlanksQuestion("rq1", "en", "He ____ to school.", "motion verb", "walks");
         questionRepository.addQuestion(reviewedQuestion);
-        var questionReview = questionReviewRepository.getReviewByQuestionIDOrCreate(reviewedQuestion.getID());
+        var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(reviewedQuestion);
         questionReview.review(1);
         questionReviewRepository.update(questionReview);
 

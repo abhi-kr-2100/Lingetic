@@ -20,7 +20,7 @@ public class AttemptQuestionUseCase {
         var question = questionRepository.getQuestionByID(request.getQuestionID());
         var response = question.assessAttempt(request);
         
-        var questionReview = questionReviewRepository.getReviewByQuestionIDOrCreate(request.getQuestionID());
+        var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(question);
         questionReview.review(
             switch (response.getAttemptStatus()) {
                 case AttemptStatus.Success -> 5;
