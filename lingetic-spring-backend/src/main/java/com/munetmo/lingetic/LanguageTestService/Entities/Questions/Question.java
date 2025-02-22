@@ -9,4 +9,5 @@ public sealed interface Question permits FillInTheBlanksQuestion {
     QuestionType getQuestionType();
     Language getLanguage();
     AttemptResponse assessAttempt(AttemptRequest request);
+    int getDifficulty();
 }
