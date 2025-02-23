@@ -6,11 +6,13 @@ import type {
   FillInTheBlanksAttemptResponse,
 } from "@/utilities/api-types";
 import assert from "@/utilities/assert";
+import { useAuth } from "@clerk/nextjs";
 
 export default function useUserAnswer(questionID: string) {
   assert(questionID?.trim()?.length > 0, "questionId is required");
 
   const [answer, setAnswer] = useState("");
+  const { getToken } = useAuth();
 
   const attemptChallengeMutation = useMutation<
     FillInTheBlanksAttemptResponse,
@@ -24,7 +26,7 @@ export default function useUserAnswer(questionID: string) {
         userResponse,
       } as FillInTheBlanksAttemptRequest;
 
-      return attemptQuestion(attemptRequest);
+      return attemptQuestion(attemptRequest, getToken);
     },
   });
 

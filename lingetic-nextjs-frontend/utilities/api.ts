@@ -10,9 +10,13 @@ async function fetchOrThrow<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export async function attemptQuestion<T extends AttemptResponse>(
-  attemptRequest: AttemptRequest
+  attemptRequest: AttemptRequest,
+  getToken: () => Promise<string | null>
 ): Promise<T> {
   validateAttemptRequestOrDie(attemptRequest);
+
+  const token = await getToken();
+  assert(token !== null, "Token was null when attempting question");
 
   return await fetchOrThrow(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions/attempt`,
@@ -20,19 +24,27 @@ export async function attemptQuestion<T extends AttemptResponse>(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(attemptRequest),
     }
   );
 }
 
-export async function fetchQuestions(language: string): Promise<Question[]> {
+export async function fetchQuestions(language: string, getToken: () => Promise<string | null>): Promise<Question[]> {
   assert(language?.trim()?.length > 0, "language is required");
 
+  const token = await getToken();
+  assert(token !== null, "Token was null when fetching questions");
+  
   const encodedLanguage = encodeURIComponent(language);
 
   return await fetchOrThrow(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions?language=${encodedLanguage}`
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions?language=${encodedLanguage}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 }
 

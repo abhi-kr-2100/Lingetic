@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
 
-@CrossOrigin(origins = "${spring.web.cors.allowed-origins}")
 @RestController
 @RequestMapping("/questions")
 public class QuestionsController {
