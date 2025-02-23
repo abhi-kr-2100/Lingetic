@@ -15,7 +15,8 @@ class QuestionDTOTest {
             Language.English,
             "Fill in: ___", 
             "This is a hint",
-            "test answer"
+            "test answer",
+            5
         );
 
         QuestionDTO dto = QuestionDTO.fromQuestion(question);

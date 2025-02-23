@@ -7,10 +7,7 @@ import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundExcep
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionWithIDAlreadyExistsException;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class QuestionInMemoryRepository implements QuestionRepository {
     private final Map<String, Question> questions;
@@ -31,7 +28,9 @@ public class QuestionInMemoryRepository implements QuestionRepository {
 
     @Override
     public List<Question> getAllQuestions() {
-        return new ArrayList<>(questions.values());
+        return questions.values().stream()
+            .sorted(Comparator.comparingInt(Question::getDifficulty))
+            .toList();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class QuestionInMemoryRepository implements QuestionRepository {
 
     @Override
     public List<Question> getQuestionsByLanguage(Language language) {
-        return questions.values().stream()
+        return getAllQuestions().stream()
             .filter(q -> q.getLanguage().equals(language))
             .toList();
     }
@@ -56,6 +55,7 @@ public class QuestionInMemoryRepository implements QuestionRepository {
         var reviewedQuestions = questionReviewRepository.getAllReviews();
         return getQuestionsByLanguage(language).stream()
             .filter(q -> reviewedQuestions.stream().noneMatch(r -> r.questionID.equals(q.getID())))
+            .sorted(Comparator.comparingInt(Question::getDifficulty))
             .limit(limit)
             .toList();
     }

@@ -19,8 +19,9 @@ public final class FillInTheBlanksQuestion implements Question {
     public final String questionText;
     public final String hint;
     public final String answer;
+    public final int difficulty;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -42,6 +43,7 @@ public final class FillInTheBlanksQuestion implements Question {
         this.questionText = questionText;
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
+        this.difficulty = difficulty;
     }
 
     @Override
@@ -74,5 +76,10 @@ public final class FillInTheBlanksQuestion implements Question {
             areEquivalent ? AttemptStatus.Success : AttemptStatus.Failure,
             answer
         );
+    }
+
+    @Override
+    public int getDifficulty() {
+        return difficulty;
     }
 }

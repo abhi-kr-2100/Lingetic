@@ -31,7 +31,8 @@ class AttemptQuestionUseCaseTest {
             Language.English,
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
-            "stretched"
+            "stretched",
+            0
         ));
     }
 
@@ -72,7 +73,8 @@ class AttemptQuestionUseCaseTest {
             Language.English,
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
-            "stretched"
+            "stretched",
+            0
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
         var before = Instant.now();
@@ -91,7 +93,8 @@ class AttemptQuestionUseCaseTest {
             Language.English,
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
-            "stretched"
+            "stretched",
+            0
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");
         var before = Instant.now();

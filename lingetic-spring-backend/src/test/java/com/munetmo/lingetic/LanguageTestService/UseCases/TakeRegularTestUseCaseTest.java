@@ -34,7 +34,8 @@ class TakeRegularTestUseCaseTest {
                 Language.English,
                 "Question " + i + ": He ____ to school.",
                 "motion verb",
-                "walks"
+                "walks",
+                0
         )));
     }
 
@@ -89,10 +90,10 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldOnlyReturnQuestionsInRequestedLanguage() {
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("1", Language.English, "He ____ to school.", "motion verb", "walks"));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("2", Language.DummyLanguage, "El ____ a la escuela.", "verbo de movimiento", "camina"));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("3", Language.English, "She ____ fast.", "motion verb", "runs"));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("4", Language.DummyLanguage, "Il ____ à l'école.", "verbe de mouvement", "marche"));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("1", Language.English, "He ____ to school.", "motion verb", "walks", 0));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("2", Language.DummyLanguage, "El ____ a la escuela.", "verbo de movimiento", "camina", 0));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("3", Language.English, "She ____ fast.", "motion verb", "runs", 0));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("4", Language.DummyLanguage, "Il ____ à l'école.", "verbe de mouvement", "marche", 0));
 
         List<QuestionDTO> result = useCase.execute(Language.English);
 
@@ -112,7 +113,7 @@ class TakeRegularTestUseCaseTest {
     @Test
     void shouldReturnQuestionsScheduledForReview() {
         addTestQuestions(TakeRegularTestUseCase.limit);
-        var reviewedQuestion = new FillInTheBlanksQuestion("rq1", Language.English, "He ____ to school.", "motion verb", "walks");
+        var reviewedQuestion = new FillInTheBlanksQuestion("rq1", Language.English, "He ____ to school.", "motion verb", "walks", 0);
         questionRepository.addQuestion(reviewedQuestion);
         var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(reviewedQuestion);
         questionReview.review(1);
@@ -166,5 +167,48 @@ class TakeRegularTestUseCaseTest {
         var result = useCase.execute(Language.English);
 
         assertEquals(TakeRegularTestUseCase.limit / 2, result.size());
+    }
+
+    @Test
+    void shouldReturnQuestionsOrderedByDifficulty() {
+        var question1 = new FillInTheBlanksQuestion("1", Language.English, "He ___ to school.", "motion verb", "walks", 3);
+        var question2 = new FillInTheBlanksQuestion("2", Language.English, "She ___ fast.", "motion verb", "runs", 1);
+        var question3 = new FillInTheBlanksQuestion("3", Language.English, "They ___ together.", "motion verb", "dance", 2);
+
+        questionRepository.addQuestion(question1);
+        questionRepository.addQuestion(question2);
+        questionRepository.addQuestion(question3);
+
+        List<QuestionDTO> result = useCase.execute(Language.English);
+
+        assertEquals(3, result.size());
+        assertEquals("2", result.get(0).getID());
+        assertEquals("3", result.get(1).getID());
+        assertEquals("1", result.get(2).getID());
+    }
+
+    @Test
+    void shouldOnlyOrderQuestionsByDifficultyIfTheyAreUnreviewed() {
+        var question1 = new FillInTheBlanksQuestion("q1", Language.English, "He ___ to school.", "motion verb", "walks", 10);
+        var question2 = new FillInTheBlanksQuestion("q2", Language.English, "She ___ fast.", "motion verb", "runs", 5);
+        var question3 = new FillInTheBlanksQuestion("q3", Language.English, "They ___ together.", "motion verb", "dance", 8);
+        var question4 = new FillInTheBlanksQuestion("q4", Language.English, "I ___ to work.", "motion verb", "drive", 4);
+        var question5 = new FillInTheBlanksQuestion("q5", Language.English, "We ___ home.", "motion verb", "walk", 1);
+
+        questionRepository.addQuestion(question1);
+        questionRepository.addQuestion(question2);
+        questionRepository.addQuestion(question3);
+        questionRepository.addQuestion(question4);
+        questionRepository.addQuestion(question5);
+
+        addTestQuestions(10); // easy questions; these should be returned over the more difficult unreviewed questions
+        reviewNQuestions(3, 1, 0);
+
+        var result = useCase.execute(Language.English);
+        var unreviewedQuestions = result.subList(3, result.size());
+
+        unreviewedQuestions.forEach(q -> {
+            assertFalse(q.getID().startsWith("q"));
+        });
     }
 }
