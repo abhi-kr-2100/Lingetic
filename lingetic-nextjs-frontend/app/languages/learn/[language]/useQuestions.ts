@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchQuestions } from "@/utilities/api";
 import assert from "@/utilities/assert";
 import type { Question } from "@/utilities/api-types";
+import { useAuth } from "@clerk/nextjs";
 
 interface UseQuestionsParams {
   onFinish: () => void;
@@ -48,13 +49,15 @@ export default function useQuestions({
 }: UseQuestionsParams): UseQuestionsResult {
   assert(language?.trim()?.length > 0, "language is required");
 
+  const { getToken } = useAuth();
+
   const {
     data: questions = [],
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["questions", language],
-    queryFn: () => fetchQuestions(language),
+    queryFn: () => fetchQuestions(language, getToken),
 
     // The same questions should not be displayed on different renders
     // of the component. This is because the questions that Lingetic thinks
