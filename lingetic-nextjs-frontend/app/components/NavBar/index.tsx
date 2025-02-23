@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AuthButton from "./AuthButton";
 
 const Navbar = () => {
   return (
@@ -11,6 +12,7 @@ const Navbar = () => {
           <Link href="/languages" className="text-skin-inverted">
             Languages
           </Link>
+          <AuthButton />
         </div>
       </div>
     </nav>
