@@ -25,3 +25,6 @@ replay_pid*
 
 # Python build files
 *.pyc
+
+# Other files
+.qodo/*
