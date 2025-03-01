@@ -1,11 +1,12 @@
 { pkgs ? import <nixpkgs> {} }:
 
 pkgs.mkShell {
-  buildInputs = [
-    pkgs.nodejs
-    pkgs.nodePackages.pnpm
-    pkgs.jdk23
-    pkgs.gradle
+  buildInputs = with pkgs; [
+    nodejs
+    nodePackages.pnpm
+    jdk23
+    gradle
+    uv
   ];
 
   shellHook = ''
@@ -16,5 +17,6 @@ pkgs.mkShell {
     echo "PNPM version: $(pnpm --version)"
     echo "Java version: $(java --version)"
     echo "Gradle version: $(gradle --version)"
+    echo "UV version: $(uv --version)"
   '';
 }
