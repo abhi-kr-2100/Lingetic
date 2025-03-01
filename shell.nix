@@ -7,6 +7,7 @@ pkgs.mkShell {
     jdk23
     gradle
     uv
+    ollama
   ];
 
   shellHook = ''
@@ -18,5 +19,6 @@ pkgs.mkShell {
     echo "Java version: $(java --version)"
     echo "Gradle version: $(gradle --version)"
     echo "UV version: $(uv --version)"
+    echo "Ollama version: $(ollama --version)"
   '';
 }
