@@ -16,11 +16,11 @@ public class AttemptQuestionUseCase {
         this.questionReviewRepository = questionReviewRepository;
     }
 
-    public AttemptResponse execute(AttemptRequest request) throws QuestionNotFoundException {
+    public AttemptResponse execute(String userId, AttemptRequest request) throws QuestionNotFoundException {
         var question = questionRepository.getQuestionByID(request.getQuestionID());
         var response = question.assessAttempt(request);
         
-        var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(question);
+        var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(userId, question);
         questionReview.review(
             switch (response.getAttemptStatus()) {
                 case AttemptStatus.Success -> 5;

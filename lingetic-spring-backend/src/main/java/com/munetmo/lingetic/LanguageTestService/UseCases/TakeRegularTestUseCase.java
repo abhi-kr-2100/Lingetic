@@ -23,10 +23,10 @@ public class TakeRegularTestUseCase {
         this.questionReviewRepository = questionReviewRepository;
     }
 
-    public List<QuestionDTO> execute(Language language) {
+    public List<QuestionDTO> execute(String userId, Language language) {
         var now = Instant.now();
 
-        var questionReviews = questionReviewRepository.getTopQuestionsToReview(language, limit);
+        var questionReviews = questionReviewRepository.getTopQuestionsToReview(userId, language, limit);
         var questionsToReviewNow = questionReviews.stream()
             .filter(r -> r.getNextReviewInstant().isBefore(now))
             .map(r -> questionRepository.getQuestionByID(r.questionID))
@@ -35,7 +35,7 @@ public class TakeRegularTestUseCase {
 
         int remainingCount = limit - questionList.size();
         var unreviewedQuestions = questionRepository
-            .getUnreviewedQuestions(language, remainingCount);
+            .getUnreviewedQuestions(userId, language, remainingCount);
         questionList.addAll(
                 unreviewedQuestions.subList(0, Math.min(unreviewedQuestions.size(), remainingCount)));
 

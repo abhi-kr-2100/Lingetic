@@ -7,9 +7,9 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import java.util.List;
 
 public interface QuestionReviewRepository {
-    List<QuestionReview> getTopQuestionsToReview(Language language, int limit);
-    List<QuestionReview> getAllReviews();
+    List<QuestionReview> getTopQuestionsToReview(String userID, Language language, int limit);
+    List<QuestionReview> getAllReviews(String userID);
     void addReview(QuestionReview review);
     void update(QuestionReview review);
-    QuestionReview getReviewForQuestionOrCreateNew(Question question);
+    QuestionReview getReviewForQuestionOrCreateNew(String userID, Question question);
 }

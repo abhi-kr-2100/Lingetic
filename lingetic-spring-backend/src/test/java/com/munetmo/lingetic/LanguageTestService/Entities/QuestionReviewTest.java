@@ -8,13 +8,15 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 class QuestionReviewTest {
+    private static final String TEST_USER_ID = "test-user-1";
+
     @Test
     void constructorShouldCreateValidInstance() {
         String id = "testId";
         String questionId = "testQuestionId";
         Language language = Language.English;
         
-        var question = new QuestionReview(id, questionId, language);
+        var question = new QuestionReview(id, questionId, TEST_USER_ID, language);
         
         assertEquals(id, question.id);
         assertEquals(questionId, question.questionID);
@@ -24,18 +26,24 @@ class QuestionReviewTest {
     @Test
     void constructorShouldThrowExceptionForBlankId() {
         assertThrows(IllegalArgumentException.class, 
-            () -> new QuestionReview(" ", "questionId", Language.English));
+            () -> new QuestionReview(" ", "questionId", TEST_USER_ID, Language.English));
     }
 
     @Test
     void constructorShouldThrowExceptionForBlankQuestionId() {
         assertThrows(IllegalArgumentException.class, 
-            () -> new QuestionReview("id", "", Language.English));
+            () -> new QuestionReview("id", "", TEST_USER_ID, Language.English));
+    }
+
+    @Test
+    void constructorShouldThrowExceptionForBlankUserId() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new QuestionReview("id", "questionId", "", Language.English));
     }
 
     @Test
     void lowQualityShouldSetNextReviewInstantToARecentInstant() {
-        var question = new QuestionReview("id2", "qid2", Language.English);
+        var question = new QuestionReview("id2", "qid2", TEST_USER_ID, Language.English);
         Instant before = Instant.now();
 
         question.review(2);
@@ -48,7 +56,7 @@ class QuestionReviewTest {
 
     @Test
     void highQualityShouldSetNextReviewInstantToADistantInstant() {
-        var question = new QuestionReview("id3", "qid3", Language.English);
+        var question = new QuestionReview("id3", "qid3", TEST_USER_ID, Language.English);
         Instant before = Instant.now();
 
         question.review(5);
@@ -60,7 +68,7 @@ class QuestionReviewTest {
 
     @Test
     void invalidQualityShouldThrowException() {
-        var question = new QuestionReview("id4", "qid4", Language.English);
+        var question = new QuestionReview("id4", "qid4", TEST_USER_ID, Language.English);
 
         assertThrows(IllegalArgumentException.class, () -> question.review(-1));
         assertThrows(IllegalArgumentException.class, () -> question.review(6));
