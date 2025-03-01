@@ -47,7 +47,13 @@ public class  ClerkAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        var authentication = new ClerkAuthentication(requestState.claims());
+        var claims = requestState.claims();
+        if (claims.isEmpty()) {
+            onUnauthorized(response);
+            return;
+        }
+
+        var authentication = new ClerkAuthentication(claims.get());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

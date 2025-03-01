@@ -1,13 +1,14 @@
 package com.munetmo.lingetic.infra.auth;
 
+import io.jsonwebtoken.Claims;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 public class ClerkAuthentication extends AbstractAuthenticationToken {
-    private final Object principal;
+    private final Claims principal;
 
-    public ClerkAuthentication(Object principal) {
+    public ClerkAuthentication(Claims principal) {
         super(AuthorityUtils.NO_AUTHORITIES);
         this.principal = principal;
         super.setAuthenticated(true);
