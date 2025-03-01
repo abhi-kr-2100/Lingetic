@@ -10,6 +10,7 @@ public class QuestionReview {
 
     public final String id;
     public final String questionID;
+    public final String userID;  // Added field
     public final Language language;
 
     private int repetitions;
@@ -17,16 +18,20 @@ public class QuestionReview {
     private int interval;
     private Instant nextReviewInstant;
 
-    public QuestionReview(String id, String questionID, Language language) {
+    public QuestionReview(String id, String questionID, String userID, Language language) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("id cannot be blank");
         }
         if (questionID.isBlank()) {
             throw new IllegalArgumentException("questionID cannot be blank");
         }
+        if (userID.isBlank()) {
+            throw new IllegalArgumentException("userID cannot be blank");
+        }
 
         this.id = id;
         this.questionID = questionID;
+        this.userID = userID;
         this.language = language;
 
         this.repetitions = 0;

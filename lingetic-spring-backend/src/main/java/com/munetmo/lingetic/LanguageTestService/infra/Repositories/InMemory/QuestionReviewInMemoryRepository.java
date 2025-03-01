@@ -15,20 +15,17 @@ public class QuestionReviewInMemoryRepository implements QuestionReviewRepositor
     }
 
     @Override
-    public List<QuestionReview> getTopQuestionsToReview(Language language, int limit) {
-        var questionReviews = reviews.stream()
-            .filter(review -> review.language.equals(language))
+    public List<QuestionReview> getTopQuestionsToReview(String userID, Language language, int limit) {
+        return reviews.stream()
+            .filter(review -> review.language.equals(language) && review.userID.equals(userID))
             .sorted(Comparator.comparing(QuestionReview::getNextReviewInstant))
             .limit(limit)
             .toList();
-
-        return questionReviews;
     }
 
     @Override
-    public List<QuestionReview> getAllReviews() {
-        // return a copy to prevent modification of the original list
-        return new ArrayList<>(reviews);
+    public List<QuestionReview> getAllReviews(String userID) {
+        return reviews.stream().filter(review -> review.userID.equals(userID)).toList();
     }
 
     @Override
@@ -43,20 +40,20 @@ public class QuestionReviewInMemoryRepository implements QuestionReviewRepositor
     }
 
     @Override
-    public QuestionReview getReviewForQuestionOrCreateNew(Question question) {
-        var questionReview = reviews.stream()
-                .filter(review -> review.questionID.equals(question.getID()))
+    public QuestionReview getReviewForQuestionOrCreateNew(String userID, Question question) {
+        return reviews.stream()
+                .filter(review -> review.questionID.equals(question.getID()) &&
+                                 review.userID.equals(userID))
                 .findFirst()
                 .orElseGet(() -> {
                     var newReview = new QuestionReview(
                         UUID.randomUUID().toString(), 
-                        question.getID(), 
+                        question.getID(),
+                        userID,
                         question.getLanguage()
                     );
                     addReview(newReview);
                     return newReview;
                 });
-
-        return questionReview;
     }
 }

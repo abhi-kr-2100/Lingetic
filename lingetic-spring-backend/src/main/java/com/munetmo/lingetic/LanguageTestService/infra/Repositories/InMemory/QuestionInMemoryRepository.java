@@ -51,8 +51,8 @@ public class QuestionInMemoryRepository implements QuestionRepository {
     }
 
     @Override
-    public List<Question> getUnreviewedQuestions(Language language, int limit) {
-        var reviewedQuestions = questionReviewRepository.getAllReviews();
+    public List<Question> getUnreviewedQuestions(String userID, Language language, int limit) {
+        var reviewedQuestions = questionReviewRepository.getAllReviews(userID);
         return getQuestionsByLanguage(language).stream()
             .filter(q -> reviewedQuestions.stream().noneMatch(r -> r.questionID.equals(q.getID())))
             .sorted(Comparator.comparingInt(Question::getDifficulty))

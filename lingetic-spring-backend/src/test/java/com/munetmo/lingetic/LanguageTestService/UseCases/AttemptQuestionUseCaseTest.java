@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AttemptQuestionUseCaseTest {
     private AttemptQuestionUseCase attemptQuestionUseCase;
     private QuestionReviewInMemoryRepository questionReviewRepository;
+    private static final String TEST_USER_ID = "test-user-1";
 
     @BeforeEach
     void setUp() {
@@ -41,7 +42,7 @@ class AttemptQuestionUseCaseTest {
         var questionId = "1";
         var request = new FillInTheBlanksAttemptRequest(questionId, "stretched");
 
-        AttemptResponse response = attemptQuestionUseCase.execute(request);
+        AttemptResponse response = attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
         assertNotNull(response);
         assertSame(AttemptStatus.Success, response.getAttemptStatus());
@@ -52,7 +53,7 @@ class AttemptQuestionUseCaseTest {
         var questionId = "1";
         var request = new FillInTheBlanksAttemptRequest(questionId, "wrong answer");
 
-        AttemptResponse response = attemptQuestionUseCase.execute(request);
+        AttemptResponse response = attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
         assertNotNull(response);
         assertSame(AttemptStatus.Failure, response.getAttemptStatus());
@@ -63,7 +64,7 @@ class AttemptQuestionUseCaseTest {
         var questionId = "999";
         var request = new FillInTheBlanksAttemptRequest(questionId, "test answer");
 
-        assertThrows(QuestionNotFoundException.class, () -> attemptQuestionUseCase.execute(request));
+        assertThrows(QuestionNotFoundException.class, () -> attemptQuestionUseCase.execute(TEST_USER_ID, request));
     }
 
     @Test
@@ -79,9 +80,9 @@ class AttemptQuestionUseCaseTest {
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
         var before = Instant.now();
 
-        attemptQuestionUseCase.execute(request);
+        attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
-        var review = questionReviewRepository.getReviewForQuestionOrCreateNew(question);
+        var review = questionReviewRepository.getReviewForQuestionOrCreateNew(TEST_USER_ID, question);
         var diff = Duration.between(before, review.getNextReviewInstant());
         assertTrue(diff.toDays() >= 1);
     }
@@ -99,9 +100,9 @@ class AttemptQuestionUseCaseTest {
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");
         var before = Instant.now();
 
-        attemptQuestionUseCase.execute(request);
+        attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
-        var review = questionReviewRepository.getReviewForQuestionOrCreateNew(question);
+        var review = questionReviewRepository.getReviewForQuestionOrCreateNew(TEST_USER_ID, question);
         var diff = Duration.between(before, review.getNextReviewInstant());
         assertTrue(diff.toSeconds() <= 1);
     }
