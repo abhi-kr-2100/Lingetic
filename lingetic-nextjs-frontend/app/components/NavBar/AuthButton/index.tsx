@@ -1,14 +1,15 @@
 "use client";
 
 import { SignInButton, useAuth, SignOutButton, useClerk } from "@clerk/nextjs";
-import { ButtonHTMLAttributes } from "react";
+import LoadingButton from "./LoadingButton";
+import StyledAuthButton from "./StyledAuthButton";
 
 export default function AuthButton() {
   const { isSignedIn, isLoaded } = useAuth();
   const { redirectToSignIn, signOut } = useClerk();
 
   if (!isLoaded) {
-    return null;
+    return <LoadingButton />;
   }
 
   return isSignedIn ? (
@@ -23,10 +24,3 @@ export default function AuthButton() {
     </SignInButton>
   );
 }
-
-const StyledAuthButton = (props: ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <button
-    {...props}
-    className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded-md hover:bg-skin-button-primary-hover"
-  />
-);
