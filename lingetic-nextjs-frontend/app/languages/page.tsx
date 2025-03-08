@@ -8,9 +8,10 @@ const languages = [
     image: undefined,
   },
   {
-    id: "DummyLanguage",
-    name: "Random",
-    description: "Hmmm..",
+    id: "Turkish",
+    name: "Turkish",
+    description:
+      "Learn Turkish, the official language of Turkey and a gateway to rich cultural heritage.",
     image: undefined,
   },
 ];

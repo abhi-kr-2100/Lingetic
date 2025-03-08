@@ -2,19 +2,22 @@ package com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels;
 
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 
-import java.util.Collections;
 import java.util.Map;
 
-public sealed interface LanguageModel permits DummyLanguageModel, EnglishLanguageModel {
+public sealed interface LanguageModel permits EnglishLanguageModel, TurkishLanguageModel {
     Language getLanguage();
     boolean areEquivalent(String s1, String s2);
 
-    static final DummyLanguageModel dummyLanguageModelInstance = new DummyLanguageModel();
-    static final Map<Language, LanguageModel> languageModelInstances = Collections.unmodifiableMap(Map.of(
-        Language.English, new EnglishLanguageModel()
-    ));
+    static final Map<Language, LanguageModel> languageModelInstances = Map.of(
+            Language.English, new EnglishLanguageModel(),
+            Language.Turkish, new TurkishLanguageModel()
+    );
 
-    public static LanguageModel getLanguageModel(Language language) {
-        return languageModelInstances.getOrDefault(language, dummyLanguageModelInstance);
+    static LanguageModel getLanguageModel(Language language) {
+        if (languageModelInstances.containsKey(language)) {
+            return languageModelInstances.get(language);
+        }
+
+        throw new IllegalArgumentException("Language not supported");
     }
 }
