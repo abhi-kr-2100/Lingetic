@@ -7,6 +7,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	jacoco
 	id("net.ltgt.errorprone") version "4.1.0"
+	id("io.sentry.jvm.gradle") version "5.3.0"
 }
 
 group = "com.munetmo"
@@ -22,9 +23,21 @@ repositories {
 	mavenCentral()
 }
 
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+}
+
+extra["sentryVersion"] = "8.3.0"
+
+val env: String? by project
+val javaEnv = if (env == "development") "development" else "production"
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.sentry:sentry-spring-boot-starter-jakarta")
 	implementation("com.clerk:backend-api:1.5.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -33,6 +46,13 @@ dependencies {
 	errorprone("com.uber.nullaway:nullaway:0.12.3")
 	api("org.jspecify:jspecify:1.0.0")
 }
+
+dependencyManagement {
+	imports {
+		mavenBom("io.sentry:sentry-bom:${property("sentryVersion")}")
+	}
+}
+
 
 tasks.withType<Test> {
 	useJUnitPlatform()
@@ -51,4 +71,15 @@ tasks.withType<JavaCompile>().configureEach {
 		check("NullAway", CheckSeverity.ERROR)
 		option("NullAway:AnnotatedPackages", "com.munetmo")
 	}
+}
+
+tasks.withType<JavaExec>().configureEach {
+	jvmArgs("-DJAVA_ENV=$javaEnv")
+}
+
+sentry {
+	includeSourceContext.set(true)
+	org.set("munetmo")
+	projectName.set("lingetic-spring-backend")
+	authToken.set(properties["sentry.authToken"] as String)
 }
