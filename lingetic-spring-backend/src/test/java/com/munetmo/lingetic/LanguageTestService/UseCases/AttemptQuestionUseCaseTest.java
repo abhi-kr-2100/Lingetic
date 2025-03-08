@@ -4,6 +4,7 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.Fil
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
@@ -20,6 +21,7 @@ class AttemptQuestionUseCaseTest {
     private AttemptQuestionUseCase attemptQuestionUseCase;
     private QuestionReviewInMemoryRepository questionReviewRepository;
     private static final String TEST_USER_ID = "test-user-1";
+    private static final QuestionList TEST_QUESTION_LIST = new QuestionList("test-list", "Test QuestionList");
 
     @BeforeEach
     void setUp() {
@@ -33,7 +35,8 @@ class AttemptQuestionUseCaseTest {
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched",
-            0
+            0,
+                TEST_QUESTION_LIST
         ));
     }
 
@@ -75,7 +78,8 @@ class AttemptQuestionUseCaseTest {
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched",
-            0
+            0,
+                TEST_QUESTION_LIST
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
         var before = Instant.now();
@@ -95,7 +99,8 @@ class AttemptQuestionUseCaseTest {
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched",
-            0
+            0,
+                TEST_QUESTION_LIST
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");
         var before = Instant.now();

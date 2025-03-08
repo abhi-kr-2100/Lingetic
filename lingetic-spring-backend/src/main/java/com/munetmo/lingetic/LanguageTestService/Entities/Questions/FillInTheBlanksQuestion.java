@@ -7,6 +7,7 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.Fi
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels.LanguageModel;
+import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
@@ -15,13 +16,14 @@ public final class FillInTheBlanksQuestion implements Question {
     private final String id;
     private final Language language;
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
+    private final QuestionList questionList;
 
     public final String questionText;
     public final String hint;
     public final String answer;
     public final int difficulty;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, QuestionList questionList) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -44,6 +46,7 @@ public final class FillInTheBlanksQuestion implements Question {
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
         this.difficulty = difficulty;
+        this.questionList = questionList;
     }
 
     @Override
@@ -59,6 +62,11 @@ public final class FillInTheBlanksQuestion implements Question {
     @Override
     public Language getLanguage() {
         return language;
+    }
+
+    @Override
+    public QuestionList getQuestionList() {
+        return questionList;
     }
 
     @Override
