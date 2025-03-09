@@ -110,17 +110,37 @@ class QuestionReviewTest {
     }
 
     @Test
-    void setEaseFactorShouldThrowExceptionForValueBelowMinimum() {
+    void setEaseFactorShouldAdjustValuesSlightlyBelowMinimum() {
         var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+        double inputEaseFactor = 1.29;
 
-        assertThrows(IllegalArgumentException.class, () -> question.setEaseFactor(1.2));
+        question.setEaseFactor(inputEaseFactor);
+
+        assertEquals(1.3, question.getEaseFactor());
     }
 
     @Test
-    void setEaseFactorShouldThrowExceptionForValueAboveMaximum() {
+    void setEaseFactorShouldAdjustValueSlightlyAboveMaximum() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+        double inputEaseFactor = 5.01;
+
+        question.setEaseFactor(inputEaseFactor);
+
+        assertEquals(5.0, question.getEaseFactor());
+    }
+
+    @Test
+    void setEaseFactorShouldThrowExceptionForValueSignificantlyBelowMinimum() {
         var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
 
-        assertThrows(IllegalArgumentException.class, () -> question.setEaseFactor(5.1));
+        assertThrows(IllegalArgumentException.class, () -> question.setEaseFactor(1.0));
+    }
+
+    @Test
+    void setEaseFactorShouldThrowExceptionForValueSignificantlyAboveMaximum() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+
+        assertThrows(IllegalArgumentException.class, () -> question.setEaseFactor(15.0));
     }
 
     @Test
