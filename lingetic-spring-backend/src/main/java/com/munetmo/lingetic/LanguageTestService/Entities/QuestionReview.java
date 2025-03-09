@@ -95,9 +95,16 @@ public class QuestionReview {
     }
 
     public void setEaseFactor(double easeFactor) {
-        if (easeFactor < 1.3 || easeFactor > MAX_EASE_FACTOR_VALUE) {
-            throw new IllegalArgumentException("Ease factor must be between 1.3 and " + MAX_EASE_FACTOR_VALUE);
+        if (easeFactor < 1.2 || easeFactor > MAX_EASE_FACTOR_VALUE + 0.1) {
+                throw new IllegalArgumentException("Ease factor must be between 1.3 and " + MAX_EASE_FACTOR_VALUE);
         }
+        if (easeFactor < 1.3) {
+            easeFactor = 1.3;
+        }
+        if (easeFactor > MAX_EASE_FACTOR_VALUE) {
+            easeFactor = MAX_EASE_FACTOR_VALUE;
+        }
+
         this.easeFactor = easeFactor;
     }
 
