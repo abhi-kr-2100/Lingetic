@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.Test;
 
@@ -72,5 +73,95 @@ class QuestionReviewTest {
 
         assertThrows(IllegalArgumentException.class, () -> question.review(-1));
         assertThrows(IllegalArgumentException.class, () -> question.review(6));
+    }
+
+    @Test
+    void setRepetitionsShouldSetValidValue() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+        int newRepetitions = 500;
+
+        question.setRepetitions(newRepetitions);
+
+        assertEquals(newRepetitions, question.getRepetitions());
+    }
+
+    @Test
+    void setRepetitionsShouldThrowExceptionForNegativeValue() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+
+        assertThrows(IllegalArgumentException.class, () -> question.setRepetitions(-1));
+    }
+
+    @Test
+    void setRepetitionsShouldThrowExceptionForValueAboveMax() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+
+        assertThrows(IllegalArgumentException.class, () -> question.setRepetitions(1001));
+    }
+
+    @Test
+    void setEaseFactorShouldSetValidValue() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+        double newEaseFactor = 2.0;
+
+        question.setEaseFactor(newEaseFactor);
+
+        assertEquals(newEaseFactor, question.getEaseFactor());
+    }
+
+    @Test
+    void setEaseFactorShouldThrowExceptionForValueBelowMinimum() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+
+        assertThrows(IllegalArgumentException.class, () -> question.setEaseFactor(1.2));
+    }
+
+    @Test
+    void setEaseFactorShouldThrowExceptionForValueAboveMaximum() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+
+        assertThrows(IllegalArgumentException.class, () -> question.setEaseFactor(5.1));
+    }
+
+    @Test
+    void setIntervalShouldSetValidValue() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+        int newInterval = 10;
+
+        question.setInterval(newInterval);
+
+        assertEquals(newInterval, question.getInterval());
+    }
+
+    @Test
+    void setIntervalShouldThrowExceptionForNegativeValue() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+
+        assertThrows(IllegalArgumentException.class, () -> question.setInterval(-1));
+    }
+
+    @Test
+    void setIntervalShouldThrowExceptionForValueAboveMaximum() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+
+        assertThrows(IllegalArgumentException.class, () -> question.setInterval(365 * 10 + 1));
+    }
+
+    @Test
+    void setNextReviewInstantShouldSetValidValue() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+        Instant newInstant = Instant.now().plus(5, ChronoUnit.DAYS);
+
+        question.setNextReviewInstant(newInstant);
+
+        assertEquals(newInstant, question.getNextReviewInstant());
+    }
+
+    @Test
+    void setNextReviewInstantShouldThrowExceptionForValueTooFarInFuture() {
+        var question = new QuestionReview("id1", "qid1", TEST_USER_ID, Language.English);
+        Instant farFuture = Instant.now().plus(365 * 11, ChronoUnit.DAYS); // 11 years in days
+
+        assertThrows(IllegalArgumentException.class, () -> question.setNextReviewInstant(farFuture));
     }
 }
