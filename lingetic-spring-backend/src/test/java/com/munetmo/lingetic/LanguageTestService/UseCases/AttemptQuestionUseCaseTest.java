@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +23,7 @@ class AttemptQuestionUseCaseTest {
     private QuestionReviewInMemoryRepository questionReviewRepository;
     private static final String TEST_USER_ID = "test-user-1";
     private static final QuestionList TEST_QUESTION_LIST = new QuestionList("test-list", "Test QuestionList");
+    private static final Supplier<QuestionList> TEST_QUESTION_LIST_SUPPLIER = () -> TEST_QUESTION_LIST;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +38,7 @@ class AttemptQuestionUseCaseTest {
             "straighten or extend one's body",
             "stretched",
             0,
-                TEST_QUESTION_LIST
+            TEST_QUESTION_LIST_SUPPLIER
         ));
     }
 
@@ -79,7 +81,7 @@ class AttemptQuestionUseCaseTest {
             "straighten or extend one's body",
             "stretched",
             0,
-                TEST_QUESTION_LIST
+            TEST_QUESTION_LIST_SUPPLIER
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
         var before = Instant.now();
@@ -100,7 +102,7 @@ class AttemptQuestionUseCaseTest {
             "straighten or extend one's body",
             "stretched",
             0,
-                TEST_QUESTION_LIST
+            TEST_QUESTION_LIST_SUPPLIER
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");
         var before = Instant.now();

@@ -9,10 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.function.Supplier;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class FillInTheBlanksQuestionTest {
     private final QuestionList defaultQuestionList = new QuestionList("list-id", "Test QuestionList");
+    private final Supplier<QuestionList> defaultQuestionListSupplier = () -> defaultQuestionList;
 
     @Test
     void constructorShouldCreateValidObjectWithCorrectValues() {
@@ -22,7 +25,7 @@ class FillInTheBlanksQuestionTest {
         var hint = "test hint";
         var answer = "blank";
 
-        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, 5, defaultQuestionList);
+        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, 5, defaultQuestionListSupplier);
 
         assertEquals(id, question.getID());
         assertEquals(language, question.getLanguage());
@@ -38,7 +41,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenIdIsInvalid(String id) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion(id, Language.English, "Fill in the ___", "hint", "answer", 5, defaultQuestionList)
+            new FillInTheBlanksQuestion(id, Language.English, "Fill in the ___", "hint", "answer", 5, defaultQuestionListSupplier)
         );
     }
 
@@ -46,7 +49,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n", "No blank here", "Multiple___ ___blanks", "Wrong blank --"})
     void constructorShouldThrowExceptionWhenQuestionTextIsInvalid(String questionText) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, questionText, "hint", "answer", 5, defaultQuestionList)
+            new FillInTheBlanksQuestion("id", Language.English, questionText, "hint", "answer", 5, defaultQuestionListSupplier)
         );
     }
 
@@ -54,14 +57,14 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenAnswerIsInvalid(String answer) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", answer, 5, defaultQuestionList)
+            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", answer, 5, defaultQuestionListSupplier)
         );
     }
 
     @Test
     void assessAttemptShouldReturnSuccessForCorrectAnswer() {
         var question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "correct", 5, defaultQuestionList
+            "id", Language.English, "Fill in the ___", "hint", "correct", 5, defaultQuestionListSupplier
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), question.answer);
 
@@ -74,7 +77,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void assessAttemptShouldReturnFailureForIncorrectAnswer() {
         var question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "correct", 5, defaultQuestionList
+            "id", Language.English, "Fill in the ___", "hint", "correct", 5, defaultQuestionListSupplier
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong");
 

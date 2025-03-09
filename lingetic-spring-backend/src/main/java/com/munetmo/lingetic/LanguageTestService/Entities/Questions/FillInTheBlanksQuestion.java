@@ -11,19 +11,22 @@ import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
     private final Language language;
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
-    private final QuestionList questionList;
+    @Nullable
+    private volatile QuestionList questionList;
+    private final Supplier<QuestionList> questionListSupplier;
 
     public final String questionText;
     public final String hint;
     public final String answer;
     public final int difficulty;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, QuestionList questionList) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, Supplier<QuestionList> questionListSupplier) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -46,7 +49,8 @@ public final class FillInTheBlanksQuestion implements Question {
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
         this.difficulty = difficulty;
-        this.questionList = questionList;
+        this.questionList = null;
+        this.questionListSupplier = questionListSupplier;
     }
 
     @Override
@@ -66,6 +70,14 @@ public final class FillInTheBlanksQuestion implements Question {
 
     @Override
     public QuestionList getQuestionList() {
+        if (questionList == null) {
+            synchronized (this) {
+                if (questionList == null) {
+                    questionList = questionListSupplier.get();
+                }
+            }
+        }
+
         return questionList;
     }
 
