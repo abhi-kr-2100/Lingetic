@@ -40,6 +40,11 @@ public class QuestionReviewInMemoryRepository implements QuestionReviewRepositor
     }
 
     @Override
+    public void deleteAllReviews() {
+        reviews.clear();
+    }
+
+    @Override
     public QuestionReview getReviewForQuestionOrCreateNew(String userID, Question question) {
         return reviews.stream()
                 .filter(review -> review.questionID.equals(question.getID()) &&
