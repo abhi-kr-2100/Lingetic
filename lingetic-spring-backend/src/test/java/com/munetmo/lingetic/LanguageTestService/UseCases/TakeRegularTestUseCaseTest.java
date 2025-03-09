@@ -4,35 +4,79 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
-import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
-import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
-import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionReviewInMemoryRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
 
+@SpringBootTest
 class TakeRegularTestUseCaseTest {
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
     private TakeRegularTestUseCase useCase;
-    private QuestionRepository questionRepository;
-    private QuestionReviewInMemoryRepository questionReviewRepository;
+    private static QuestionPostgresRepository questionRepository;
+    private static QuestionReviewPostgresRepository questionReviewRepository;
 
-    private static final String TEST_USER_ID = "test-user-1";
-    private static final String TEST_QUESTION_LIST_ID = "test-list";
+    private static final String TEST_USER_ID = UUID.randomUUID().toString();
+    private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
+
+    @BeforeAll
+    static void beforeAll() {
+        postgres.start();
+
+        var dataSource = DataSourceBuilder.create()
+                .url(postgres.getJdbcUrl())
+                .username(postgres.getUsername())
+                .password(postgres.getPassword())
+                .build();
+        var jdbcTemplate = new JdbcTemplate(dataSource);
+
+        questionRepository = new QuestionPostgresRepository(jdbcTemplate);
+        questionReviewRepository = new QuestionReviewPostgresRepository(jdbcTemplate);
+
+        var flyway = Flyway.configure()
+                .dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())
+                .load();
+        flyway.migrate();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        postgres.stop();
+    }
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.flyway.enabled", () -> false);
+    }
 
     @BeforeEach
     void setUp() {
-        questionReviewRepository = new QuestionReviewInMemoryRepository();
-        questionRepository = new QuestionInMemoryRepository(questionReviewRepository);
+        questionReviewRepository.deleteAllReviews();
+        questionRepository.deleteAllQuestions();
         useCase = new TakeRegularTestUseCase(questionRepository, questionReviewRepository);
     }
 
     private void addTestQuestions(int count) {
         IntStream.rangeClosed(1, count).forEach(i -> questionRepository.addQuestion(new FillInTheBlanksQuestion(
-                String.valueOf(i),
+                UUID.randomUUID().toString(),
                 Language.English,
                 "Question " + i + ": He ____ to school.",
                 "motion verb",
@@ -93,10 +137,10 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldOnlyReturnQuestionsInRequestedLanguage() {
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("1", Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("2", Language.DummyLanguage, "El ____ a la escuela.", "verbo de movimiento", "camina", 0, TEST_QUESTION_LIST_ID));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("3", Language.English, "She ____ fast.", "motion verb", "runs", 0, TEST_QUESTION_LIST_ID));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("4", Language.DummyLanguage, "Il ____ à l'école.", "verbe de mouvement", "marche", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "El ____ a la escuela.", "verbo de movimiento", "camina", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ____ fast.", "motion verb", "runs", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "Il ____ à l'école.", "verbe de mouvement", "marche", 0, TEST_QUESTION_LIST_ID));
 
         List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
 
@@ -116,7 +160,7 @@ class TakeRegularTestUseCaseTest {
     @Test
     void shouldReturnQuestionsScheduledForReview() {
         addTestQuestions(TakeRegularTestUseCase.limit);
-        var reviewedQuestion = new FillInTheBlanksQuestion("rq1", Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID);
+        var reviewedQuestion = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID);
         questionRepository.addQuestion(reviewedQuestion);
         var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(TEST_USER_ID, reviewedQuestion);
         questionReview.review(1);
@@ -174,9 +218,9 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldReturnQuestionsOrderedByDifficulty() {
-        var question1 = new FillInTheBlanksQuestion("1", Language.English, "He ___ to school.", "motion verb", "walks", 3, TEST_QUESTION_LIST_ID);
-        var question2 = new FillInTheBlanksQuestion("2", Language.English, "She ___ fast.", "motion verb", "runs", 1, TEST_QUESTION_LIST_ID);
-        var question3 = new FillInTheBlanksQuestion("3", Language.English, "They ___ together.", "motion verb", "dance", 2, TEST_QUESTION_LIST_ID);
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 3, TEST_QUESTION_LIST_ID);
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 1, TEST_QUESTION_LIST_ID);
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 2, TEST_QUESTION_LIST_ID);
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
@@ -185,18 +229,18 @@ class TakeRegularTestUseCaseTest {
         List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
 
         assertEquals(3, result.size());
-        assertEquals("2", result.get(0).getID());
-        assertEquals("3", result.get(1).getID());
-        assertEquals("1", result.get(2).getID());
+        assertEquals(question2.getID(), result.get(0).getID());
+        assertEquals(question3.getID(), result.get(1).getID());
+        assertEquals(question1.getID(), result.get(2).getID());
     }
 
     @Test
     void shouldOnlyOrderQuestionsByDifficultyIfTheyAreUnreviewed() {
-        var question1 = new FillInTheBlanksQuestion("q1", Language.English, "He ___ to school.", "motion verb", "walks", 10, TEST_QUESTION_LIST_ID);
-        var question2 = new FillInTheBlanksQuestion("q2", Language.English, "She ___ fast.", "motion verb", "runs", 5, TEST_QUESTION_LIST_ID);
-        var question3 = new FillInTheBlanksQuestion("q3", Language.English, "They ___ together.", "motion verb", "dance", 8, TEST_QUESTION_LIST_ID);
-        var question4 = new FillInTheBlanksQuestion("q4", Language.English, "I ___ to work.", "motion verb", "drive", 4, TEST_QUESTION_LIST_ID);
-        var question5 = new FillInTheBlanksQuestion("q5", Language.English, "We ___ home.", "motion verb", "walk", 1, TEST_QUESTION_LIST_ID);
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 10, TEST_QUESTION_LIST_ID);
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 5, TEST_QUESTION_LIST_ID);
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 8, TEST_QUESTION_LIST_ID);
+        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", 4, TEST_QUESTION_LIST_ID);
+        var question5 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "We ___ home.", "motion verb", "walk", 1, TEST_QUESTION_LIST_ID);
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
@@ -211,7 +255,12 @@ class TakeRegularTestUseCaseTest {
         var unreviewedQuestions = result.subList(3, result.size());
 
         unreviewedQuestions.forEach(q -> {
-            assertFalse(q.getID().startsWith("q"));
+            var id = q.getID();
+            assertFalse(id.equals(question1.getID()) ||
+                       id.equals(question2.getID()) ||
+                       id.equals(question3.getID()) ||
+                       id.equals(question4.getID()) ||
+                       id.equals(question5.getID()));
         });
     }
 }
