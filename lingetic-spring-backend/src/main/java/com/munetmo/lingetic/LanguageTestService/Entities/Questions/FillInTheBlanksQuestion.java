@@ -9,6 +9,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels.LanguageModel;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Objects;
 
 public final class FillInTheBlanksQuestion implements Question {
@@ -93,5 +94,26 @@ public final class FillInTheBlanksQuestion implements Question {
     @Override
     public int getDifficulty() {
         return difficulty;
+    }
+
+    @Override
+    public Map<String, Object> getQuestionTypeSpecificData() {
+        return Map.of(
+            "questionText", questionText,
+            "hint", hint,
+            "answer", answer
+        );
+    }
+
+    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, int difficulty, String questionListId, Map<String, Object> data) {
+        if (!data.containsKey("questionText") || !data.containsKey("answer")) {
+            throw new IllegalArgumentException("Required fields 'questionText' and 'answer' must be present in data");
+        }
+
+        String questionText = (String) data.get("questionText");
+        String answer = (String) data.get("answer");
+        String hint = (String) data.getOrDefault("hint", "");
+
+        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, difficulty, questionListId);
     }
 }

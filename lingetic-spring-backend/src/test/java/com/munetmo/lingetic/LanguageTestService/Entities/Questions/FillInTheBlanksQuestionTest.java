@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class FillInTheBlanksQuestionTest {
@@ -89,5 +91,103 @@ class FillInTheBlanksQuestionTest {
 
         assertEquals(AttemptStatus.Failure, response.getAttemptStatus());
         assertEquals(question.answer, response.getCorrectAnswer());
+    }
+
+    @Test
+    void getQuestionTypeSpecificDataShouldReturnCorrectMap() {
+        var question = new FillInTheBlanksQuestion(
+            "test-id",
+            Language.English,
+            "Fill in the ___",
+            "test hint",
+            "blank",
+            5,
+            defaultQuestionListId
+        );
+
+        var data = question.getQuestionTypeSpecificData();
+
+        assertEquals("Fill in the ___", data.get("questionText"));
+        assertEquals("test hint", data.get("hint"));
+        assertEquals("blank", data.get("answer"));
+        assertEquals(3, data.size());
+    }
+
+    @Test
+    void createFromQuestionTypeSpecificDataShouldCreateEquivalentQuestion() {
+        var originalQuestion = new FillInTheBlanksQuestion(
+            "test-id",
+            Language.English,
+            "Fill in the ___",
+            "test hint",
+            "blank",
+            5,
+            defaultQuestionListId
+        );
+
+        var data = originalQuestion.getQuestionTypeSpecificData();
+        var newQuestion = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
+            originalQuestion.getID(),
+            originalQuestion.getLanguage(),
+            originalQuestion.getDifficulty(),
+            originalQuestion.getQuestionListID(),
+            data
+        );
+
+        assertEquals(originalQuestion.getID(), newQuestion.getID());
+        assertEquals(originalQuestion.getLanguage(), newQuestion.getLanguage());
+        assertEquals(originalQuestion.getDifficulty(), newQuestion.getDifficulty());
+        assertEquals(originalQuestion.getQuestionListID(), newQuestion.getQuestionListID());
+        assertEquals(originalQuestion.questionText, ((FillInTheBlanksQuestion)newQuestion).questionText);
+        assertEquals(originalQuestion.hint, ((FillInTheBlanksQuestion)newQuestion).hint);
+        assertEquals(originalQuestion.answer, ((FillInTheBlanksQuestion)newQuestion).answer);
+    }
+
+    @Test
+    void createFromQuestionTypeSpecificDataShouldHandleMissingOptionalFields() {
+        Map<String, Object> data = Map.of(
+            "questionText", "Fill in the ___",
+            "answer", "blank"
+        );
+
+        var newQuestion = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
+            "test-id",
+            Language.English,
+            5,
+            defaultQuestionListId,
+            data
+        );
+
+        assertEquals("", newQuestion.hint);
+    }
+
+    @Test
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenQuestionTextIsMissing() {
+        Map<String, Object> incompleteData = Map.of("answer", "blank");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
+                        "test-id",
+                        Language.English,
+                        5,
+                        defaultQuestionListId,
+                        incompleteData
+                )
+        );
+    }
+
+    @Test
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenAnswerIsMissing() {
+        Map<String, Object> incompleteData = Map.of("questionText", "Fill in the ___");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
+                        "test-id",
+                        Language.English,
+                        5,
+                        defaultQuestionListId,
+                        incompleteData
+                )
+        );
     }
 }
