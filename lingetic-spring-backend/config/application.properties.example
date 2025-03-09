@@ -4,6 +4,13 @@ server.port=8000
 spring.web.cors.allowed-origins=http://localhost:3000
 spring.main.allow-circular-references=true
 
+spring.datasource.url=jdbc:postgresql://localhost:5432/lingetic
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.flyway.enabled=true
+
 clerk.apiKey=****************
 
 sentry.dsn=https://395a50a4da23afeb05d9959f9859ed3d@o4508705106952192.ingest.de.sentry.io/4508942592770128
