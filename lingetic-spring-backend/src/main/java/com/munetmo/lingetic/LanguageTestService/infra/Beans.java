@@ -4,10 +4,11 @@ import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
-import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
-import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionReviewInMemoryRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 public class Beans {
@@ -18,13 +19,13 @@ public class Beans {
     }
 
     @Bean
-    public QuestionRepository questionRepository(QuestionReviewRepository questionReviewRepository) {
-        return new QuestionInMemoryRepository(questionReviewRepository);
+    public QuestionRepository questionRepository(JdbcTemplate jdbcTemplate) {
+        return new QuestionPostgresRepository(jdbcTemplate);
     }
 
     @Bean
-    public QuestionReviewRepository questionReviewRepository() {
-        return new QuestionReviewInMemoryRepository();
+    public QuestionReviewRepository questionReviewRepository(JdbcTemplate jdbcTemplate) {
+        return new QuestionReviewPostgresRepository(jdbcTemplate);
     }
 
     @Bean
