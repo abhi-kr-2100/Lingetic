@@ -34,14 +34,23 @@ extra["sentryVersion"] = "8.3.0"
 val env: String? by project
 val javaEnv = if (env == "development") "development" else "production"
 
+ext {
+	set("testcontainers.version", "1.20.6")
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("io.sentry:sentry-spring-boot-starter-jakarta")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("com.clerk:backend-api:1.5.0")
+	runtimeOnly("org.postgresql:postgresql")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:postgresql")
 	errorprone("com.google.errorprone:error_prone_core:2.36.0")
 	errorprone("com.uber.nullaway:nullaway:0.12.3")
 	api("org.jspecify:jspecify:1.0.0")
