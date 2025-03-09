@@ -10,6 +10,7 @@ import java.util.List;
 public interface QuestionRepository {
     Question getQuestionByID(String id) throws QuestionNotFoundException;
     List<Question> getAllQuestions();
+    void deleteAllQuestions();
     List<Question> getQuestionsByLanguage(Language language);
     void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException;
     List<Question> getUnreviewedQuestions(String userID, Language language, int limit);

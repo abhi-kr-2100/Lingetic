@@ -34,6 +34,11 @@ public class QuestionInMemoryRepository implements QuestionRepository {
     }
 
     @Override
+    public void deleteAllQuestions() {
+        questions.clear();
+    }
+
+    @Override
     public void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException {
         if (questions.containsKey(question.getID())) {
             throw new QuestionWithIDAlreadyExistsException(
