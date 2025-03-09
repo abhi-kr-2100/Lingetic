@@ -1,18 +1,14 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
-import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Supplier;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuestionDTOTest {
-    private static final QuestionList TEST_QUESTION_LIST = new QuestionList("test-list", "Test QuestionList");
-    private static final Supplier<QuestionList> TEST_QUESTION_LIST_SUPPLIER = () -> TEST_QUESTION_LIST;
+    private static final String TEST_QUESTION_LIST_ID = "test-list";
 
     @Test
     void shouldConvertFillInTheBlanksQuestionToDTO() {
@@ -23,7 +19,7 @@ class QuestionDTOTest {
             "This is a hint",
             "test answer",
             5,
-            TEST_QUESTION_LIST_SUPPLIER
+            TEST_QUESTION_LIST_ID
         );
 
         QuestionDTO dto = QuestionDTO.fromQuestion(question);

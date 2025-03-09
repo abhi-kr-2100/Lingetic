@@ -4,12 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
-import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.InMemory.QuestionInMemoryRepository;
@@ -23,8 +21,7 @@ class TakeRegularTestUseCaseTest {
     private QuestionReviewInMemoryRepository questionReviewRepository;
 
     private static final String TEST_USER_ID = "test-user-1";
-    private static final QuestionList TEST_QUESTION_LIST = new QuestionList("test-list", "Test QuestionList");
-    private static final Supplier<QuestionList> TEST_QUESTION_LIST_SUPPLIER = () -> TEST_QUESTION_LIST;
+    private static final String TEST_QUESTION_LIST_ID = "test-list";
 
     @BeforeEach
     void setUp() {
@@ -41,7 +38,7 @@ class TakeRegularTestUseCaseTest {
                 "motion verb",
                 "walks",
                 0,
-                TEST_QUESTION_LIST_SUPPLIER
+                TEST_QUESTION_LIST_ID
         )));
     }
 
@@ -96,10 +93,10 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldOnlyReturnQuestionsInRequestedLanguage() {
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("1", Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_SUPPLIER));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("2", Language.DummyLanguage, "El ____ a la escuela.", "verbo de movimiento", "camina", 0, TEST_QUESTION_LIST_SUPPLIER));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("3", Language.English, "She ____ fast.", "motion verb", "runs", 0, TEST_QUESTION_LIST_SUPPLIER));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion("4", Language.DummyLanguage, "Il ____ à l'école.", "verbe de mouvement", "marche", 0, TEST_QUESTION_LIST_SUPPLIER));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("1", Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("2", Language.DummyLanguage, "El ____ a la escuela.", "verbo de movimiento", "camina", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("3", Language.English, "She ____ fast.", "motion verb", "runs", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion("4", Language.DummyLanguage, "Il ____ à l'école.", "verbe de mouvement", "marche", 0, TEST_QUESTION_LIST_ID));
 
         List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
 
@@ -119,7 +116,7 @@ class TakeRegularTestUseCaseTest {
     @Test
     void shouldReturnQuestionsScheduledForReview() {
         addTestQuestions(TakeRegularTestUseCase.limit);
-        var reviewedQuestion = new FillInTheBlanksQuestion("rq1", Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_SUPPLIER);
+        var reviewedQuestion = new FillInTheBlanksQuestion("rq1", Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID);
         questionRepository.addQuestion(reviewedQuestion);
         var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(TEST_USER_ID, reviewedQuestion);
         questionReview.review(1);
@@ -177,9 +174,9 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldReturnQuestionsOrderedByDifficulty() {
-        var question1 = new FillInTheBlanksQuestion("1", Language.English, "He ___ to school.", "motion verb", "walks", 3, TEST_QUESTION_LIST_SUPPLIER);
-        var question2 = new FillInTheBlanksQuestion("2", Language.English, "She ___ fast.", "motion verb", "runs", 1, TEST_QUESTION_LIST_SUPPLIER);
-        var question3 = new FillInTheBlanksQuestion("3", Language.English, "They ___ together.", "motion verb", "dance", 2, TEST_QUESTION_LIST_SUPPLIER);
+        var question1 = new FillInTheBlanksQuestion("1", Language.English, "He ___ to school.", "motion verb", "walks", 3, TEST_QUESTION_LIST_ID);
+        var question2 = new FillInTheBlanksQuestion("2", Language.English, "She ___ fast.", "motion verb", "runs", 1, TEST_QUESTION_LIST_ID);
+        var question3 = new FillInTheBlanksQuestion("3", Language.English, "They ___ together.", "motion verb", "dance", 2, TEST_QUESTION_LIST_ID);
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
@@ -195,11 +192,11 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldOnlyOrderQuestionsByDifficultyIfTheyAreUnreviewed() {
-        var question1 = new FillInTheBlanksQuestion("q1", Language.English, "He ___ to school.", "motion verb", "walks", 10, TEST_QUESTION_LIST_SUPPLIER);
-        var question2 = new FillInTheBlanksQuestion("q2", Language.English, "She ___ fast.", "motion verb", "runs", 5, TEST_QUESTION_LIST_SUPPLIER);
-        var question3 = new FillInTheBlanksQuestion("q3", Language.English, "They ___ together.", "motion verb", "dance", 8, TEST_QUESTION_LIST_SUPPLIER);
-        var question4 = new FillInTheBlanksQuestion("q4", Language.English, "I ___ to work.", "motion verb", "drive", 4, TEST_QUESTION_LIST_SUPPLIER);
-        var question5 = new FillInTheBlanksQuestion("q5", Language.English, "We ___ home.", "motion verb", "walk", 1, TEST_QUESTION_LIST_SUPPLIER);
+        var question1 = new FillInTheBlanksQuestion("q1", Language.English, "He ___ to school.", "motion verb", "walks", 10, TEST_QUESTION_LIST_ID);
+        var question2 = new FillInTheBlanksQuestion("q2", Language.English, "She ___ fast.", "motion verb", "runs", 5, TEST_QUESTION_LIST_ID);
+        var question3 = new FillInTheBlanksQuestion("q3", Language.English, "They ___ together.", "motion verb", "dance", 8, TEST_QUESTION_LIST_ID);
+        var question4 = new FillInTheBlanksQuestion("q4", Language.English, "I ___ to work.", "motion verb", "drive", 4, TEST_QUESTION_LIST_ID);
+        var question5 = new FillInTheBlanksQuestion("q5", Language.English, "We ___ home.", "motion verb", "walk", 1, TEST_QUESTION_LIST_ID);
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);

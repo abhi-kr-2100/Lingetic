@@ -7,26 +7,23 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.Fi
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels.LanguageModel;
-import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
     private final Language language;
+    private final String questionListId;
+
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
-    @Nullable
-    private volatile QuestionList questionList;
-    private final Supplier<QuestionList> questionListSupplier;
 
     public final String questionText;
     public final String hint;
     public final String answer;
     public final int difficulty;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, Supplier<QuestionList> questionListSupplier) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, String questionListId) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -43,14 +40,17 @@ public final class FillInTheBlanksQuestion implements Question {
             throw new IllegalArgumentException("Answer cannot be blank");
         }
 
+        if (questionListId.isBlank()) {
+            throw new IllegalArgumentException("Question list ID cannot be blank");
+        }
+
         this.id = id;
         this.language = language;
         this.questionText = questionText;
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
         this.difficulty = difficulty;
-        this.questionList = null;
-        this.questionListSupplier = questionListSupplier;
+        this.questionListId = questionListId;
     }
 
     @Override
@@ -69,16 +69,8 @@ public final class FillInTheBlanksQuestion implements Question {
     }
 
     @Override
-    public QuestionList getQuestionList() {
-        if (questionList == null) {
-            synchronized (this) {
-                if (questionList == null) {
-                    questionList = questionListSupplier.get();
-                }
-            }
-        }
-
-        return questionList;
+    public String getQuestionListID() {
+        return questionListId;
     }
 
     @Override
