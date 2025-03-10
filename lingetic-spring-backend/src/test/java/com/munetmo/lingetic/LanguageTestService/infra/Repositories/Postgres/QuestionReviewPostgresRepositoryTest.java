@@ -3,17 +3,15 @@ package com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionReview;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
-import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -22,48 +20,21 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestionReviewPostgresRepositoryTest {
+    @Container
+    @ServiceConnection
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
+
     private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
     private static final Duration INSTANT_COMPARISON_TOLERANCE = Duration.ofMinutes(1);
-    private static QuestionReviewPostgresRepository questionReviewRepository;
-    private static QuestionPostgresRepository questionRepository;
 
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
+    @Autowired
+    private QuestionReviewPostgresRepository questionReviewRepository;
 
-        var dataSource = DataSourceBuilder.create()
-                .url(postgres.getJdbcUrl())
-                .username(postgres.getUsername())
-                .password(postgres.getPassword())
-                .build();
-        var jdbcTemplate = new JdbcTemplate(dataSource);
-
-        questionReviewRepository = new QuestionReviewPostgresRepository(jdbcTemplate);
-        questionRepository = new QuestionPostgresRepository(jdbcTemplate);
-
-        var flyway = Flyway.configure()
-                .dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())
-                .load();
-        flyway.migrate();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
-
-    @DynamicPropertySource
-    static void postgresProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-
-        // Flyway is manually run in beforeAll; this overrides the value in application.properties
-        // because Flyway being enabled in application.properties would cause the test to fail
-        registry.add("spring.flyway.enabled", () -> false);
-    }
+    @Autowired
+    private QuestionPostgresRepository questionRepository;
 
     @BeforeEach
     void setUp() {
