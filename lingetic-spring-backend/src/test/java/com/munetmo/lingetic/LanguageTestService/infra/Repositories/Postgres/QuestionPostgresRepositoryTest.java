@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Testcontainers
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestionPostgresRepositoryTest {
     @Container
     @ServiceConnection
