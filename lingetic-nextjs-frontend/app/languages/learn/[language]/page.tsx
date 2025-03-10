@@ -8,12 +8,26 @@ import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 import QuestionProps from "@/app/components/questions/QuestionProps";
+import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
 
 type LearnPageParams = {
   language: string;
 };
 
 export default function LearnPage() {
+  return (
+    <>
+      <SignedIn>
+        <LearnPageComponent />
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  );
+}
+
+function LearnPageComponent() {
   const { language } = useParams<LearnPageParams>();
   assert(language?.trim()?.length > 0, "language is required");
 
