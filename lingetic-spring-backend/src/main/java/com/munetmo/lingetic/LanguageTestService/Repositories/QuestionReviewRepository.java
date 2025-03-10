@@ -11,5 +11,6 @@ public interface QuestionReviewRepository {
     List<QuestionReview> getAllReviews(String userID);
     void addReview(QuestionReview review);
     void update(QuestionReview review);
+    void deleteAllReviews();
     QuestionReview getReviewForQuestionOrCreateNew(String userID, Question question);
 }
