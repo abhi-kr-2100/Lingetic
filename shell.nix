@@ -8,6 +8,8 @@ pkgs.mkShell {
     gradle
     uv
     ollama
+    docker
+    postgresql
   ];
 
   shellHook = ''
@@ -20,5 +22,18 @@ pkgs.mkShell {
     echo "Gradle version: $(gradle --version)"
     echo "UV version: $(uv --version)"
     echo "Ollama version: $(ollama --version)"
+    echo "Docker version: $(docker --version)"
+    echo "Docker Compose version: $(docker compose version)"
+    echo "PostgreSQL version: $(psql --version)"
+
+    # Start Docker if not running
+    if ! systemctl is-active --quiet docker; then
+      sudo systemctl start docker
+    fi
+
+    # Ensure user is in the docker group
+    if ! groups | grep -q "\bdocker\b"; then
+      echo "You are not in the docker group. Add yourself with: sudo usermod -aG docker $USER"
+    fi
   '';
 }
