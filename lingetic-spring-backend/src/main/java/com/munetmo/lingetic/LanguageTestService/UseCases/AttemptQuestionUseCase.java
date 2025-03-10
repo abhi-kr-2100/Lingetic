@@ -19,7 +19,11 @@ public class AttemptQuestionUseCase {
     public AttemptResponse execute(String userId, AttemptRequest request) throws QuestionNotFoundException {
         var question = questionRepository.getQuestionByID(request.getQuestionID());
         var response = question.assessAttempt(request);
-        
+
+        // There's a race condition here: a review is fetched and then updated un-atomically. It's not a big deal
+        // because the race condition will only be triggered if a particular user attempts the same question from
+        // multiple devices at the same time. Moreover, the worst consequence would be a lost review, which is not a
+        // big deal.
         var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(userId, question);
         questionReview.review(
             switch (response.getAttemptStatus()) {
