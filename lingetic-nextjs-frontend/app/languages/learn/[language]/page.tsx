@@ -27,7 +27,8 @@ export default function LearnPage() {
   );
 }
 
-function LearnPageComponent() {
+// exported to allow unit testing; not meant to be used elsewhere
+export function LearnPageComponent() {
   const { language } = useParams<LearnPageParams>();
   assert(language?.trim()?.length > 0, "language is required");
 
