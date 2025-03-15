@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from "@testing-library/react";
-import LearnPage from "@/app/languages/learn/[language]/page";
+import { LearnPageComponent } from "@/app/languages/learn/[language]/page";
 import { renderWithQueryClient } from "@/utilities/testing-helpers";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 
@@ -11,49 +11,49 @@ jest.mock("next/navigation", () => ({
   useParams: () => ({ language: "spanish" }),
 }));
 
-describe("LearnPage", () => {
+describe("LearnPageComponent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("shows loading text when loading", async () => {
     mockForeverPendingFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     expect(await findByText(/loading/i)).toBeInTheDocument();
   });
 
   it("shows error text when there is a network error", async () => {
     mockNetworkErrorFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     expect(await findByText(/failed/i)).toBeInTheDocument();
   });
 
   it("shows error when request resolves unsuccessfully", async () => {
     mockServerErrorFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     expect(await findByText(/failed/i)).toBeInTheDocument();
   });
 
   it("shows the current question when loaded successfully", async () => {
     mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     expect(await findByText(/the cat/i)).toBeInTheDocument();
   });
 
   it("shows a next button when not on the last question", async () => {
     mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     expect(await findByText(/next/i)).toBeInTheDocument();
   });
 
   it("advances to the next question when Next button is clicked", async () => {
     mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     const nextBtn = await findByText(/next/i);
     fireEvent.click(nextBtn);
@@ -63,7 +63,7 @@ describe("LearnPage", () => {
 
   it("shows a finish button on the last question", async () => {
     mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     await navigateToLastQuestion(findByText);
 
@@ -72,7 +72,7 @@ describe("LearnPage", () => {
 
   it("redirects when finish button is clicked", async () => {
     mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     await navigateToLastQuestion(findByText);
     const finishBtn = await findByText(/finish/i);
@@ -83,7 +83,7 @@ describe("LearnPage", () => {
 
   it("focuses the Next button after answer submission", async () => {
     mockSuccessfulFetch();
-    const { findByRole } = renderWithQueryClient(<LearnPage />);
+    const { findByRole } = renderWithQueryClient(<LearnPageComponent />);
 
     const input = await findByRole("textbox");
     fireEvent.change(input, { target: { value: "stretched" } });
@@ -96,7 +96,7 @@ describe("LearnPage", () => {
 
   it("shows a message when no questions are available", async () => {
     mockEmptyFetch();
-    const { findByText } = renderWithQueryClient(<LearnPage />);
+    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
     expect(await findByText(/no questions available/i)).toBeInTheDocument();
   });
