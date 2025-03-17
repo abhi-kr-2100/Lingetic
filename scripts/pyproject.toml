@@ -8,6 +8,8 @@ dependencies = [
     "ollama>=0.4.7",
     "requests>=2.32.3",
     "ruff>=0.9.9",
+    "psycopg2-binary>=2.9.9",
+    "uuid>=1.30",
 ]
 
 [tool.ruff]
