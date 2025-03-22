@@ -1,6 +1,13 @@
 import LanguageCard from "../components/LanguageCard";
 
-const languages = [
+export interface LanguageProperty {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
+const languages: LanguageProperty[] = [
   {
     id: "English",
     name: "English",
