@@ -2,12 +2,13 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useRef } from "react";
+import { ArrowRight, BookOpen, XCircle, Loader2 } from "lucide-react";
 
 import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
 import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
-import QuestionProps from "@/app/components/questions/QuestionProps";
+import type QuestionProps from "@/app/components/questions/QuestionProps";
 import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
 
 type LearnPageParams = {
@@ -42,48 +43,87 @@ export function LearnPageComponent() {
 
   if (result.isLoading) {
     return (
-      <div className="container mx-auto p-4">
-        <p className="text-skin-base">Loading questions...</p>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+          <Loader2 className="h-12 w-12 text-[#2563eb] animate-spin mx-auto mb-4" />
+          <p className="text-[#374151] text-lg">
+            Loading your language exercises...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (result.isError) {
     return (
-      <div className="container mx-auto p-4">
-        <p className="text-red-500">
-          Failed to load questions. Please try again later.
-        </p>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+          <XCircle className="h-12 w-12 text-[#dc2626] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[#374151] mb-2">Oops!</h2>
+          <p className="text-[#374151] mb-6">
+            We couldn't load your questions. Please try again later.
+          </p>
+          <button
+            onClick={() => router.push("/languages")}
+            className="bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            Back to Languages
+          </button>
+        </div>
       </div>
     );
   }
 
   if (!result.hasQuestions) {
     return (
-      <div className="container mx-auto p-4">
-        <p className="text-skin-base">
-          No questions available for this language.
-        </p>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+          <BookOpen className="h-12 w-12 text-[#2563eb] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[#374151] mb-2">
+            No Questions Available
+          </h2>
+          <p className="text-[#374151] mb-6">
+            We don't have any questions for {language} yet. Please check back
+            later.
+          </p>
+          <button
+            onClick={() => router.push("/languages")}
+            className="bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            Back to Languages
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-skin-base text-3xl font-bold mb-6">
-        Learning {language}
-      </h1>
-      {renderQuestion(result.currentQuestion, () =>
-        nextButtonRef.current?.focus()
-      )}
-      <button
-        ref={nextButtonRef}
-        type="button"
-        onClick={result.onNext}
-        className="mt-4 bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
-      >
-        {result.isLastQuestion ? "Finish" : "Next"}
-      </button>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-[#374151]">
+            Learning <span className="text-[#2563eb]">{language}</span>
+          </h1>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
+          {renderQuestion(result.currentQuestion, () =>
+            nextButtonRef.current?.focus()
+          )}
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            ref={nextButtonRef}
+            type="button"
+            onClick={result.onNext}
+            className="bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center"
+          >
+            {result.isLastQuestion ? "Finish" : "Next"}
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
