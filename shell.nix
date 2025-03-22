@@ -13,27 +13,25 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
-    export JAVA_HOME=${pkgs.jdk23}/lib/openjdk
-    export PATH=${pkgs.jdk23}/bin:$PATH
+    echo "Setting up Docker and Ollama..."
 
-    echo "Node.js version: $(node --version)"
-    echo "PNPM version: $(pnpm --version)"
-    echo "Java version: $(java --version)"
-    echo "Gradle version: $(gradle --version)"
-    echo "UV version: $(uv --version)"
-    echo "Ollama version: $(ollama --version)"
-    echo "Docker version: $(docker --version)"
-    echo "Docker Compose version: $(docker compose version)"
-    echo "PostgreSQL version: $(psql --version)"
+    export DOCKER_HOST=unix:///tmp/docker.sock
 
-    # Start Docker if not running
-    if ! systemctl is-active --quiet docker; then
-      sudo systemctl start docker
+    # Start Docker in rootless mode if not already running
+    if ! docker info >/dev/null 2>&1; then
+      echo "Starting Docker (rootless mode)..."
+      dockerd-rootless --host=unix:///tmp/docker.sock > /dev/null 2>&1 &
+
+      # Wait until Docker is responsive
+      while ! docker info >/dev/null 2>&1; do
+        sleep 1
+      done
     fi
 
-    # Ensure user is in the docker group
-    if ! groups | grep -q "\bdocker\b"; then
-      echo "You are not in the docker group. Add yourself with: sudo usermod -aG docker $USER"
+    # Start Ollama if not already running
+    if ! pgrep -x ollama > /dev/null; then
+      echo "Starting Ollama..."
+      nohup ollama serve > /dev/null 2>&1 &
     fi
   '';
 }
