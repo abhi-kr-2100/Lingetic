@@ -67,7 +67,7 @@ Return ONLY ONE of these exact responses:
 """
 
     response = chat(
-        model="qwen2.5:1.5b", messages=[{"role": "user", "content": prompt}]
+        model="gemma3", messages=[{"role": "user", "content": prompt}]
     )
 
     result = response["message"]["content"].strip()
@@ -113,7 +113,7 @@ def main(file_path: str) -> None:
     Args:
         file_path: Path to the JSON file containing sentences
     """
-    sentences = load_sentences(file_path)
+    sentences = load_sentences(file_path)["sentences"]
 
     # Use length as a heuristic to sort sentences by difficulty. Use AI to sort
     # further. Presorting aims to reduce the amount of work AI has to do.
