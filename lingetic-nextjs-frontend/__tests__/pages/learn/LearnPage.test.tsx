@@ -27,14 +27,14 @@ describe("LearnPageComponent", () => {
     mockNetworkErrorFetch();
     const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
-    expect(await findByText(/failed/i)).toBeInTheDocument();
+    expect(await findByText(/oops/i)).toBeInTheDocument();
   });
 
   it("shows error when request resolves unsuccessfully", async () => {
     mockServerErrorFetch();
     const { findByText } = renderWithQueryClient(<LearnPageComponent />);
 
-    expect(await findByText(/failed/i)).toBeInTheDocument();
+    expect(await findByText(/oops/i)).toBeInTheDocument();
   });
 
   it("shows the current question when loaded successfully", async () => {
