@@ -33,5 +33,7 @@ pkgs.mkShell {
       echo "Starting Ollama..."
       nohup ollama serve > /dev/null 2>&1 &
     fi
+
+    echo "Ready!"
   '';
 }
