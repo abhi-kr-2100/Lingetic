@@ -1,0 +1,11 @@
+{
+  "name": "lingetic",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.6.5",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

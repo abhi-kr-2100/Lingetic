@@ -1,0 +1,25 @@
+STAGED_FILES=$(git diff --cached --name-only)
+
+RUN_FRONTEND_TESTS=false
+RUN_BACKEND_TESTS=false
+
+for file in $STAGED_FILES; do
+  if echo "$file" | grep -q "^lingetic-nextjs-frontend/"; then
+    RUN_FRONTEND_TESTS=true
+  fi
+  if echo "$file" | grep -q "^lingetic-spring-backend/"; then
+    RUN_BACKEND_TESTS=true
+  fi
+done
+
+if [ "$RUN_FRONTEND_TESTS" = true ]; then
+  echo "Running frontend tests..."
+  pnpm --filter lingetic-nextjs-frontend test || exit 1
+fi
+
+if [ "$RUN_BACKEND_TESTS" = true ]; then
+  echo "Running backend tests..."
+  (cd lingetic-spring-backend && ./gradlew test) || exit 1
+fi
+
+echo "All relevant tests passed. Commit allowed."
