@@ -13,6 +13,8 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
+    export JAVA_HOME=${pkgs.jdk23.home}
+
     echo "Setting up Docker and Ollama..."
 
     export DOCKER_HOST=unix:///tmp/docker.sock
