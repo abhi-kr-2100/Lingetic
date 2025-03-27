@@ -19,15 +19,15 @@ import java.net.http.HttpRequest;
 
 @Component
 public class  ClerkAuthenticationFilter extends OncePerRequestFilter {
-    @Value("${clerk.apiKey}")
+    @Value("${clerk.jwksPublicKey}")
     @Nullable
-    private String clerkAPIKey;
+    private String jwksPublicKey;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        if (clerkAPIKey == null) {
-            throw new IllegalStateException("Clerk API key is not set");
+        if (jwksPublicKey == null) {
+            throw new IllegalStateException("Clerk JWKS public key is not set");
         }
 
         if (!request.getHeader("Authorization").startsWith("Bearer ")) {
@@ -38,7 +38,7 @@ public class  ClerkAuthenticationFilter extends OncePerRequestFilter {
         var requestState = AuthenticateRequest.authenticateRequest(
                 createHttpRequestForClerk(request),
                 AuthenticateRequestOptions
-                    .secretKey(clerkAPIKey)
+                    .jwtKey(jwksPublicKey)
                     .build()
         );
 
