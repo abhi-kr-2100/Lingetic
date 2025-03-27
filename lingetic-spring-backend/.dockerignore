@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Gradle
+.gradle
+build/*
+!build/libs/*.jar
+
+# IDE files
+.idea
+*.iml
+.vscode
+*.sublime-*
+.project
+.classpath
+.settings
+
+# Logs
+logs
+*.log
+
+# Environment files
+.env*
+
+# Test reports
+**/test-results
+**/reports
+
+# Misc
+README.md
+LICENSE
+*.md
+.DS_Store
