@@ -87,9 +87,11 @@ tasks.withType<JavaExec>().configureEach {
 	jvmArgs("-DJAVA_ENV=$javaEnv")
 }
 
+val sentryAuthKey: String = System.getenv("SENTRY_AUTH_TOKEN") ?: throw IllegalStateException("SENTRY_AUTH_TOKEN environment variable is not set")
+
 sentry {
 	includeSourceContext.set(true)
 	org.set("munetmo")
 	projectName.set("lingetic-spring-backend")
-	authToken.set(properties["sentry.authToken"] as String)
+	authToken.set(sentryAuthKey)
 }
