@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "Codium.codium",
+        "esbenp.prettier-vscode",
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "semanticdiff.semanticdiff"
+    ]
+}
