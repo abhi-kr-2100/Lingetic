@@ -3,6 +3,7 @@
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "Codium.codium",
+        "google.geminicodeassist",
         "esbenp.prettier-vscode",
         "ms-python.python",
         "charliermarsh.ruff",
