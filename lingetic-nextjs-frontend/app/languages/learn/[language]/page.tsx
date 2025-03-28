@@ -61,7 +61,7 @@ export function LearnPageComponent() {
           <XCircle className="h-12 w-12 text-[#dc2626] mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-[#374151] mb-2">Oops!</h2>
           <p className="text-[#374151] mb-6">
-            We couldn't load your questions. Please try again later.
+            {"We couldn't load your questions. Please try again later."}
           </p>
           <button
             onClick={() => router.push("/languages")}
@@ -83,8 +83,7 @@ export function LearnPageComponent() {
             No Questions Available
           </h2>
           <p className="text-[#374151] mb-6">
-            We don't have any questions for {language} yet. Please check back
-            later.
+            {`We don't have any questions for ${language} yet. Please check back later.`}
           </p>
           <button
             onClick={() => router.push("/languages")}
@@ -144,7 +143,7 @@ const renderQuestion = (question: Question, onAnswerSubmit?: () => void) => {
   return <Component question={question} onAnswerSubmit={onAnswerSubmit} />;
 };
 
-const validateQuestionOrDie = (question: any) => {
+const validateQuestionOrDie = (question: Question) => {
   assert(question != null, "question is null or undefined");
   assert(
     question.questionType != null,

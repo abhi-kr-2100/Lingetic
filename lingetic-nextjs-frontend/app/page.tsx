@@ -164,9 +164,7 @@ function PhilosophySection() {
             Our Philosophy
           </h2>
           <p className="text-lg mb-6 text-[#374151]">
-            Lingetic is built on the belief that the best way to learn a
-            language is through interaction with native speakers. This app
-            doesn't aim to replace these crucial real-world interactions.
+            {"Lingetic is built on the belief that the best way to learn a language is through interaction with native speakers. This app doesn't aim to replace these crucial real-world interactions."}
           </p>
           <p className="text-lg mb-8 text-[#374151]">
             Instead, it prepares you to make the most of them by equipping you
