@@ -45,9 +45,10 @@ export default function useUserAnswer(questionID: string) {
 
     try {
       await attemptChallengeMutation.mutateAsync(answer);
-    } catch (_) {
+    } catch (err) {
       // Do nothing; isError has been set by the mutation, and can be checked
       // to display an error message.
+      console.error(`Error while checking answer: ${err}`);
     }
   };
 
