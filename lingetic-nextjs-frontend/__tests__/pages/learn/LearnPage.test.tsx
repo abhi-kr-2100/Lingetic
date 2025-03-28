@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from "@testing-library/react";
-import { LearnPageComponent } from "@/app/languages/learn/[language]/page";
+import LearnPageComponent from "@/app/languages/learn/[language]/LearnPageComponent";
 import { renderWithQueryClient } from "@/utilities/testing-helpers";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 
