@@ -36,8 +36,7 @@ export default function Languages() {
             </h1>
           </div>
           <p className="text-xl text-[#374151] max-w-2xl mx-auto">
-            Choose a language to start your journey to fluency with Lingetic's
-            AI-powered learning
+            {"Choose a language to start your journey to fluency with Lingetic's AI-powered learning"}
           </p>
         </div>
 
@@ -55,7 +54,7 @@ export default function Languages() {
 
         <div className="mt-16 text-center">
           <p className="text-[#374151] mb-4">
-            Don't see the language you want to learn?
+            {"Don't see the language you want to learn?"}
           </p>
           <button className="bg-white border-2 border-[#2563eb] text-[#2563eb] px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors">
             Request a Language

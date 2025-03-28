@@ -47,7 +47,7 @@ export default function FillInTheBlanks({
     // input field cannot be focused.
     inputRef.current.disabled = false;
     inputRef.current.focus();
-  }, [inputRef.current, question.id]);
+  }, [question.id]);
 
   return (
     <div className="shadow-lg rounded-lg p-6">
@@ -99,11 +99,9 @@ export default function FillInTheBlanks({
   );
 }
 
-function validateQuestionOrDie(
-  question: any
-): asserts question is FillInTheBlanksQuestion {
+function validateQuestionOrDie(question: FillInTheBlanksQuestion) {
   assert(question != null, "question is null or undefined");
-  assert(question.id?.trim()?.length > 0, "question.id is empty");
+  assert(question.id?.trim()?.length > 0, "question.id is empty"); 
   assert(
     question.questionType === "FillInTheBlanks",
     "question.questionType is not FillInTheBlanks"
@@ -114,7 +112,7 @@ function validateQuestionOrDie(
     "question.text does not contain any blank"
   );
   assert(
-    question.text.match(/_+/g).length === 1,
+    question.text?.match(/_+/g)?.length === 1,
     "question.text contains more than one blank"
   );
 }
