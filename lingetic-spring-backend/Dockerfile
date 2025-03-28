@@ -1,24 +1,24 @@
-FROM amazoncorretto:23-jdk AS builder
+FROM gradle:jdk23-alpine AS builder
 
 WORKDIR /app
-
-# Install findutils to provide xargs which is required by gradle but not provided by the base image
-RUN yum update -y && yum install -y findutils
 
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle.kts .
 COPY settings.gradle.kts .
 
-COPY config/application.properties config/application.properties
+RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
+    export SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) && \
+    ./gradlew dependencies --no-daemon
 
+COPY config/application.properties config/application.properties
 COPY src/main src/main
 
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
     export SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) && \
-    ./gradlew clean build -x test
+    ./gradlew build -x test --no-daemon
 
-FROM amazoncorretto:23-jdk
+FROM amazoncorretto:23-jdk AS runtime
 
 WORKDIR /app
 
