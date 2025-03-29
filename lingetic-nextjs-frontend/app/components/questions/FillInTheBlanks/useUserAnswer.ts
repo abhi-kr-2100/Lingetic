@@ -34,7 +34,7 @@ export default function useUserAnswer(questionID: string) {
   useEffect(() => {
     setAnswer("");
     attemptChallengeMutation.reset();
-  }, [questionID, attemptChallengeMutation]);
+  }, [questionID, attemptChallengeMutation.reset]);
 
   const checkAnswer = async () => {
     // Prevents race conditions where the user might click the button multiple
