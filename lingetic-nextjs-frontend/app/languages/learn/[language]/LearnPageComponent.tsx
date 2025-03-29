@@ -9,7 +9,6 @@ import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTh
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 import type QuestionProps from "@/app/components/questions/QuestionProps";
 
-
 export default function LearnPageComponent() {
   const { language } = useParams<LearnPageParams>();
   assert(language?.trim()?.length > 0, "language is required");
@@ -87,9 +86,10 @@ export default function LearnPageComponent() {
         </div>
 
         <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-          {renderQuestion(result.currentQuestion, () =>
-            nextButtonRef.current?.focus()
-          )}
+          <RenderQuestion
+            question={result.currentQuestion}
+            onAnswerSubmit={() => nextButtonRef.current?.focus()}
+          />
         </div>
 
         <div className="flex justify-end">
@@ -112,8 +112,12 @@ type LearnPageParams = {
   language: string;
 };
 
+interface RenderQuestionProps {
+  question: Question;
+  onAnswerSubmit?: () => void;
+}
 
-const renderQuestion = (question: Question, onAnswerSubmit?: () => void) => {
+const RenderQuestion = ({ question, onAnswerSubmit }: RenderQuestionProps) => {
   validateQuestionOrDie(question);
 
   const Component = questionTypeToComponentMap[question.questionType];
