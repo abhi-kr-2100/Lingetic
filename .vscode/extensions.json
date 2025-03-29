@@ -6,6 +6,7 @@
         "google.geminicodeassist",
         "Supermaven.supermaven",
         "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
         "ms-python.python",
         "charliermarsh.ruff",
         "semanticdiff.semanticdiff"
