@@ -10,6 +10,7 @@ pkgs.mkShell {
     ollama
     docker
     postgresql
+    google-cloud-sdk
   ];
 
   shellHook = ''
