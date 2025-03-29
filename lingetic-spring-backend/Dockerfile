@@ -11,7 +11,6 @@ RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
     export SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) && \
     ./gradlew dependencies --no-daemon
 
-COPY config/application.properties config/application.properties
 COPY src/main src/main
 
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
@@ -23,7 +22,7 @@ FROM amazoncorretto:23-jdk AS runtime
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/lingetic-0.0.1-SNAPSHOT.jar application.jar
-COPY --from=builder /app/config/application.properties config/application.properties
+COPY config/application.properties config/application.properties
 
 EXPOSE 8000
 
