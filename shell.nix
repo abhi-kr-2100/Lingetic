@@ -11,6 +11,7 @@ pkgs.mkShell {
     docker
     postgresql
     google-cloud-sdk
+    poppler-utils
   ];
 
   shellHook = ''
