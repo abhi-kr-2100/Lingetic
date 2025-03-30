@@ -30,7 +30,7 @@ public class  ClerkAuthenticationFilter extends OncePerRequestFilter {
             throw new IllegalStateException("Clerk JWKS public key is not set");
         }
 
-        if (!request.getHeader("Authorization").startsWith("Bearer ")) {
+        if (request.getHeader("Authorization") == null || !request.getHeader("Authorization").startsWith("Bearer ")) {
             onUnauthorized(response);
             return;
         }
