@@ -1,14 +1,13 @@
 {
-    "recommendations": [
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "Codium.codium",
-        "google.geminicodeassist",
-        "Supermaven.supermaven",
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "ms-python.python",
-        "charliermarsh.ruff",
-        "semanticdiff.semanticdiff"
-    ]
+  "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "Codium.codium",
+    "google.geminicodeassist",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "semanticdiff.semanticdiff"
+  ]
 }
