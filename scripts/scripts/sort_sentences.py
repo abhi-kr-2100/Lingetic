@@ -107,12 +107,14 @@ Return ONLY ONE of these exact responses:
 
     if "FIRST_EASIER" in result:
         print(f"INFO: {sentence1['text']}", file=stderr)
-        return -1
+        comparison_result = -1
     elif "SECOND_EASIER" in result:
         print(f"INFO: {sentence2['text']}", file=stderr)
-        return 1
+        comparison_result = 1
     else:
-        return 0
+        comparison_result = 0
+
+    return comparison_result
 
 
 def sort_sentences_by_difficulty(
@@ -127,10 +129,27 @@ def sort_sentences_by_difficulty(
     Returns:
         Sorted list of sentence dictionaries
     """
-    # Create a custom key function for sorting
-    difficulty_key = cmp_to_key(
-        lambda s1, s2: compare_sentence_difficulty(s1, s2)
-    )
+    # Cache for comparison results to avoid redundant API calls
+    comparison_cache = {}
+
+    def cached_compare(s1, s2):
+        # Create a unique key for this comparison pair
+        # Use sentence IDs or text as keys
+        key = (s1["text"], s2["text"])
+        reverse_key = (s2["text"], s1["text"])
+
+        if key in comparison_cache:
+            return comparison_cache[key]
+        elif reverse_key in comparison_cache:
+            return -comparison_cache[reverse_key]
+
+        # Perform the comparison and cache the result
+        result = compare_sentence_difficulty(s1, s2)
+        comparison_cache[key] = result
+        return result
+
+    # Create a custom key function for sorting with caching
+    difficulty_key = cmp_to_key(cached_compare)
 
     # Sort the sentences using the custom comparator
     return sorted(sentences, key=difficulty_key)
