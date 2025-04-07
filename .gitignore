@@ -32,3 +32,5 @@ replay_pid*
 .direnv/*
 
 .env
+
+node_modules
