@@ -59,7 +59,37 @@ Compare these two sentences and determine which one is easier to understand for 
 Sentence 1: "{sentence1["text"]}"
 Sentence 2: "{sentence2["text"]}"
 
-Consider factors like vocabulary complexity, grammatical structures, idioms, and sentence length.
+Consider the following factors in detail:
+1. Vocabulary Complexity:
+   - Word frequency and commonness in everyday language
+   - Abstract vs concrete words
+   - Technical or specialized terminology
+   - Number of cognates with English
+   - Word length and syllable count
+   - Presence of compound words
+   - Register (formal vs informal language)
+   - False friends with English
+
+2. Grammatical Elements:
+   - Verb tense complexity (simple present vs subjunctive, etc.)
+   - Number of clauses and subordination levels
+   - Complex grammatical structures (subjunctive, conditionals, etc.)
+   - Word order complexity
+   - Agreement complexity (gender, number, etc.)
+   - Voice (active vs passive)
+   - Mood (indicative, subjunctive, imperative)
+   - Modal verb usage
+
+3. Sentence Structure:
+   - Overall length and word count
+   - Number of dependent and independent clauses
+   - Presence of embedded phrases
+   - Complexity of punctuation
+   - Coordination vs subordination
+   - Left vs right branching structures
+   - Parenthetical expressions
+   - Distance between related elements
+
 Return ONLY ONE of these exact responses:
 - "FIRST_EASIER" if the first sentence is easier
 - "SECOND_EASIER" if the second sentence is easier
