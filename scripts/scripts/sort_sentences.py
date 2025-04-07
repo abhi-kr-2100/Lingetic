@@ -113,7 +113,7 @@ def main(file_path: str) -> None:
     Args:
         file_path: Path to the JSON file containing sentences
     """
-    sentences = load_sentences(file_path)["sentences"]
+    sentences = load_sentences(file_path)["data"]
 
     # Use length as a heuristic to sort sentences by difficulty. Use AI to sort
     # further. Presorting aims to reduce the amount of work AI has to do.
