@@ -19,7 +19,15 @@ def main(argv: Iterable[str]):
         exit(1)
 
     script_module = getattr(scripts, script_name)
-    script_module.main(*script_args)
+
+    # Get the parser from the script module if it exists
+    if hasattr(script_module, "get_parser"):
+        parser = script_module.get_parser()
+        args = parser.parse_args(script_args)
+        script_module.main(**vars(args))
+    else:
+        # Fallback to old behavior for scripts without parsers
+        script_module.main(*script_args)
 
 
 if __name__ == "__main__":
