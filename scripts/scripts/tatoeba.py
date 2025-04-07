@@ -116,7 +116,12 @@ def main(
                     print(f"Error fetching data: {e}", file=sys.stderr)
                     break
 
-        json.dump(all_sentences, output_file, ensure_ascii=False, indent=2)
+        json.dump(
+            {"data": all_sentences},
+            output_file,
+            ensure_ascii=False,
+            indent=2,
+        )
     finally:
         if output != "-":
             output_file.close()

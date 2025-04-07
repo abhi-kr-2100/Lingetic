@@ -21,7 +21,7 @@ def load_sentences(filepath: str) -> List[Dict[str, str]]:
     try:
         with open(filepath, "r", encoding="utf-8") as file:
             data = json.load(file)
-            return data.get("sentences", [])
+            return data.get("data", [])
     except FileNotFoundError:
         print(f"Error: File '{filepath}' not found", file=sys.stderr)
         sys.exit(1)
