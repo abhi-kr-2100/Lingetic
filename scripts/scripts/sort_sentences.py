@@ -106,28 +106,56 @@ def sort_sentences_by_difficulty(
     return sorted(sentences, key=difficulty_key)
 
 
-def main(file_path: str) -> None:
+def main(file_path: str, output: str = "-") -> None:
     """
-    Load sentences from a file, sort them by difficulty, and output to stdout.
+    Load sentences from a file, sort them by difficulty, and output to file or stdout.
 
     Args:
         file_path: Path to the JSON file containing sentences
+        output: Output file path or "-" for stdout (default: "-")
     """
-    sentences = load_sentences(file_path)["data"]
+    # Handle file output
+    if output == "-":
+        output_file = stdout
+    else:
+        output_file = open(output, "w", encoding="utf-8")
 
-    # Use length as a heuristic to sort sentences by difficulty. Use AI to sort
-    # further. Presorting aims to reduce the amount of work AI has to do.
-    presorted = sort_by_length(sentences)
-    sorted_sentences = sort_sentences_by_difficulty(presorted)
+    try:
+        sentences = load_sentences(file_path)["data"]
 
-    dump(sorted_sentences, stdout, ensure_ascii=False, indent=2)
+        # Use length as a heuristic to sort sentences by difficulty. Use AI to sort
+        # further. Presorting aims to reduce the amount of work AI has to do.
+        presorted = sort_by_length(sentences)
+        sorted_sentences = sort_sentences_by_difficulty(presorted)
+
+        dump(
+            {"data": sorted_sentences},
+            output_file,
+            ensure_ascii=False,
+            indent=2,
+        )
+    finally:
+        if output != "-":
+            output_file.close()
 
 
-if __name__ == "__main__":
+def get_parser() -> ArgumentParser:
     parser = ArgumentParser(description="Sort sentences by difficulty using AI")
     parser.add_argument(
         "file_path", help="Path to the JSON file containing sentences"
     )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        default="-",
+        help="Output file path (default: stdout)",
+    )
+    return parser
+
+
+if __name__ == "__main__":
+    parser = get_parser()
     args = parser.parse_args()
 
-    main(args.file_path)
+    main(args.file_path, args.output)
