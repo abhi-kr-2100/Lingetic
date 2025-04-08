@@ -62,7 +62,7 @@ export default function FillInTheBlanks({
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !isChecked) {
-              handleCheckAnswer();
+              void handleCheckAnswer();
             }
           }}
           className="p-2 border rounded w-40 text-center"
@@ -74,7 +74,9 @@ export default function FillInTheBlanks({
       {!isChecked && (
         <button
           disabled={isChecking}
-          onClick={handleCheckAnswer}
+          onClick={() => {
+            void handleCheckAnswer();
+          }}
           className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
         >
           Check
