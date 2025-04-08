@@ -114,9 +114,12 @@ export default function LearnPageComponent() {
   );
 }
 
-type LearnPageParams = {
+interface LearnPageParams {
   language: string;
-};
+
+  // Not used, but required by useParams
+  [key: string]: string;
+}
 
 interface RenderQuestionProps {
   question: Question;
