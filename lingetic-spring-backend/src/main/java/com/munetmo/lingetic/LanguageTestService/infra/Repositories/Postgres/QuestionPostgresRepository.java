@@ -95,7 +95,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 objectMapper.writeValueAsString(question.getQuestionTypeSpecificData())
             );
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(String.format("Failed to serialize question %s", question.getID()), e);
         } catch (DuplicateKeyException e) {
             throw new QuestionWithIDAlreadyExistsException("Question with ID %s already exists.".formatted(question.getID()));
         }

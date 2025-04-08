@@ -12,13 +12,19 @@ public class Utilities {
         INFO
     }
 
+    public static class AssertionFailedException extends RuntimeException {
+        public AssertionFailedException(String message) {
+            super(message);
+        }
+    }
+
     public static void assert_(boolean condition, String message) {
         if (condition) {
             return;
         }
 
         log(message, Severity.FATAL);
-        throw new RuntimeException("Assertion failed.");
+        throw new AssertionFailedException("Assertion failed.");
     }
 
     public static void log(String message, Severity severity) {

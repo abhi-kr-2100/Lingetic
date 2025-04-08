@@ -22,6 +22,6 @@ public sealed interface LanguageModel permits EnglishLanguageModel, TurkishLangu
         }
 
         Utilities.assert_(false, "Unreachable code to satisfy compiler and NullAway");
-        throw new RuntimeException("Unreachable code");
+        throw new IllegalStateException("Unreachable code");
     }
 }
