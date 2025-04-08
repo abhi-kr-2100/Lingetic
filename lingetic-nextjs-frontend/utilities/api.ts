@@ -31,16 +31,20 @@ export async function attemptQuestion<T extends AttemptResponse>(
   );
 }
 
-export async function fetchQuestions(language: string, getToken: () => Promise<string | null>): Promise<Question[]> {
-  assert(language?.trim()?.length > 0, "language is required");
+export async function fetchQuestions(
+  language: string,
+  getToken: () => Promise<string | null>
+): Promise<Question[]> {
+  assert(language.trim().length > 0, "language is required");
 
   const token = await getToken();
   assert(token !== null, "Token was null when fetching questions");
-  
+
   const encodedLanguage = encodeURIComponent(language);
 
   return await fetchOrThrow(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions?language=${encodedLanguage}`, {
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/questions?language=${encodedLanguage}`,
+    {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -49,14 +53,11 @@ export async function fetchQuestions(language: string, getToken: () => Promise<s
 }
 
 function validateAttemptRequestOrDie(
-  attemptRequest: any
+  attemptRequest: AttemptRequest
 ): asserts attemptRequest is AttemptRequest {
+  assert(attemptRequest.questionID.trim().length > 0, "questionID is blank");
   assert(
-    attemptRequest?.questionID?.trim()?.length > 0,
-    "questionID is nullish or blank"
-  );
-  assert(
-    attemptRequest?.questionType?.trim()?.length > 0,
-    "questionType is nullish or blank"
+    attemptRequest.questionType.trim().length > 0,
+    "questionType is blank"
   );
 }

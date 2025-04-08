@@ -11,7 +11,7 @@ import type QuestionProps from "@/app/components/questions/QuestionProps";
 
 export default function LearnPageComponent() {
   const { language } = useParams<LearnPageParams>();
-  assert(language?.trim()?.length > 0, "language is required");
+  assert(language.trim().length > 0, "language is required");
 
   const router = useRouter();
   const nextButtonRef = useRef<HTMLButtonElement>(null);
