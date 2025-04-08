@@ -43,8 +43,8 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
 function validatePropsOrDie(
   props: LanguageCardProps
 ): asserts props is LanguageCardProps {
-  assert(props.id?.trim()?.length > 0, "id is required");
-  assert(props.name?.trim()?.length > 0, "name is required");
+  assert(props.id.trim().length > 0, "id is required");
+  assert(props.name.trim().length > 0, "name is required");
 }
 
 export default LanguageCard;
