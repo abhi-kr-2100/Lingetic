@@ -203,8 +203,8 @@ const mockServerError = () => {
 
 const checkAnswer = async (
   answer: string,
-  findByRole: (role: string) => Promise<HTMLElement>,
-  findByText: (text: string | RegExp) => Promise<HTMLElement>
+  findByRole: (_role: string) => Promise<HTMLElement>,
+  findByText: (_text: string | RegExp) => Promise<HTMLElement>
 ) => {
   const input = await findByRole("textbox");
   fireEvent.change(input, { target: { value: answer } });
@@ -231,8 +231,8 @@ const ComponentWithChangeQuestionBtn = () => {
 
 const checkAnswerAndChangeQuestion = async (
   answer: string,
-  findByRole: (role: string) => Promise<HTMLElement>,
-  findByText: (text: string | RegExp) => Promise<HTMLElement>
+  findByRole: (_role: string) => Promise<HTMLElement>,
+  findByText: (_text: string | RegExp) => Promise<HTMLElement>
 ) => {
   await checkAnswer(answer, findByRole, findByText);
   const changeQuestionButton = await findByText("Change Question");
