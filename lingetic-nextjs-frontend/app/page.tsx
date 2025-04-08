@@ -74,7 +74,7 @@ function LanguageCard({ language }: { language: LanguageProperty }) {
     <div className="flex flex-col md:flex-row items-center p-4 border border-gray-100 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
       <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 mb-4 md:mb-0 md:mr-4">
         <img
-          src={language.image || "/placeholder.svg?height=96&width=96"}
+          src={language.image ?? "/placeholder.svg?height=96&width=96"}
           alt={language.name}
           className="w-full h-full object-cover"
         />
@@ -164,7 +164,9 @@ function PhilosophySection() {
             Our Philosophy
           </h2>
           <p className="text-lg mb-6 text-[#374151]">
-            {"Lingetic is built on the belief that the best way to learn a language is through interaction with native speakers. This app doesn't aim to replace these crucial real-world interactions."}
+            {
+              "Lingetic is built on the belief that the best way to learn a language is through interaction with native speakers. This app doesn't aim to replace these crucial real-world interactions."
+            }
           </p>
           <p className="text-lg mb-8 text-[#374151]">
             Instead, it prepares you to make the most of them by equipping you
