@@ -113,7 +113,7 @@ const mockSuccessfulFetch = () => {
 
 const mockNetworkErrorFetch = () => {
   (global.fetch as jest.Mock).mockImplementation(() =>
-    Promise.reject("Network Error")
+    Promise.reject(new Error("Network Error"))
   );
 };
 
