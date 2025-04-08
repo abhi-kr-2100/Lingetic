@@ -177,7 +177,9 @@ async function navigateToLastQuestion(
   findByText: (_text: RegExp) => Promise<HTMLElement>
 ) {
   for (let i = 0; i < mockQuestions.length - 1; i++) {
-    const nextBtn = await findByText(/next/i);
+    const nextBtn = await findByText(/next/i).catch(() => {
+      throw new Error("Next button not found");
+    });
     fireEvent.click(nextBtn);
   }
 }
