@@ -57,7 +57,9 @@ export default function FillInTheBlanks({
           type="text"
           value={answer}
           ref={inputRef}
-          onChange={(e) => setAnswer(e.target.value)}
+          onChange={(e) => {
+            setAnswer(e.target.value);
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !isChecked) {
               handleCheckAnswer();
@@ -101,7 +103,7 @@ export default function FillInTheBlanks({
 
 function validateQuestionOrDie(question: FillInTheBlanksQuestion) {
   assert(question != null, "question is null or undefined");
-  assert(question.id?.trim()?.length > 0, "question.id is empty"); 
+  assert(question.id?.trim()?.length > 0, "question.id is empty");
   assert(
     question.questionType === "FillInTheBlanks",
     "question.questionType is not FillInTheBlanks"

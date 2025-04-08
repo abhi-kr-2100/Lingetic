@@ -89,9 +89,9 @@ describe("LearnPageComponent", () => {
     fireEvent.change(input, { target: { value: "stretched" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
 
-    await waitFor(async () =>
-      expect(await findByRole("button", { name: /next/i })).toHaveFocus()
-    );
+    await waitFor(async () => {
+      expect(await findByRole("button", { name: /next/i })).toHaveFocus();
+    });
   });
 
   it("shows a message when no questions are available", async () => {
