@@ -33,7 +33,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
                     new TypeReference<>() {}
             );
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(String.format("Failed to deserialize question type specific data for question %s", rs.getString("id")), e);
         }
 
         return Question.createFromQuestionTypeSpecificData(
@@ -84,7 +84,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 INSERT INTO questions (id, question_type, language, difficulty, question_list_id, question_type_specific_data)
                 VALUES (?::uuid, ?, ?, ?, ?::uuid, ?::jsonb)
                 """;
-            
+
             jdbcTemplate.update(
                 sql,
                 question.getID(),
@@ -114,7 +114,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
             ORDER BY q.difficulty
             LIMIT ?
             """;
-        
+
         return jdbcTemplate.query(sql, questionMapper, language.name(), userID, limit);
     }
 }
