@@ -108,7 +108,7 @@ export default function useQuestions({
     isLoading: false,
     isError: false,
     hasQuestions: true,
-    currentQuestion: questions[currentQuestionIndex],
+    currentQuestion: questions.at(currentQuestionIndex) as Question,
     isLastQuestion: currentQuestionIndex === questions.length - 1,
     onNext,
   };
