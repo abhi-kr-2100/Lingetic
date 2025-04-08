@@ -47,7 +47,7 @@ export default function useQuestions({
   onFinish,
   language,
 }: UseQuestionsParams): UseQuestionsResult {
-  assert(language?.trim()?.length > 0, "language is required");
+  assert(language.trim().length > 0, "language is required");
 
   const { getToken } = useAuth();
 
