@@ -5,17 +5,15 @@ import Link from "next/link";
 interface LanguageCardProps {
   id: string;
   name: string;
-  description: string;
-  image?: string;
+  image: string;
 }
 
-const LanguageCard: React.FC<LanguageCardProps> = ({
+export default function LanguagePlayCard({
   id,
   name,
-  description,
   image,
-}) => {
-  validatePropsOrDie({ id, name, description, image });
+}: LanguageCardProps) {
+  validatePropsOrDie({ id, name, image });
 
   return (
     <div className="shadow-lg rounded-lg overflow-hidden">
@@ -28,7 +26,6 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
       />
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-2">{name}</h2>
-        <p className="text-skin-base mb-4">{description}</p>
         <Link
           href={`/languages/learn/${id}`}
           className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
@@ -38,7 +35,7 @@ const LanguageCard: React.FC<LanguageCardProps> = ({
       </div>
     </div>
   );
-};
+}
 
 function validatePropsOrDie(
   props: LanguageCardProps
@@ -46,5 +43,3 @@ function validatePropsOrDie(
   assert(props.id.trim().length > 0, "id is required");
   assert(props.name.trim().length > 0, "name is required");
 }
-
-export default LanguageCard;
