@@ -219,9 +219,9 @@ const ComponentWithChangeQuestionBtn = () => {
     <>
       <FillInTheBlanks question={currentQuestion} />
       <button
-        onClick={() =>
-          setCurrentQuestion({ ...mockQuestion, id: "different-id" })
-        }
+        onClick={() => {
+          setCurrentQuestion({ ...mockQuestion, id: "different-id" });
+        }}
       >
         Change Question
       </button>
