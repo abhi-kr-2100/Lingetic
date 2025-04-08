@@ -1,6 +1,7 @@
 import LanguagePlayCard from "../components/LanguagePlayCard";
 import { Globe } from "lucide-react";
 import { languages } from "./constants";
+import Link from "next/link";
 
 export default function Languages() {
   return (
@@ -13,11 +14,18 @@ export default function Languages() {
               Available Languages
             </h1>
           </div>
-          <p className="text-xl text-[#374151] max-w-2xl mx-auto">
-            {
-              "Choose a language to start your journey to fluency with Lingetic's AI-powered learning"
-            }
-          </p>
+          <div className="text-center">
+            <p className="text-[#374151] mb-4">
+              {"Don't see the language you want to learn?"}
+            </p>
+            <Link
+              href={`mailto:${process.env.NEXT_PUBLIC_FEEDBACK_EMAIL_ADDRESS}?subject=Request%20a%20language`}
+              target="_blank"
+              className="bg-white border-2 border-[#2563eb] text-[#2563eb] px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors"
+            >
+              Request a Language
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -31,15 +39,6 @@ export default function Languages() {
                 image={language.image}
               />
             ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <p className="text-[#374151] mb-4">
-            {"Don't see the language you want to learn?"}
-          </p>
-          <button className="bg-white border-2 border-[#2563eb] text-[#2563eb] px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors">
-            Request a Language
-          </button>
         </div>
       </div>
     </div>
