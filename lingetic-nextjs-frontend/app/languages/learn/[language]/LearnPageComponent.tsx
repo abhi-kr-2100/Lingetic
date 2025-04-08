@@ -18,7 +18,9 @@ export default function LearnPageComponent() {
 
   const result = useQuestions({
     language,
-    onFinish: () => router.push("/languages"),
+    onFinish: () => {
+      router.push("/languages");
+    },
   });
 
   if (result.isLoading) {
@@ -44,7 +46,9 @@ export default function LearnPageComponent() {
             {"We couldn't load your questions. Please try again later."}
           </p>
           <button
-            onClick={() => router.push("/languages")}
+            onClick={() => {
+              router.push("/languages");
+            }}
             className="bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             Back to Languages
@@ -66,7 +70,9 @@ export default function LearnPageComponent() {
             {`We don't have any questions for ${language} yet. Please check back later.`}
           </p>
           <button
-            onClick={() => router.push("/languages")}
+            onClick={() => {
+              router.push("/languages");
+            }}
             className="bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             Back to Languages

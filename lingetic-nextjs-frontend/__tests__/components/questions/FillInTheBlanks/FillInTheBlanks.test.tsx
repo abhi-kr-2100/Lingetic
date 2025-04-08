@@ -39,7 +39,9 @@ describe("FillInTheBlanks", () => {
     const input = await findByRole("textbox");
     fireEvent.change(input, { target: { value: "stretched" } });
 
-    await waitFor(() => expect(input).toHaveValue("stretched"));
+    await waitFor(() => {
+      expect(input).toHaveValue("stretched");
+    });
   });
 
   it("submits the answer when Enter key is pressed", async () => {
@@ -97,7 +99,9 @@ describe("FillInTheBlanks", () => {
 
     const input = await findByRole("textbox");
 
-    await waitFor(() => expect(input).toHaveFocus());
+    await waitFor(() => {
+      expect(input).toHaveFocus();
+    });
   });
 
   describe("when question changes", () => {
@@ -109,7 +113,9 @@ describe("FillInTheBlanks", () => {
       const input = await findByRole("textbox");
       await checkAnswerAndChangeQuestion("stretched", findByRole, findByText);
 
-      await waitFor(() => expect(input).toHaveValue(""));
+      await waitFor(() => {
+        expect(input).toHaveValue("");
+      });
     });
 
     it("should make the check button visible again", async () => {
@@ -131,9 +137,9 @@ describe("FillInTheBlanks", () => {
 
       await checkAnswerAndChangeQuestion("stretched", findByRole, findByText);
 
-      await waitFor(() =>
-        expect(queryByText(/correct/i)).not.toBeInTheDocument()
-      );
+      await waitFor(() => {
+        expect(queryByText(/correct/i)).not.toBeInTheDocument();
+      });
     });
 
     it("should clear error state", async () => {
@@ -144,9 +150,9 @@ describe("FillInTheBlanks", () => {
 
       await checkAnswerAndChangeQuestion("stretched", findByRole, findByText);
 
-      await waitFor(() =>
-        expect(queryByText(/error/i)).not.toBeInTheDocument()
-      );
+      await waitFor(() => {
+        expect(queryByText(/error/i)).not.toBeInTheDocument();
+      });
     });
 
     it("should focus the input box when question changes", async () => {
@@ -159,9 +165,9 @@ describe("FillInTheBlanks", () => {
       const changeQuestionButton = await findByText("Change Question");
       fireEvent.click(changeQuestionButton);
 
-      await waitFor(async () =>
-        expect(await findByRole("textbox")).toHaveFocus()
-      );
+      await waitFor(async () => {
+        expect(await findByRole("textbox")).toHaveFocus();
+      });
     });
   });
 });
