@@ -23,12 +23,13 @@ def fetch_sentences(session: requests.Session, url: str) -> Dict:
     return response.json()
 
 
-def extract_sentences(data: Dict) -> List[Dict]:
+def extract_sentences(data: Dict, all_translations: bool = False) -> List[Dict]:
     """
     Extract sentences and their translations from the API response.
 
     Args:
         data: The JSON response from the Tatoeba API
+        all_translations: If True, include all available translations for each sentence (default: False)
 
     Returns:
         A list of dictionaries containing the source text and translations
@@ -54,6 +55,14 @@ def extract_sentences(data: Dict) -> List[Dict]:
                     }
                 )
 
+                # If all_translations is False, we only need one translation; break out of both loops
+
+                if not all_translations:
+                    break
+
+            if not all_translations:
+                break
+
         if sentence_data["translations"]:
             result.append(sentence_data)
 
@@ -64,6 +73,7 @@ def main(
     source_language: str,
     target_language: str = "eng",
     output: str = "-",
+    all_translations: bool = False,
 ):
     """
     Fetch all sentences in the given source language from Tatoeba API.
@@ -72,6 +82,7 @@ def main(
         source_language: The language code to fetch sentences for
         target_language: The language code to filter translations for (default: eng)
         output: Output file path or "-" for stdout (default: "-")
+        all_translations: If True, all available translations for each sentence are included (default: False)
     """
     # Handle file output
     if output == "-":
@@ -97,7 +108,7 @@ def main(
             while url:
                 try:
                     data = fetch_sentences(session, url)
-                    sentences = extract_sentences(data)
+                    sentences = extract_sentences(data, all_translations)
                     all_sentences.extend(sentences)
 
                     # Check if there are more pages
@@ -147,6 +158,11 @@ def get_parser() -> argparse.ArgumentParser:
         default="-",
         help="Output file path (default: stdout)",
     )
+    parser.add_argument(
+        "--all-translations",
+        action="store_true",
+        help="Include all available translations for each sentence",
+    )
     return parser
 
 
@@ -154,4 +170,9 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
 
-    main(args.source_language, args.target_language, args.output)
+    main(
+        args.source_language,
+        args.target_language,
+        args.output,
+        args.all_translations,
+    )

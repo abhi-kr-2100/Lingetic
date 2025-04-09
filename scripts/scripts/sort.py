@@ -110,17 +110,24 @@ def sort_by_length(sentences: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 def load_sentences(file_path: str) -> List[Dict[str, Any]]:
     """
-    Load sentences from a JSON file.
+    Load sentences from a JSON file or stdin if file_path is '-'.
 
     Args:
-        file_path: Path to the JSON file containing sentences
+        file_path: Path to the JSON file containing sentences or '-' for stdin
 
     Returns:
         A list of dictionaries containing sentence data
     """
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return load(f)
+        if file_path == "-":
+            # Read from stdin
+            from sys import stdin
+
+            return load(stdin)
+        else:
+            # Read from file
+            with open(file_path, "r", encoding="utf-8") as f:
+                return load(f)
     except Exception as e:
         print(f"Error loading sentences: {e}", file=stderr)
         exit(1)
@@ -240,7 +247,9 @@ def sort_sentences_by_difficulty(
     return sorted(sentences, key=difficulty_key)
 
 
-def main(file_path: str, output: str = "-", cache: str = None) -> None:
+def main(
+    file_path: str, output: str = "-", cache: str = None, use_llm: bool = False
+) -> None:
     """
     Load sentences from a file, sort them by difficulty, and output to file or stdout.
 
@@ -248,6 +257,7 @@ def main(file_path: str, output: str = "-", cache: str = None) -> None:
         file_path: Path to the JSON file containing sentences
         output: Output file path or "-" for stdout (default: "-")
         cache: Path to the cache file (default: None)
+        use_llm: Flag to enable LLM-based sorting (default: False)
     """
     cache_manager = CacheManager.get_instance()
     cache_manager.set_cache_file(cache)
@@ -268,7 +278,10 @@ def main(file_path: str, output: str = "-", cache: str = None) -> None:
         # Use length as a heuristic to sort sentences by difficulty. Use AI to sort
         # further. Presorting aims to reduce the amount of work AI has to do.
         presorted = sort_by_length(sentences)
-        sorted_sentences = sort_sentences_by_difficulty(presorted)
+        if use_llm:
+            sorted_sentences = sort_sentences_by_difficulty(presorted)
+        else:
+            sorted_sentences = presorted
 
         dump(
             {"data": sorted_sentences},
@@ -286,7 +299,10 @@ def main(file_path: str, output: str = "-", cache: str = None) -> None:
 def get_parser() -> ArgumentParser:
     parser = ArgumentParser(description="Sort sentences by difficulty using AI")
     parser.add_argument(
-        "file_path", help="Path to the JSON file containing sentences"
+        "file_path",
+        nargs="?",
+        default="-",
+        help="Path to the JSON file containing sentences (default: stdin, use '-')",
     )
     parser.add_argument(
         "--output",
@@ -301,10 +317,15 @@ def get_parser() -> ArgumentParser:
         type=str,
         help="Path to cache file for storing comparison results",
     )
+    parser.add_argument(
+        "--use-llm",
+        action="store_true",
+        help="Enable LLM-based sorting (default: only length-based sorting is used)",
+    )
     return parser
 
 
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
-    main(args.file_path, args.output, args.cache)
+    main(args.file_path, args.output, args.cache, args.use_llm)
