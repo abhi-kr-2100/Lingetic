@@ -29,3 +29,9 @@ export interface AttemptResponse {
 export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
   correctAnswer: string;
 }
+
+export interface QuestionList {
+  id: string;
+  name: string;
+  language: string;
+}

@@ -27,7 +27,7 @@ export default function LanguagePlayCard({
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-2">{name}</h2>
         <Link
-          href={`/languages/learn/${id}`}
+          href={`/languages/${id}`}
           className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
         >
           Play!
