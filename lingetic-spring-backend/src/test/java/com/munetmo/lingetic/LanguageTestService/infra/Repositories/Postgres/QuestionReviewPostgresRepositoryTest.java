@@ -3,6 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionReview;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
+import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,10 +43,20 @@ public class QuestionReviewPostgresRepositoryTest {
     @Autowired
     private QuestionPostgresRepository questionRepository;
 
+    @Autowired
+    private QuestionListPostgresRepository questionListRepository;
+
     @BeforeEach
     void setUp() {
         questionReviewRepository.deleteAllReviews();
         questionRepository.deleteAllQuestions();
+        questionListRepository.deleteAllQuestionLists();
+
+        questionListRepository.addQuestionList(new QuestionList(
+            TEST_QUESTION_LIST_ID,
+            "Test Question List",
+            Language.English
+        ));
     }
 
     private FillInTheBlanksQuestion createAndAddQuestion(Language language) {

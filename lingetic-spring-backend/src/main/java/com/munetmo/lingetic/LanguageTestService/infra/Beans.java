@@ -1,9 +1,12 @@
 package com.munetmo.lingetic.LanguageTestService.infra;
 
+import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionListRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
+import com.munetmo.lingetic.LanguageTestService.UseCases.GetQuestionListsForLanguageUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
 import org.springframework.context.annotation.Bean;
@@ -32,5 +35,16 @@ public class Beans {
     public AttemptQuestionUseCase attemptQuestionUseCase(
             QuestionRepository questionRepository, QuestionReviewRepository questionReviewRepository) {
         return new AttemptQuestionUseCase(questionRepository, questionReviewRepository);
+    }
+
+    @Bean
+    public QuestionListRepository questionListRepository(JdbcTemplate jdbcTemplate) {
+        return new QuestionListPostgresRepository(jdbcTemplate);
+    }
+
+    @Bean
+    public GetQuestionListsForLanguageUseCase getQuestionListsForLanguageUseCase(
+            QuestionListRepository questionListRepository) {
+        return new GetQuestionListsForLanguageUseCase(questionListRepository);
     }
 }

@@ -2,6 +2,7 @@ package com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres;
 
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
+import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionWithIDAlreadyExistsException;
 import org.junit.jupiter.api.*;
@@ -38,9 +39,19 @@ public class QuestionPostgresRepositoryTest {
     @Autowired
     private QuestionPostgresRepository questionRepository;
 
+    @Autowired
+    private QuestionListPostgresRepository questionListRepository;
+
     @BeforeEach
     void setUp() {
         questionRepository.deleteAllQuestions();
+        questionListRepository.deleteAllQuestionLists();
+
+        questionListRepository.addQuestionList(new QuestionList(
+            TEST_QUESTION_LIST_ID,
+            "Test Question List",
+            Language.English
+        ));
     }
 
     @Test
