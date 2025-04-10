@@ -61,11 +61,42 @@ def connect_to_database(db_url: str):
         sys.exit(1)
 
 
+def insert_question_list(conn, name: str, language: str) -> uuid.UUID:
+    """
+    Insert a new question list into the database.
+
+    Args:
+        conn: Database connection object
+        name: Name of the question list
+        language: Language of the questions
+
+    Returns:
+        UUID of the created question list
+    """
+    try:
+        with conn.cursor() as cur:
+            question_list_id = uuid.uuid4()
+            cur.execute(
+                """
+                INSERT INTO question_lists (id, name, language)
+                VALUES (%s, %s, %s)
+                RETURNING id
+                """,
+                (question_list_id, name, language),
+            )
+            conn.commit()
+            return question_list_id
+    except Exception as e:
+        conn.rollback()
+        print(f"Error creating question list: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def insert_questions(
     conn,
     questions: List[Dict[str, Any]],
     language: str,
-    question_list_id: Optional[uuid.UUID] = None,
+    question_list_id: uuid.UUID,
 ):
     """
     Insert questions into the database.
@@ -74,15 +105,11 @@ def insert_questions(
         conn: Database connection object
         questions: List of dictionaries containing question_type, and question_type_specific_data
         language: Language of the questions
-        question_list_id: Optional UUID for the question list, generated if None
+        question_list_id: UUID for the question list
     """
     try:
         # Create a cursor object that can handle UUIDs
         with conn.cursor() as cur:
-            # Use provided question_list_id or generate a new one
-            if question_list_id is None:
-                question_list_id = uuid.uuid4()
-
             # Insert each question into the database
             for index, question in enumerate(questions):
                 # Generate a unique id for each question
@@ -119,7 +146,6 @@ def insert_questions(
                 f"Successfully inserted {len(questions)} questions into the database."
             )
             print(f"Used question_list_id: {question_list_id}")
-
     except Exception as e:
         conn.rollback()
         print(
@@ -133,6 +159,7 @@ def main(
     db_url: str,
     language: str,
     question_list_id: Optional[str] = None,
+    question_list_name: Optional[str] = None,
 ):
     """
     Main function to process questions and insert them into the database.
@@ -142,6 +169,7 @@ def main(
         db_url: Database connection URL
         language: Language of the questions
         question_list_id: Optional UUID string for the question list
+        question_list_name: Optional name for creating a new question list
     """
     # Load questions from the JSON file
     questions = load_questions(filepath)
@@ -149,19 +177,27 @@ def main(
     # Connect to the database
     conn = connect_to_database(db_url)
 
-    # Convert question_list_id string to UUID if provided
-    uuid_obj = None
-    if question_list_id:
-        try:
-            uuid_obj = uuid.UUID(question_list_id)
-        except ValueError:
+    try:
+        # Handle question list ID
+        uuid_obj = None
+        if question_list_id:
+            try:
+                uuid_obj = uuid.UUID(question_list_id)
+            except ValueError:
+                print(
+                    f"Error: Invalid UUID format: '{question_list_id}'",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+        elif question_list_name:
+            uuid_obj = insert_question_list(conn, question_list_name, language)
+        else:
             print(
-                f"Error: Invalid UUID format: '{question_list_id}'",
+                "Error: Either --question-list-id or --question-list-name must be provided",
                 file=sys.stderr,
             )
             sys.exit(1)
 
-    try:
         # Insert questions into the database
         insert_questions(conn, questions, language, uuid_obj)
     finally:
@@ -202,6 +238,11 @@ def get_parser() -> argparse.ArgumentParser:
         "--question-list-id",
         help="UUID for the question list (default: randomly generated)",
     )
+    parser.add_argument(
+        "-n",
+        "--question-list-name",
+        help="Name for creating a new question list (ignored if --question-list-id is provided)",
+    )
     return parser
 
 
@@ -209,4 +250,10 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
 
-    main(args.filepath, args.db_url, args.language, args.question_list_id)
+    main(
+        args.filepath,
+        args.db_url,
+        args.language,
+        args.question_list_id,
+        args.question_list_name,
+    )
