@@ -6,11 +6,9 @@ import sys
 import argparse
 import uuid
 import psycopg2
-import psycopg2.extras  # Import extras module which contains the UUID adapter
+from psycopg2.extras import register_uuid, execute_values
 
-
-# Register UUID adapter with psycopg2
-psycopg2.extras.register_uuid()
+register_uuid()
 
 
 def load_questions(filepath: str) -> List[Dict[str, Any]]:
@@ -99,7 +97,7 @@ def insert_questions(
     question_list_id: uuid.UUID,
 ):
     """
-    Insert questions into the database.
+    Insert questions into the database using batch insertion.
 
     Args:
         conn: Database connection object
@@ -108,37 +106,32 @@ def insert_questions(
         question_list_id: UUID for the question list
     """
     try:
-        # Create a cursor object that can handle UUIDs
         with conn.cursor() as cur:
-            # Insert each question into the database
-            for index, question in enumerate(questions):
-                # Generate a unique id for each question
-                question_id = uuid.uuid4()
-
-                # Set difficulty based on question index (starting from 10, incrementing by 10)
-                difficulty = (index + 1) * 10
-
-                # Create the question_type_specific_data as a JSON
-                question_type = question.get("question_type")
-                question_data = question.get("question_type_specific_data", {})
-
-                # Insert the question into the database
-                cur.execute(
-                    """
-                    INSERT INTO questions (
-                        id, question_type, language, difficulty,
-                        question_list_id, question_type_specific_data
-                    ) VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-                    (
-                        question_id,
-                        question_type,
-                        language,
-                        difficulty,
-                        question_list_id,
-                        json.dumps(question_data),
-                    ),
+            # Prepare the data for batch insertion
+            values = [
+                (
+                    uuid.uuid4(),  # question_id
+                    question.get("question_type"),
+                    language,
+                    (index + 1) * 10,  # difficulty
+                    question_list_id,
+                    json.dumps(question.get("question_type_specific_data", {})),
                 )
+                for index, question in enumerate(questions)
+            ]
+
+            # Insert all questions in a single batch operation
+            execute_values(
+                cur,
+                """
+                INSERT INTO questions (
+                    id, question_type, language, difficulty,
+                    question_list_id, question_type_specific_data
+                ) VALUES %s
+                """,
+                values,
+                template="(%s, %s, %s, %s, %s, %s)",
+            )
 
             # Commit the transaction
             conn.commit()
