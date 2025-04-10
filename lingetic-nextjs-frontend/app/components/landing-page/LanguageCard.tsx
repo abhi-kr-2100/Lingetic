@@ -7,7 +7,7 @@ interface LanguageCardProps {
 }
 
 export default function LanguageCard({ language }: LanguageCardProps) {
-  const url = `/languages/learn/${language.id}`;
+  const url = `/languages/${language.id}`;
 
   return (
     <Link href={url}>

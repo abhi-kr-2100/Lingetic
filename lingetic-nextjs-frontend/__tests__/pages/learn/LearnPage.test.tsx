@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from "@testing-library/react";
-import LearnPageComponent from "@/app/languages/learn/[language]/LearnPageComponent";
+import LearnPageComponent from "@/app/languages/[language]/[questionListId]/LearnPageComponent";
 import { renderWithQueryClient } from "@/utilities/testing-helpers";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 
@@ -8,7 +8,7 @@ global.fetch = jest.fn();
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
-  useParams: () => ({ language: "spanish" }),
+  useParams: () => ({ language: "spanish", questionListId: "1" }),
 }));
 
 describe("LearnPageComponent", () => {

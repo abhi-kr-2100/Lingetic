@@ -10,14 +10,16 @@ import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 import type QuestionProps from "@/app/components/questions/QuestionProps";
 
 export default function LearnPageComponent() {
-  const { language } = useParams<LearnPageParams>();
+  const { language, questionListId } = useParams<LearnPageParams>();
   assert(language.trim().length > 0, "language is required");
+  assert(questionListId.trim().length > 0, "questionListId is required");
 
   const router = useRouter();
   const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   const result = useQuestions({
     language,
+    questionListId,
     onFinish: () => {
       router.push("/languages");
     },
@@ -116,6 +118,7 @@ export default function LearnPageComponent() {
 
 interface LearnPageParams {
   language: string;
+  questionListId: string;
 
   // Not used, but required by useParams
   [key: string]: string;
