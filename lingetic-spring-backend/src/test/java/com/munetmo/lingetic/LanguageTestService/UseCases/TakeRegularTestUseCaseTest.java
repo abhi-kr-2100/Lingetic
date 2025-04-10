@@ -10,6 +10,8 @@ import java.util.stream.IntStream;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
+import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +48,9 @@ class TakeRegularTestUseCaseTest {
     @Autowired
     private QuestionReviewPostgresRepository questionReviewRepository;
 
+    @Autowired
+    private QuestionListPostgresRepository questionListRepository;
+
     private static final String TEST_USER_ID = UUID.randomUUID().toString();
     private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
 
@@ -53,6 +58,13 @@ class TakeRegularTestUseCaseTest {
     void setUp() {
         questionReviewRepository.deleteAllReviews();
         questionRepository.deleteAllQuestions();
+        questionListRepository.deleteAllQuestionLists();
+
+        questionListRepository.addQuestionList(new QuestionList(
+                TEST_QUESTION_LIST_ID,
+                "Test Question List",
+                Language.English
+        ));
     }
 
     private void addTestQuestions(int count) {
@@ -92,7 +104,7 @@ class TakeRegularTestUseCaseTest {
         int questionsCount = TakeRegularTestUseCase.limit - 5;
         addTestQuestions(questionsCount);
 
-        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
+        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(questionsCount, result.size());
         assertTrue(result.stream().allMatch(Objects::nonNull));
@@ -103,7 +115,7 @@ class TakeRegularTestUseCaseTest {
         int questionsCount = TakeRegularTestUseCase.limit + 5;
         addTestQuestions(questionsCount);
 
-        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
+        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(TakeRegularTestUseCase.limit, result.size());
         assertTrue(result.stream().allMatch(Objects::nonNull));
@@ -111,7 +123,7 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldReturnEmptyListWhenNoQuestionsExist() {
-        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
+        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertTrue(result.isEmpty());
     }
@@ -123,7 +135,7 @@ class TakeRegularTestUseCaseTest {
         questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ____ fast.", "motion verb", "runs", 0, TEST_QUESTION_LIST_ID));
         questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "Il ____ à l'école.", "verbe de mouvement", "marche", 0, TEST_QUESTION_LIST_ID));
 
-        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
+        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(2, result.size());
         assertTrue(result.stream().allMatch(q -> q.getLanguage().equals(Language.English)));
@@ -133,7 +145,7 @@ class TakeRegularTestUseCaseTest {
     void shouldReturnNewQuestionsIfNoQuestionsToReview() {
         addTestQuestions(TakeRegularTestUseCase.limit);
 
-        var result = useCase.execute(TEST_USER_ID, Language.English);
+        var result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(TakeRegularTestUseCase.limit, result.size());
     }
@@ -147,7 +159,7 @@ class TakeRegularTestUseCaseTest {
         questionReview.review(1);
         questionReviewRepository.update(questionReview);
 
-        var result = useCase.execute(TEST_USER_ID, Language.English);
+        var result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertTrue(result.stream().anyMatch(q -> q.getID().equals(reviewedQuestion.getID())));
     }
@@ -157,7 +169,7 @@ class TakeRegularTestUseCaseTest {
         addTestQuestions(TakeRegularTestUseCase.limit);
         reviewNQuestions(TakeRegularTestUseCase.limit / 2, 1, 0);
 
-        var result = useCase.execute(TEST_USER_ID, Language.English);
+        var result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(TakeRegularTestUseCase.limit, result.stream().map(QuestionDTO::getID).distinct().count());
     }
@@ -171,7 +183,7 @@ class TakeRegularTestUseCaseTest {
                 .map(r -> r.questionID)
                 .toList();
 
-        var result = useCase.execute(TEST_USER_ID, Language.English);
+        var result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertFalse(result.stream().anyMatch(q -> reviewedQuestionIDs.contains(q.getID())));
     }
@@ -181,7 +193,7 @@ class TakeRegularTestUseCaseTest {
         addTestQuestions(TakeRegularTestUseCase.limit);
         reviewNQuestions(TakeRegularTestUseCase.limit, 5, 0);
 
-        var result = useCase.execute(TEST_USER_ID, Language.English);
+        var result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(TakeRegularTestUseCase.limit, result.size());
     }
@@ -192,7 +204,7 @@ class TakeRegularTestUseCaseTest {
         reviewNQuestions(1, 1, 0);
         reviewNQuestions(1, 5, 1);
 
-        var result = useCase.execute(TEST_USER_ID, Language.English);
+        var result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(TakeRegularTestUseCase.limit / 2, result.size());
     }
@@ -207,7 +219,7 @@ class TakeRegularTestUseCaseTest {
         questionRepository.addQuestion(question2);
         questionRepository.addQuestion(question3);
 
-        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
+        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
         assertEquals(3, result.size());
         assertEquals(question2.getID(), result.get(0).getID());
@@ -232,7 +244,7 @@ class TakeRegularTestUseCaseTest {
         addTestQuestions(10); // easy questions; these should be returned over the more difficult unreviewed questions
         reviewNQuestions(3, 1, 0);
 
-        var result = useCase.execute(TEST_USER_ID, Language.English);
+        var result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
         var unreviewedQuestions = result.subList(3, result.size());
 
         unreviewedQuestions.forEach(q -> {
@@ -243,5 +255,38 @@ class TakeRegularTestUseCaseTest {
                        id.equals(question4.getID()) ||
                        id.equals(question5.getID()));
         });
+    }
+
+    @Test
+    void shouldFilterQuestionsByQuestionListId() {
+        var questionListId1 = UUID.randomUUID().toString();
+        var questionListId2 = UUID.randomUUID().toString();
+
+        questionListRepository.addQuestionList(new QuestionList(questionListId1, "Test Question List 1", Language.English));
+        questionListRepository.addQuestionList(new QuestionList(questionListId2, "Test Question List 2", Language.English));
+
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 1, questionListId1);
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 2, questionListId1);
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 3, questionListId2);
+        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", 4, questionListId2);
+
+        questionRepository.addQuestion(question1);
+        questionRepository.addQuestion(question2);
+        questionRepository.addQuestion(question3);
+        questionRepository.addQuestion(question4);
+
+        var result1 = useCase.execute(TEST_USER_ID, Language.English, questionListId1);
+        var result2 = useCase.execute(TEST_USER_ID, Language.English, questionListId2);
+
+        assertEquals(2, result1.size());
+        assertEquals(2, result2.size());
+
+        assertTrue(result1.stream().allMatch(q ->
+            q.getID().equals(question1.getID()) || q.getID().equals(question2.getID())
+        ));
+
+        assertTrue(result2.stream().allMatch(q ->
+            q.getID().equals(question3.getID()) || q.getID().equals(question4.getID())
+        ));
     }
 }

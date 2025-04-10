@@ -4,8 +4,10 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.Fil
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +50,9 @@ class AttemptQuestionUseCaseTest {
     @Autowired
     private QuestionReviewPostgresRepository questionReviewRepository;
 
+    @Autowired
+    private QuestionListPostgresRepository questionListRepository;
+
     private static final String TEST_USER_ID = UUID.randomUUID().toString();
     private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
 
@@ -55,6 +60,13 @@ class AttemptQuestionUseCaseTest {
     void setUp() {
         questionReviewRepository.deleteAllReviews();
         questionRepository.deleteAllQuestions();
+        questionListRepository.deleteAllQuestionLists();
+
+        questionListRepository.addQuestionList(new QuestionList(
+            TEST_QUESTION_LIST_ID,
+            "Test Question List",
+            Language.English
+        ));
 
         questionRepository.addQuestion(new FillInTheBlanksQuestion(
             UUID.randomUUID().toString(),

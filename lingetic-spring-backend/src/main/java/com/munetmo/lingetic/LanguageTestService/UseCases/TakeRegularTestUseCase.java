@@ -23,19 +23,26 @@ public class TakeRegularTestUseCase {
         this.questionReviewRepository = questionReviewRepository;
     }
 
-    public List<QuestionDTO> execute(String userId, Language language) {
+    public List<QuestionDTO> execute(String userId, Language language, String questionListId) {
         var now = Instant.now();
 
+        // Some of the questions to review get filtered out by the question list filter.
+        // This is a bug, but not a severe one. Ideally, getTopQuestionsToReview should
+        // be modified to take a question list ID.
         var questionReviews = questionReviewRepository.getTopQuestionsToReview(userId, language, limit);
         var questionsToReviewNow = questionReviews.stream()
             .filter(r -> r.getNextReviewInstant().isBefore(now))
             .map(r -> questionRepository.getQuestionByID(r.questionID))
+            .filter(q -> q.getQuestionListID().equals(questionListId))
             .toList();
         var questionList = new ArrayList<>(questionsToReviewNow);
 
         int remainingCount = limit - questionList.size();
         var unreviewedQuestions = questionRepository
-            .getUnreviewedQuestions(userId, language, remainingCount);
+            .getUnreviewedQuestions(userId, language, remainingCount)
+            .stream()
+            .filter(q -> q.getQuestionListID().equals(questionListId))
+            .toList();
         questionList.addAll(
                 unreviewedQuestions.subList(0, Math.min(unreviewedQuestions.size(), remainingCount)));
 
@@ -43,6 +50,7 @@ public class TakeRegularTestUseCase {
         var questionsToReviewLater = questionReviews.stream()
             .filter(r -> !r.getNextReviewInstant().isBefore(now))
             .map(r -> questionRepository.getQuestionByID(r.questionID))
+            .filter(q -> q.getQuestionListID().equals(questionListId))
             .limit(stillRemainingCount)
             .toList();
         questionList.addAll(questionsToReviewLater);
