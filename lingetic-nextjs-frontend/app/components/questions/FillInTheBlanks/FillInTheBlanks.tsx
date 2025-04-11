@@ -12,7 +12,7 @@ interface FillInTheBlanksProps extends QuestionProps {
 
 export default function FillInTheBlanks({
   question,
-  onAnswerSubmit,
+  afterAnswerCheck,
 }: FillInTheBlanksProps) {
   validateQuestionOrDie(question);
 
@@ -27,8 +27,8 @@ export default function FillInTheBlanks({
   } = useUserAnswer(question.id);
 
   const handleCheckAnswer = async () => {
-    await checkAnswer();
-    onAnswerSubmit?.();
+    const response = await checkAnswer();
+    afterAnswerCheck?.(response?.attemptStatus);
   };
 
   const [textBefore, textAfter] = question.text.split(/_+/);

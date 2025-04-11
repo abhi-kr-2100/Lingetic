@@ -6,7 +6,11 @@ import { ArrowRight, BookOpen, XCircle, Loader2 } from "lucide-react";
 import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
 import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
-import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
+import type {
+  AttemptStatus,
+  FillInTheBlanksQuestion,
+  Question,
+} from "@/utilities/api-types";
 import type QuestionProps from "@/app/components/questions/QuestionProps";
 
 export default function LearnPageComponent() {
@@ -84,6 +88,11 @@ export default function LearnPageComponent() {
     );
   }
 
+  const afterAnswerCheck = (attemptStatus?: AttemptStatus) => {
+    console.log("Answer checked:", attemptStatus);
+    nextButtonRef.current?.focus();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4">
       <div className="max-w-3xl mx-auto">
@@ -96,7 +105,7 @@ export default function LearnPageComponent() {
         <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
           <RenderQuestion
             question={result.currentQuestion}
-            onAnswerSubmit={() => nextButtonRef.current?.focus()}
+            afterAnswerCheck={afterAnswerCheck}
           />
         </div>
 
@@ -126,14 +135,17 @@ interface LearnPageParams {
 
 interface RenderQuestionProps {
   question: Question;
-  onAnswerSubmit?: () => void;
+  afterAnswerCheck?: (attemptStatus?: AttemptStatus) => void;
 }
 
-const RenderQuestion = ({ question, onAnswerSubmit }: RenderQuestionProps) => {
+const RenderQuestion = ({
+  question,
+  afterAnswerCheck,
+}: RenderQuestionProps) => {
   validateQuestionOrDie(question);
 
   const Component = questionTypeToComponentMap[question.questionType];
-  return <Component question={question} onAnswerSubmit={onAnswerSubmit} />;
+  return <Component question={question} afterAnswerCheck={afterAnswerCheck} />;
 };
 
 const validateQuestionOrDie = (question: Question) => {
@@ -152,7 +164,7 @@ const questionTypeToComponentMap = {
   FillInTheBlanks: (props: QuestionProps) => (
     <FillInTheBlanks
       question={props.question as FillInTheBlanksQuestion}
-      onAnswerSubmit={props.onAnswerSubmit}
+      afterAnswerCheck={props.afterAnswerCheck}
     />
   ),
 };
