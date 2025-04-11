@@ -29,7 +29,7 @@ interface NoQuestionsState {
   hasQuestions: false;
 }
 
-interface SuccessState {
+export interface SuccessState {
   isLoading: false;
   isError: false;
   hasQuestions: true;

@@ -3,7 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { ArrowRight, BookOpen, XCircle, Loader2 } from "lucide-react";
-import useQuestions from "./useQuestions";
+import useQuestions, { SuccessState } from "./useQuestions";
 import assert from "@/utilities/assert";
 import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
 import type {
@@ -26,8 +26,18 @@ export default function LearnPageComponent() {
     language,
     questionListId,
     onFinish: () => {
-      console.log(`You answered ${correctAnswers} questions correctly.`);
-      router.push("/languages");
+      assert(
+        result.hasQuestions,
+        "Questions were not available before finishing."
+      );
+
+      const searchParams = new URLSearchParams({
+        total: (result as SuccessState).totalQuestions.toString(),
+        correct: correctAnswers.toString(),
+      });
+      router.push(
+        `/languages/${language}/${questionListId}/results?${searchParams.toString()}`
+      );
     },
   });
 
