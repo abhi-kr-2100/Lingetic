@@ -4,10 +4,18 @@
     "GitHub.copilot-chat",
     "Codium.codium",
     "google.geminicodeassist",
+
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
+
     "ms-python.python",
     "charliermarsh.ruff",
+
+    "redhat.java",
+    "vscjava.vscode-gradle",
+    "vscjava.vscode-java-debug",
+    "vscjava.vscode-java-test",
+
     "semanticdiff.semanticdiff",
     "codacy-app.codacy"
   ]

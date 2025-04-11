@@ -6,9 +6,20 @@
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
+
   "codium.codeCompletion.enable": true,
   "chat.agent.enabled": true,
   "github.copilot.chat.agent.thinkingTool": true,
   "github.copilot.chat.codesearch.enabled": true,
-  "github.copilot.nextEditSuggestions.enabled": true
+  "github.copilot.nextEditSuggestions.enabled": true,
+
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-23",
+      "path": "/nix/store/hfjmn4gy2llrkyvmbaw48776vr1ynxd4-openjdk-23.0.2+7/lib/openjdk",
+      "default": true
+    }
+  ],
+  "java.import.gradle.java.home": "/nix/store/hfjmn4gy2llrkyvmbaw48776vr1ynxd4-openjdk-23.0.2+7/lib/openjdk",
+  "java.compile.nullAnalysis.mode": "automatic"
 }
