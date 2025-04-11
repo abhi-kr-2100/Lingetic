@@ -1,5 +1,5 @@
 type QuestionType = "FillInTheBlanks";
-type AttemptStatus = "Success" | "Failure";
+export type AttemptStatus = "Success" | "Failure";
 
 export interface Question {
   id: string;

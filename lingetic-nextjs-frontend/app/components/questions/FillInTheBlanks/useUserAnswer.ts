@@ -44,7 +44,8 @@ export default function useUserAnswer(questionID: string) {
     }
 
     try {
-      await attemptChallengeMutation.mutateAsync(answer);
+      const response = await attemptChallengeMutation.mutateAsync(answer);
+      return response;
     } catch (err) {
       // Do nothing; isError has been set by the mutation, and can be checked
       // to display an error message.
