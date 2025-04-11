@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useParams } from "next/navigation";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight, BookOpen, XCircle, Loader2 } from "lucide-react";
 import useQuestions from "./useQuestions";
 import assert from "@/utilities/assert";
@@ -20,11 +20,13 @@ export default function LearnPageComponent() {
 
   const router = useRouter();
   const nextButtonRef = useRef<HTMLButtonElement>(null);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
 
   const result = useQuestions({
     language,
     questionListId,
     onFinish: () => {
+      console.log(`You answered ${correctAnswers} questions correctly.`);
       router.push("/languages");
     },
   });
@@ -89,7 +91,9 @@ export default function LearnPageComponent() {
   }
 
   const afterAnswerCheck = (attemptStatus?: AttemptStatus) => {
-    console.log("Answer checked:", attemptStatus);
+    if (attemptStatus === "Success") {
+      setCorrectAnswers((prev) => prev + 1);
+    }
     nextButtonRef.current?.focus();
   };
 

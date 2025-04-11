@@ -36,6 +36,7 @@ interface SuccessState {
   currentQuestion: Question;
   isLastQuestion: boolean;
   onNext: () => void;
+  totalQuestions: number;
 }
 
 type UseQuestionsResult =
@@ -114,5 +115,6 @@ export default function useQuestions({
     currentQuestion: questions.at(currentQuestionIndex) as Question,
     isLastQuestion: currentQuestionIndex === questions.length - 1,
     onNext,
+    totalQuestions: questions.length,
   };
 }
