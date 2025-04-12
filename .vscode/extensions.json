@@ -18,6 +18,8 @@
     "vscjava.vscode-java-debug",
     "vscjava.vscode-java-test",
 
+    "golang.go",
+
     "semanticdiff.semanticdiff",
     "codacy-app.codacy"
   ]
