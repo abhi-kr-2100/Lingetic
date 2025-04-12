@@ -11,6 +11,8 @@
     "ms-python.python",
     "charliermarsh.ruff",
 
+    "docker.docker",
+
     "redhat.java",
     "vscjava.vscode-gradle",
     "vscjava.vscode-java-debug",
