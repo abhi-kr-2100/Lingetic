@@ -1,38 +1,48 @@
 package com.munetmo.lingetic.LanguageTestService.UseCases;
 
+import java.time.Instant;
+
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
-import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
+import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
+import com.munetmo.lingetic.LanguageTestService.Queues.QueueNames;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
-import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
+import com.munetmo.lingetic.lib.tasks.TaskQueue;
 
 public class AttemptQuestionUseCase {
     private final QuestionRepository questionRepository;
-    private final QuestionReviewRepository questionReviewRepository;
+    private final TaskQueue taskQueue;
 
-    public AttemptQuestionUseCase(QuestionRepository questionRepository, QuestionReviewRepository questionReviewRepository) {
+    public AttemptQuestionUseCase(QuestionRepository questionRepository, TaskQueue taskQueue) {
         this.questionRepository = questionRepository;
-        this.questionReviewRepository = questionReviewRepository;
+        this.taskQueue = taskQueue;
     }
 
-    public AttemptResponse execute(String userId, AttemptRequest request) throws QuestionNotFoundException {
+    public AttemptResponse execute(String userId, AttemptRequest request)
+            throws QuestionNotFoundException {
         var question = questionRepository.getQuestionByID(request.getQuestionID());
         var response = question.assessAttempt(request);
 
-        // There's a race condition here: a review is fetched and then updated un-atomically. It's not a big deal
-        // because the race condition will only be triggered if a particular user attempts the same question from
-        // multiple devices at the same time. Moreover, the worst consequence would be a lost review, which is not a
-        // big deal.
-        var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(userId, question);
-        questionReview.review(
-            switch (response.getAttemptStatus()) {
-                case AttemptStatus.Success -> 5;
-                case AttemptStatus.Failure -> 0;
-            }
-        );
-        questionReviewRepository.update(questionReview);
-        
+        var payload = new QuestionReviewProcessingPayload(
+                userId,
+                question.getID(),
+                response.getAttemptStatus());
+
+        taskQueue.submitTask(
+                generateTaskId(userId, question),
+                payload,
+                QueueNames.QUESTION_REVIEW_PROCESSING_QUEUE);
+
         return response;
+    }
+
+    private String generateTaskId(String userId, Question question) {
+        // timestamp in seconds because updates to the same question by the same user
+        // should be considered duplicates if they happen in quick succession
+        var timestamp = Instant.now().getEpochSecond();
+
+        return String.format("AttemptQuestionUseCase|%s|%s|%s", userId, question.getID(), timestamp);
     }
 }
