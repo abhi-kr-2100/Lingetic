@@ -7,15 +7,15 @@ public class EnvironmentService {
     }
 
     public static Environment getEnvironment() {
-        var javaEnv = System.getProperty("JAVA_ENV");
-        if (javaEnv == null) {
-            throw new IllegalStateException("JAVA_ENV environment variable is not set");
+        var environment = System.getenv("ENVIRONMENT");
+        if (environment == null) {
+            throw new IllegalStateException("ENVIRONMENT environment variable is not set");
         }
 
-        return switch (javaEnv) {
+        return switch (environment) {
             case "production" -> Environment.PRODUCTION;
             case "development" -> Environment.DEVELOPMENT;
-            default -> throw new IllegalArgumentException("Invalid active profile: " + javaEnv);
+            default -> throw new IllegalArgumentException("Invalid active profile: " + environment);
         };
     }
 }

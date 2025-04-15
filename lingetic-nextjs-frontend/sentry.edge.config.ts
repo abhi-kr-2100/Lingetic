@@ -9,7 +9,7 @@ Sentry.init({
   dsn: "https://86de7112fa096440cb5a8ab83332bfb4@o4508705106952192.ingest.de.sentry.io/4508705241432144",
 
   // Disable Sentry in development mode
-  enabled: process.env.NODE_ENV !== "development",
+  enabled: process.env.NEXT_PUBLIC_ENVIRONMENT !== "development",
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,

@@ -6,7 +6,7 @@ export default function log(message: string, severity: Severity) {
   switch (severity) {
     case "fatal":
     case "error":
-      if (process.env.NODE_ENV === "production") {
+      if (process.env.NEXT_PUBLIC_ENVIRONMENT !== "development") {
         captureMessage(message, {
           level: severity,
         });
