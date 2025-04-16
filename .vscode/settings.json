@@ -22,5 +22,14 @@
   ],
   "java.import.gradle.java.home": "/nix/store/hfjmn4gy2llrkyvmbaw48776vr1ynxd4-openjdk-23.0.2+7/lib/openjdk",
   "java.compile.nullAnalysis.mode": "automatic",
-  "java.configuration.updateBuildConfiguration": "automatic"
+  "java.configuration.updateBuildConfiguration": "automatic",
+
+  "mcp": {
+    "servers": {
+      "playwright": {
+        "command": "pnpx",
+        "args": ["@playwright/mcp@latest"]
+      }
+    }
+  }
 }
