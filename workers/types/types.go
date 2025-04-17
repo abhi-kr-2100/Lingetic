@@ -23,14 +23,15 @@ type TaskProcessor interface {
 
 // GetRabbitMQConnection returns a connection to RabbitMQ using environment variables
 func GetRabbitMQConnection() (*amqp.Connection, error) {
+	protocol := getEnvironmentVariableOrDie("RABBITMQ_PROTOCOL")
 	host := getEnvironmentVariableOrDie("RABBITMQ_HOST")
 	vhost := getEnvironmentVariableOrDie("RABBITMQ_VHOST")
 	port := getEnvironmentVariableOrDie("RABBITMQ_PORT")
 	user := getEnvironmentVariableOrDie("RABBITMQ_USERNAME")
 	pass := getEnvironmentVariableOrDie("RABBITMQ_PASSWORD")
 
-	connectionURL := fmt.Sprintf("amqp://%s:%s@%s:%s%s",
-		user, pass, host, port, vhost)
+	connectionURL := fmt.Sprintf("%s://%s:%s@%s:%s%s",
+		protocol, user, pass, host, port, vhost)
 
 	return amqp.Dial(connectionURL)
 }

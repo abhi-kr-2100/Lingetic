@@ -15,38 +15,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    @Value("${spring.rabbitmq.host}")
+    @Value("${spring.rabbitmq.uri}")
     @Nullable
-    private String host;
-
-    @Value("${spring.rabbitmq.virtual-host}")
-    @Nullable
-    private String virtualHost;
-
-    @Value("${spring.rabbitmq.port}")
-    private int port;
-
-    @Value("${spring.rabbitmq.username}")
-    @Nullable
-    private String username;
-
-    @Value("${spring.rabbitmq.password}")
-    @Nullable
-    private String password;
+    private String uri;
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        Utilities.assert_(host != null && !host.isBlank(), "RabbitMQ host cannot be null or empty");
-        Utilities.assert_(username != null && !username.isBlank(), "RabbitMQ username cannot be null or empty");
-        Utilities.assert_(password != null && !password.isBlank(), "RabbitMQ password cannot be null or empty");
-        Utilities.assert_(port > 0, "RabbitMQ port must be greater than 0");
+        Utilities.assert_(uri != null && !uri.isBlank(), "RabbitMQ URI cannot be null or empty");
 
         var factory = new CachingConnectionFactory();
-        factory.setHost(host);
-        factory.setVirtualHost(virtualHost);
-        factory.setPort(port);
-        factory.setUsername(username);
-        factory.setPassword(password);
+        factory.setUri(uri);
         return factory;
     }
 
