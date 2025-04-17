@@ -42,9 +42,10 @@ func GetDatabaseConnection() (*sql.DB, error) {
 	dbHost := getEnvironmentVariableOrDie("DATABASE_HOST")
 	dbPort := getEnvironmentVariableOrDie("DATABASE_PORT")
 	dbName := getEnvironmentVariableOrDie("DATABASE_NAME")
+	sslMode := getEnvironmentVariableOrDie("DATABASE_SSLMODE")
 
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		dbHost, dbPort, dbUser, dbPass, dbName)
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		dbHost, dbPort, dbUser, dbPass, dbName, sslMode)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
