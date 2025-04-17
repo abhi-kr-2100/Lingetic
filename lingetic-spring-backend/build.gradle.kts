@@ -31,9 +31,6 @@ buildscript {
 
 extra["sentryVersion"] = "8.3.0"
 
-val env: String? by project
-val javaEnv = if (env == "development") "development" else "production"
-
 ext {
 	set("testcontainers.version", "1.20.6")
 }
@@ -83,10 +80,6 @@ tasks.withType<JavaCompile>().configureEach {
 		check("NullAway", CheckSeverity.ERROR)
 		option("NullAway:AnnotatedPackages", "com.munetmo")
 	}
-}
-
-tasks.withType<JavaExec>().configureEach {
-	jvmArgs("-DJAVA_ENV=$javaEnv")
 }
 
 val sentryAuthKey: String = System.getenv("SENTRY_AUTH_TOKEN") ?: throw IllegalStateException("SENTRY_AUTH_TOKEN environment variable is not set")

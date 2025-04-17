@@ -2,17 +2,19 @@
 
 import { PropsWithChildren } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ClerkProvider } from "@clerk/nextjs";
+import useReactQueryDevtools from "./hooks/useReactQueryDevtools";
 
 const queryClient = new QueryClient();
 
 export default function Providers({ children }: PropsWithChildren) {
+  const ReactQueryDevtools = useReactQueryDevtools();
+
   return (
     <ClerkProvider>
       <QueryClientProvider client={queryClient}>
         {children}
-        <ReactQueryDevtools initialIsOpen={false} />
+        {ReactQueryDevtools}
       </QueryClientProvider>
     </ClerkProvider>
   );

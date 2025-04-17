@@ -20,7 +20,7 @@ export default function ErrorPage({ error }: ErrorPageProps) {
           </h1>
           <p className="text-[#dc2626] mb-8">
             We encountered an unexpected error.
-            {process.env.NODE_ENV === "development" && (
+            {process.env.NEXT_PUBLIC_ENVIRONMENT === "development" && (
               <span className="block mt-2 text-sm">{error.message}</span>
             )}
           </p>
