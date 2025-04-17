@@ -9,6 +9,7 @@ import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
+import com.munetmo.lingetic.lib.tasks.TaskQueue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,8 +34,8 @@ public class Beans {
 
     @Bean
     public AttemptQuestionUseCase attemptQuestionUseCase(
-            QuestionRepository questionRepository, QuestionReviewRepository questionReviewRepository) {
-        return new AttemptQuestionUseCase(questionRepository, questionReviewRepository);
+            QuestionRepository questionRepository, TaskQueue taskQueue) {
+        return new AttemptQuestionUseCase(questionRepository, taskQueue);
     }
 
     @Bean

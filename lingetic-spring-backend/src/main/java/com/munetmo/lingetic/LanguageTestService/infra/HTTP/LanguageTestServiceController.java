@@ -36,14 +36,14 @@ public class LanguageTestServiceController {
             @AuthenticationPrincipal Claims user) {
         if (language == null || language.isBlank()) {
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Language parameter cannot be null or empty");
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Language parameter cannot be null or empty");
         }
 
         if (questionListId == null || questionListId.isBlank()) {
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Question list ID parameter cannot be null or empty");
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Question list ID parameter cannot be null or empty");
         }
 
         Language languageEnum;
@@ -51,8 +51,8 @@ public class LanguageTestServiceController {
             languageEnum = Language.valueOf(language);
         } catch (IllegalArgumentException e) {
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid language: " + language);
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid language: " + language);
         }
 
         var questions = takeRegularTestUseCase.execute(user.getSubject(), languageEnum, questionListId);
@@ -60,11 +60,12 @@ public class LanguageTestServiceController {
     }
 
     @PostMapping("/questions/attempt")
-    public ResponseEntity<?> attemptQuestion(@RequestBody AttemptRequest request, @AuthenticationPrincipal Claims user) {
+    public ResponseEntity<?> attemptQuestion(@RequestBody AttemptRequest request,
+            @AuthenticationPrincipal Claims user) {
         if (request == null) {
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Attempt request cannot be null");
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Attempt request cannot be null");
         }
 
         try {
@@ -72,8 +73,8 @@ public class LanguageTestServiceController {
             return ResponseEntity.ok(response);
         } catch (QuestionNotFoundException e) {
             return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Question not found: " + request.getQuestionID());
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Question not found: " + request.getQuestionID());
         }
     }
 
@@ -81,8 +82,8 @@ public class LanguageTestServiceController {
     public ResponseEntity<?> getQuestionLists(@RequestParam String language) {
         if (language == null || language.isBlank()) {
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Language parameter cannot be null or empty");
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Language parameter cannot be null or empty");
         }
 
         Language languageEnum;
@@ -90,8 +91,8 @@ public class LanguageTestServiceController {
             languageEnum = Language.valueOf(language);
         } catch (IllegalArgumentException e) {
             return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid language: " + language);
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid language: " + language);
         }
 
         List<QuestionList> questionLists = getQuestionListsForLanguageUseCase.execute(languageEnum);
