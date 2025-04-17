@@ -19,6 +19,10 @@ public class RabbitMQConfig {
     @Nullable
     private String host;
 
+    @Value("${spring.rabbitmq.virtual-host}")
+    @Nullable
+    private String virtualHost;
+
     @Value("${spring.rabbitmq.port}")
     private int port;
 
@@ -39,6 +43,7 @@ public class RabbitMQConfig {
 
         var factory = new CachingConnectionFactory();
         factory.setHost(host);
+        factory.setVirtualHost(virtualHost);
         factory.setPort(port);
         factory.setUsername(username);
         factory.setPassword(password);
