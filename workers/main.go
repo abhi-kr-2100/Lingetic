@@ -6,6 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"github.com/getsentry/sentry-go"
 
 	"lingetic/workers/processors"
 	"lingetic/workers/types"
@@ -20,28 +23,40 @@ func getProcessor(task string) (types.TaskProcessor, error) {
 	return nil, fmt.Errorf("unknown task type: %s", task)
 }
 
+func initSentry() error {
+	return sentry.Init(sentry.ClientOptions{
+		Dsn: "https://8ad8f8e91c359c460cc57f75645c92b0@o4508705106952192.ingest.de.sentry.io/4509141118222416",
+	})
+}
+
 func main() {
+	err := initSentry()
+	if err != nil {
+		log.Fatalf("sentry.Init: %s", err)
+	}
+	defer sentry.Flush(2 * time.Second)
+
 	if len(os.Args) != 2 {
-		log.Fatal("Usage: worker <processor-name>")
+		log.Fatalf("worker started with wrong arguments: %v", os.Args)
 	}
 
 	processorName := os.Args[1]
 	processor, err := getProcessor(processorName)
 	if err != nil {
-		log.Fatalf("Failed to get processor: %v", err)
+		log.Fatalf("failed to get processor: %v", err)
 	}
 	defer processor.Close()
 
 	// Connect to RabbitMQ
 	conn, err := types.GetRabbitMQConnection()
 	if err != nil {
-		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
+		log.Fatalf("failed to connect to RabbitMQ: %v", err)
 	}
 	defer conn.Close()
 
 	ch, err := conn.Channel()
 	if err != nil {
-		log.Fatalf("Failed to open a channel: %v", err)
+		log.Fatalf("failed to open a channel: %v", err)
 	}
 	defer ch.Close()
 
@@ -56,7 +71,7 @@ func main() {
 		nil,   // arguments
 	)
 	if err != nil {
-		log.Fatalf("Failed to declare queue: %v", err)
+		log.Fatalf("failed to declare queue: %v", err)
 	}
 
 	msgs, err := ch.Consume(
@@ -69,7 +84,7 @@ func main() {
 		nil,   // args
 	)
 	if err != nil {
-		log.Fatalf("Failed to register a consumer: %v", err)
+		log.Fatalf("failed to register a consumer: %v", err)
 	}
 
 	stop := make(chan os.Signal, 1)
@@ -80,7 +95,9 @@ func main() {
 	go func() {
 		for d := range msgs {
 			if err := processor.ProcessTask(d.Body); err != nil {
-				log.Printf("Error processing task: %v", err)
+				err := fmt.Errorf("failed to process task: %v", err)
+				sentry.CaptureException(err)
+				log.Print(err)
 			}
 		}
 	}()
