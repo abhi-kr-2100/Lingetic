@@ -1,6 +1,7 @@
 package com.munetmo.lingetic.LanguageTestService.UseCases;
 
 import java.time.Instant;
+import java.util.concurrent.ExecutorService;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
@@ -13,11 +14,15 @@ import com.munetmo.lingetic.lib.tasks.TaskQueue;
 
 public class AttemptQuestionUseCase {
     private final QuestionRepository questionRepository;
-    private final TaskQueue taskQueue;
 
-    public AttemptQuestionUseCase(QuestionRepository questionRepository, TaskQueue taskQueue) {
+    private final TaskQueue taskQueue;
+    private final ExecutorService taskSubmitExecutor;
+
+    public AttemptQuestionUseCase(QuestionRepository questionRepository, TaskQueue taskQueue,
+            ExecutorService taskSubmitExecutor) {
         this.questionRepository = questionRepository;
         this.taskQueue = taskQueue;
+        this.taskSubmitExecutor = taskSubmitExecutor;
     }
 
     public AttemptResponse execute(String userId, AttemptRequest request)
@@ -30,10 +35,12 @@ public class AttemptQuestionUseCase {
                 question.getID(),
                 response.getAttemptStatus());
 
-        taskQueue.submitTask(
-                generateTaskId(userId, question),
-                payload,
-                QueueNames.QUESTION_REVIEW_PROCESSING_QUEUE);
+        taskSubmitExecutor.submit(() -> {
+            taskQueue.submitTask(
+                    generateTaskId(userId, question),
+                    payload,
+                    QueueNames.QUESTION_REVIEW_PROCESSING_QUEUE);
+        });
 
         return response;
     }
