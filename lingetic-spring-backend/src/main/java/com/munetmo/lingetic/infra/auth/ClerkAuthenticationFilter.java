@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 
 @Component
-public class  ClerkAuthenticationFilter extends OncePerRequestFilter {
+public class ClerkAuthenticationFilter extends OncePerRequestFilter {
     @Value("${clerk.jwksPublicKey}")
     @Nullable
     private String jwksPublicKey;
@@ -31,25 +31,24 @@ public class  ClerkAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (request.getHeader("Authorization") == null || !request.getHeader("Authorization").startsWith("Bearer ")) {
-            onUnauthorized(response);
+            onUnauthorized(request, response, chain);
             return;
         }
 
         var requestState = AuthenticateRequest.authenticateRequest(
                 createHttpRequestForClerk(request),
                 AuthenticateRequestOptions
-                    .jwtKey(jwksPublicKey)
-                    .build()
-        );
+                        .jwtKey(jwksPublicKey)
+                        .build());
 
         if (requestState.isSignedOut()) {
-            onUnauthorized(response);
+            onUnauthorized(request, response, chain);
             return;
         }
 
         var claims = requestState.claims();
         if (claims.isEmpty()) {
-            onUnauthorized(response);
+            onUnauthorized(request, response, chain);
             return;
         }
 
@@ -60,9 +59,10 @@ public class  ClerkAuthenticationFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private void onUnauthorized(HttpServletResponse response) throws IOException {
+    private void onUnauthorized(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         SecurityContextHolder.clearContext();
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        chain.doFilter(request, response);
     }
 
     private HttpRequest createHttpRequestForClerk(HttpServletRequest servletRequest) {

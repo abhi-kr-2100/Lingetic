@@ -1,18 +1,23 @@
 package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
+import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import io.jsonwebtoken.Claims;
+import io.micrometer.common.lang.Nullable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.GetQuestionListsForLanguageUseCase;
+import com.munetmo.lingetic.LanguageTestService.UseCases.ReviewQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
 
 import java.util.List;
@@ -28,6 +33,13 @@ public class LanguageTestServiceController {
 
     @Autowired
     private GetQuestionListsForLanguageUseCase getQuestionListsForLanguageUseCase;
+
+    @Autowired
+    private ReviewQuestionUseCase reviewQuestionUseCase;
+
+    @Value("${cloudamqp.webhook.secretKey}")
+    @Nullable
+    private String secretKey;
 
     @GetMapping("/questions")
     public ResponseEntity<?> getQuestions(
@@ -97,5 +109,29 @@ public class LanguageTestServiceController {
 
         List<QuestionList> questionLists = getQuestionListsForLanguageUseCase.execute(languageEnum);
         return ResponseEntity.ok(questionLists);
+    }
+
+    @PostMapping("/questions/review")
+    public ResponseEntity<?> reviewQuestion(
+            @RequestParam String key,
+            @RequestBody QuestionReviewProcessingPayload payload) {
+        if (payload == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Review payload cannot be null");
+        }
+
+        if (secretKey == null || secretKey.isBlank()) {
+            throw new IllegalStateException("Secret key is not set");
+        }
+
+        if (!key.equals(secretKey)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid key");
+        }
+
+        reviewQuestionUseCase.execute(payload);
+        return ResponseEntity.ok("Review accepted");
     }
 }
