@@ -3,7 +3,6 @@
 pkgs.mkShell {
   buildInputs = with pkgs; [
     docker
-    go
     google-cloud-sdk
     gradle
     jdk23
