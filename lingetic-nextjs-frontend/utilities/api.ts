@@ -14,6 +14,12 @@ async function fetchOrThrow<T>(url: string, options?: RequestInit): Promise<T> {
   throw new Error(response.statusText);
 }
 
+export async function wakeUpBackend(): Promise<void> {
+  await fetchOrThrow(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/health-service/wakeup`
+  );
+}
+
 export async function attemptQuestion<T extends AttemptResponse>(
   attemptRequest: AttemptRequest,
   getToken: () => Promise<string | null>
