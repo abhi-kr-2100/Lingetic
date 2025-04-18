@@ -28,10 +28,7 @@ class RabbitMQTaskQueueTest {
         // Disable Flyway migrations since we are not using a database in this test
         registry.add("spring.flyway.enabled", () -> false);
 
-        registry.add("spring.rabbitmq.host", rabbitmq::getHost);
-        registry.add("spring.rabbitmq.port", rabbitmq::getAmqpPort);
-        registry.add("spring.rabbitmq.username", rabbitmq::getAdminUsername);
-        registry.add("spring.rabbitmq.password", rabbitmq::getAdminPassword);
+        registry.add("spring.rabbitmq.uri", rabbitmq::getAmqpUrl);
     }
 
     @Autowired
