@@ -23,12 +23,12 @@ type TaskProcessor interface {
 
 // GetRabbitMQConnection returns a connection to RabbitMQ using environment variables
 func GetRabbitMQConnection() (*amqp.Connection, error) {
-	protocol := getEnvironmentVariableOrDie("RABBITMQ_PROTOCOL")
-	host := getEnvironmentVariableOrDie("RABBITMQ_HOST")
-	vhost := getEnvironmentVariableOrDie("RABBITMQ_VHOST")
-	port := getEnvironmentVariableOrDie("RABBITMQ_PORT")
-	user := getEnvironmentVariableOrDie("RABBITMQ_USERNAME")
-	pass := getEnvironmentVariableOrDie("RABBITMQ_PASSWORD")
+	protocol := GetEnvironmentVariableOrDie("RABBITMQ_PROTOCOL")
+	host := GetEnvironmentVariableOrDie("RABBITMQ_HOST")
+	vhost := GetEnvironmentVariableOrDie("RABBITMQ_VHOST")
+	port := GetEnvironmentVariableOrDie("RABBITMQ_PORT")
+	user := GetEnvironmentVariableOrDie("RABBITMQ_USERNAME")
+	pass := GetEnvironmentVariableOrDie("RABBITMQ_PASSWORD")
 
 	connectionURL := fmt.Sprintf("%s://%s:%s@%s:%s%s",
 		protocol, user, pass, host, port, vhost)
@@ -38,12 +38,12 @@ func GetRabbitMQConnection() (*amqp.Connection, error) {
 
 // GetDatabaseConnection returns a connection to PostgreSQL using environment variables
 func GetDatabaseConnection() (*sql.DB, error) {
-	dbUser := getEnvironmentVariableOrDie("DATABASE_USERNAME")
-	dbPass := getEnvironmentVariableOrDie("DATABASE_PASSWORD")
-	dbHost := getEnvironmentVariableOrDie("DATABASE_HOST")
-	dbPort := getEnvironmentVariableOrDie("DATABASE_PORT")
-	dbName := getEnvironmentVariableOrDie("DATABASE_NAME")
-	sslMode := getEnvironmentVariableOrDie("DATABASE_SSLMODE")
+	dbUser := GetEnvironmentVariableOrDie("DATABASE_USERNAME")
+	dbPass := GetEnvironmentVariableOrDie("DATABASE_PASSWORD")
+	dbHost := GetEnvironmentVariableOrDie("DATABASE_HOST")
+	dbPort := GetEnvironmentVariableOrDie("DATABASE_PORT")
+	dbName := GetEnvironmentVariableOrDie("DATABASE_NAME")
+	sslMode := GetEnvironmentVariableOrDie("DATABASE_SSLMODE")
 
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		dbHost, dbPort, dbUser, dbPass, dbName, sslMode)
@@ -66,7 +66,7 @@ func GetDatabaseConnection() (*sql.DB, error) {
 	return db, nil
 }
 
-func getEnvironmentVariableOrDie(key string) string {
+func GetEnvironmentVariableOrDie(key string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
 	}
