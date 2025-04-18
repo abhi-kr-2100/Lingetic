@@ -1,7 +1,9 @@
 package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
+import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.GenericTaskPayloadWrapper;
 import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
@@ -135,16 +137,19 @@ public class LanguageTestServiceController {
                     .body("Payload cannot be null or empty");
         }
 
-        QuestionReviewProcessingPayload questionReviewProcessingPayload;
+        GenericTaskPayloadWrapper<QuestionReviewProcessingPayload> wrappedPayload;
         try {
-            questionReviewProcessingPayload = objectMapper.readValue(payload, QuestionReviewProcessingPayload.class);
+            wrappedPayload = objectMapper.readValue(
+                    payload,
+                    new TypeReference<GenericTaskPayloadWrapper<QuestionReviewProcessingPayload>>() {
+                    });
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("Invalid payload format");
         }
 
-        reviewQuestionUseCase.execute(questionReviewProcessingPayload);
-        return ResponseEntity.ok("Review accepted");
+        reviewQuestionUseCase.execute(wrappedPayload.getPayload());
+        return ResponseEntity.ok("Review processed successfully");
     }
 }
