@@ -1,5 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Entities.Language;
@@ -36,6 +37,9 @@ public class LanguageTestServiceController {
 
     @Autowired
     private ReviewQuestionUseCase reviewQuestionUseCase;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${cloudamqp.webhook.secretKey}")
     @Nullable
@@ -114,13 +118,7 @@ public class LanguageTestServiceController {
     @PostMapping("/questions/review")
     public ResponseEntity<?> reviewQuestion(
             @RequestParam String key,
-            @RequestBody QuestionReviewProcessingPayload payload) {
-        if (payload == null) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Review payload cannot be null");
-        }
-
+            @RequestBody String payload) {
         if (secretKey == null || secretKey.isBlank()) {
             throw new IllegalStateException("Secret key is not set");
         }
@@ -131,7 +129,22 @@ public class LanguageTestServiceController {
                     .body("Invalid key");
         }
 
-        reviewQuestionUseCase.execute(payload);
+        if (payload == null || payload.isBlank()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Payload cannot be null or empty");
+        }
+
+        QuestionReviewProcessingPayload questionReviewProcessingPayload;
+        try {
+            questionReviewProcessingPayload = objectMapper.readValue(payload, QuestionReviewProcessingPayload.class);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid payload format");
+        }
+
+        reviewQuestionUseCase.execute(questionReviewProcessingPayload);
         return ResponseEntity.ok("Review accepted");
     }
 }
