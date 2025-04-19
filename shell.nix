@@ -4,6 +4,7 @@ pkgs.mkShell {
   buildInputs = with pkgs; [
     docker
     google-cloud-sdk
+    graalvmPackages.graalvm-ce
     gradle
     jdk23
     nodejs
@@ -17,6 +18,7 @@ pkgs.mkShell {
   shellHook = ''
     export JAVA_HOME=${pkgs.jdk23.home}
     sed -i "s|/nix/store/[^/]\\+-openjdk-[^/]\\+/lib/openjdk|$JAVA_HOME|g" .vscode/settings.json
+    export JAVA_HOME=${pkgs.graalvmPackages.graalvm-ce.home}
 
     echo "Setting up Docker and Ollama..."
 
