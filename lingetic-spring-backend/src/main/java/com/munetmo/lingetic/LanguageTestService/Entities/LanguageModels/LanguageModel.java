@@ -5,14 +5,15 @@ import com.munetmo.lingetic.lib.Utilities;
 
 import java.util.Map;
 
-public sealed interface LanguageModel permits EnglishLanguageModel, TurkishLanguageModel {
+public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLanguageModel, TurkishLanguageModel {
     Language getLanguage();
+
     boolean areEquivalent(String s1, String s2);
 
     static final Map<Language, LanguageModel> languageModelInstances = Map.of(
             Language.English, new EnglishLanguageModel(),
-            Language.Turkish, new TurkishLanguageModel()
-    );
+            Language.French, new FrenchLanguageModel(),
+            Language.Turkish, new TurkishLanguageModel());
 
     static LanguageModel getLanguageModel(Language language) {
         Utilities.assert_(languageModelInstances.containsKey(language), "Language not supported");

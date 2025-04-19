@@ -5,13 +5,13 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import java.util.Arrays;
 import java.util.Locale;
 
-public final class TurkishLanguageModel implements LanguageModel {
+public final class FrenchLanguageModel implements LanguageModel {
     @Override
     public Language getLanguage() {
-        return Language.Turkish;
+        return Language.French;
     }
 
-    private static final String turkishSpecificCharacters = "çğıöşü";
+    private static final String frenchSpecificCharacters = "àâäæçéèêëîïôœùûüÿ";
 
     @Override
     public boolean areEquivalent(String s1, String s2) {
@@ -22,15 +22,13 @@ public final class TurkishLanguageModel implements LanguageModel {
     }
 
     private String normalizeString(String input) {
+        var regex = String.format("^[^a-z0-9%s]+|[^a-z0-9%s]+$", frenchSpecificCharacters,
+                frenchSpecificCharacters);
+
         var words = input.split("\\s+");
         var normalizedWords = Arrays.stream(words)
-                .map(w -> w.trim().toLowerCase(Locale.forLanguageTag("tr-TR")))
-                .map(w -> {
-                    var regex = String.format("^[^a-z0-9%s]+|[^a-z0-9%s]+$", turkishSpecificCharacters,
-                            turkishSpecificCharacters);
-
-                    return w.replaceAll(regex, "");
-                })
+                .map(w -> w.trim().toLowerCase(Locale.FRANCE))
+                .map(w -> w.replaceAll(regex, ""))
                 .filter(w -> !w.isBlank());
 
         return String.join(" ", normalizedWords.toList());
