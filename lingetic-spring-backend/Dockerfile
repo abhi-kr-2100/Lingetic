@@ -1,4 +1,4 @@
-FROM gradle:jdk23-alpine AS builder
+FROM gradle:jdk23-graal AS builder
 
 WORKDIR /app
 
@@ -15,15 +15,15 @@ COPY src/main src/main
 
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
     export SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) && \
-    ./gradlew build -x test --no-daemon
+    ./gradlew nativeCompile -x test --no-daemon
 
-FROM amazoncorretto:23-jdk AS runtime
+FROM ubuntu:latest AS runtime
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/lingetic-0.0.1-SNAPSHOT.jar application.jar
+COPY --from=builder /app/build/native/nativeCompile/lingetic ./lingetic
 COPY config/application.properties config/application.properties
 
 EXPOSE 8000
 
-ENTRYPOINT ["java", "-jar", "application.jar"]
+ENTRYPOINT ["./lingetic"]

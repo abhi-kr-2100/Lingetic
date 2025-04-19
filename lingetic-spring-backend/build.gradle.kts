@@ -4,6 +4,7 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
 	id("java-library")
 	id("org.springframework.boot") version "3.4.2"
+	id("org.graalvm.buildtools.native") version "0.10.6"
 	id("io.spring.dependency-management") version "1.1.7"
 	jacoco
 	id("net.ltgt.errorprone") version "4.1.0"
@@ -16,7 +17,29 @@ version = "0.0.1-SNAPSHOT"
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(23)
+		vendor = JvmVendorSpec.GRAAL_VM
 	}
+}
+
+graalvmNative {
+    binaries {
+        named("main") {
+            imageName.set("lingetic")
+			mainClass.set("com.munetmo.lingetic.LingeticApplication")
+			sharedLibrary.set(false)
+			fallback.set(false)
+        }
+    }
+
+	testSupport.set(false)
+}
+
+tasks.named("processTestAot") {
+    enabled = false
+}
+
+springBoot {
+    buildInfo()
 }
 
 repositories {
