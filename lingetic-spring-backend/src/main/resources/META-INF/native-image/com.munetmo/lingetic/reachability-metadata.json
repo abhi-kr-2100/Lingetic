@@ -270,9 +270,30 @@
       "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO"
     },
     {
+      "type": "com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.GenericTaskPayloadWrapper",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
       "type": "com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload",
       "allDeclaredFields": true,
       "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String",
+            "com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus"
+          ]
+        },
         {
           "name": "questionId",
           "parameterTypes": []
@@ -478,6 +499,13 @@
             "java.lang.String",
             "java.lang.String",
             "io.jsonwebtoken.Claims"
+          ]
+        },
+        {
+          "name": "reviewQuestion",
+          "parameterTypes": [
+            "java.lang.String",
+            "java.lang.String"
           ]
         }
       ]
@@ -798,7 +826,79 @@
       "type": "com.sendgrid.SendGrid"
     },
     {
+      "type": "com.sun.crypto.provider.AESCipher$General",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.ARCFOURCipher",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.ChaCha20Cipher$ChaCha20Poly1305",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.DESCipher",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.DESedeCipher",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.DHParameters",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.GaloisCounterMode$AESGCM",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.sun.crypto.provider.HmacCore$HmacSHA256",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.HmacCore$HmacSHA384",
       "methods": [
         {
           "name": "<init>",
@@ -844,6 +944,15 @@
     },
     {
       "type": "com.sun.crypto.provider.PBKDF2Core$HmacSHA512",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.crypto.provider.TlsMasterSecretGenerator",
       "methods": [
         {
           "name": "<init>",
@@ -1891,7 +2000,13 @@
       ]
     },
     {
+      "type": "java.security.AlgorithmParametersSpi"
+    },
+    {
       "type": "java.security.AllPermission"
+    },
+    {
+      "type": "java.security.KeyStoreSpi"
     },
     {
       "type": "java.security.SecurityPermission"
@@ -2140,10 +2255,31 @@
       "type": "org.aopalliance.intercept.MethodInterceptor"
     },
     {
+      "type": "org.apache.catalina.authenticator.AuthenticatorBase"
+    },
+    {
+      "type": "org.apache.catalina.connector.CoyoteAdapter"
+    },
+    {
       "type": "org.apache.catalina.core.ApplicationContextFacade"
     },
     {
+      "type": "org.apache.catalina.core.ApplicationFilterChain"
+    },
+    {
       "type": "org.apache.catalina.core.AprLifecycleListener"
+    },
+    {
+      "type": "org.apache.catalina.core.StandardContextValve"
+    },
+    {
+      "type": "org.apache.catalina.core.StandardEngineValve"
+    },
+    {
+      "type": "org.apache.catalina.core.StandardHostValve"
+    },
+    {
+      "type": "org.apache.catalina.core.StandardWrapperValve"
     },
     {
       "type": "org.apache.catalina.loader.JdbcLeakPrevention",
@@ -2171,6 +2307,9 @@
       ]
     },
     {
+      "type": "org.apache.catalina.valves.ErrorReportValve"
+    },
+    {
       "type": "org.apache.commons.dbcp2.BasicDataSource"
     },
     {
@@ -2193,6 +2332,9 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.apache.coyote.AbstractProcessorLight"
     },
     {
       "type": "org.apache.coyote.AbstractProtocol",
@@ -2227,6 +2369,9 @@
       ]
     },
     {
+      "type": "org.apache.coyote.AbstractProtocol$ConnectionHandler"
+    },
+    {
       "type": "org.apache.coyote.UpgradeProtocol"
     },
     {
@@ -2239,7 +2384,13 @@
       ]
     },
     {
+      "type": "org.apache.coyote.http11.Http11InputBuffer"
+    },
+    {
       "type": "org.apache.coyote.http11.Http11NioProtocol"
+    },
+    {
+      "type": "org.apache.coyote.http11.Http11Processor"
     },
     {
       "type": "org.apache.derby.jdbc.EmbeddedDriver"
@@ -2287,6 +2438,24 @@
     },
     {
       "type": "org.apache.tomcat.util.net.NioEndpoint"
+    },
+    {
+      "type": "org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper"
+    },
+    {
+      "type": "org.apache.tomcat.util.net.NioEndpoint$SocketProcessor"
+    },
+    {
+      "type": "org.apache.tomcat.util.net.SocketProcessorBase"
+    },
+    {
+      "type": "org.apache.tomcat.util.threads.TaskThread$WrappingRunnable"
+    },
+    {
+      "type": "org.apache.tomcat.util.threads.ThreadPoolExecutor"
+    },
+    {
+      "type": "org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker"
     },
     {
       "type": "org.apache.tomcat.websocket.server.WsFilter"
@@ -6765,6 +6934,9 @@
       "allDeclaredFields": true
     },
     {
+      "type": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain"
+    },
+    {
       "type": "org.springframework.security.web.SecurityFilterChain"
     },
     {
@@ -6806,6 +6978,9 @@
       "allDeclaredFields": true
     },
     {
+      "type": "org.springframework.security.web.authentication.AnonymousAuthenticationFilter"
+    },
+    {
       "type": "org.springframework.security.web.authentication.logout.LogoutFilter",
       "allDeclaredFields": true
     },
@@ -6839,6 +7014,9 @@
       "allDeclaredFields": true
     },
     {
+      "type": "org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter"
+    },
+    {
       "type": "org.springframework.security.web.header.HeaderWriterFilter",
       "allDeclaredFields": true
     },
@@ -6857,6 +7035,9 @@
     {
       "type": "org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter",
       "allDeclaredFields": true
+    },
+    {
+      "type": "org.springframework.security.web.session.DisableEncodeUrlFilter"
     },
     {
       "type": "org.springframework.security.web.session.SessionManagementFilter",
@@ -7084,6 +7265,15 @@
       "allDeclaredFields": true
     },
     {
+      "type": "org.springframework.web.filter.CompositeFilter"
+    },
+    {
+      "type": "org.springframework.web.filter.CompositeFilter$VirtualFilterChain"
+    },
+    {
+      "type": "org.springframework.web.filter.CorsFilter"
+    },
+    {
       "type": "org.springframework.web.filter.DelegatingFilterProxy"
     },
     {
@@ -7103,8 +7293,14 @@
       "allDeclaredFields": true
     },
     {
+      "type": "org.springframework.web.method.annotation.ExceptionHandlerMethodResolver"
+    },
+    {
       "type": "org.springframework.web.method.support.CompositeUriComponentsContributor",
       "allDeclaredFields": true
+    },
+    {
+      "type": "org.springframework.web.method.support.InvocableHandlerMethod"
     },
     {
       "type": "org.springframework.web.method.support.UriComponentsContributor"
@@ -7377,6 +7573,9 @@
       "allDeclaredFields": true
     },
     {
+      "type": "org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod"
+    },
+    {
       "type": "org.springframework.web.servlet.resource.ResourceUrlProvider",
       "allDeclaredFields": true
     },
@@ -7479,6 +7678,60 @@
       "type": "reactor.tools.agent.ReactorDebugAgent"
     },
     {
+      "type": "sun.security.pkcs12.PKCS12KeyStore",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.pkcs12.PKCS12KeyStore$DualFormatPKCS12",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.DSA$SHA224withDSA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.DSA$SHA256withDSA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.JavaKeyStore$DualFormatJKS",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.JavaKeyStore$JKS",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "sun.security.provider.NativePRNG",
       "methods": [
         {
@@ -7544,7 +7797,43 @@
       ]
     },
     {
+      "type": "sun.security.provider.certpath.PKIXCertPathValidator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.rsa.PSSParameters",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "sun.security.rsa.RSAKeyFactory$Legacy",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.rsa.RSAPSSSignature",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.rsa.RSASignature$SHA224withRSA",
       "methods": [
         {
           "name": "<init>",
@@ -7558,6 +7847,177 @@
         {
           "name": "<init>",
           "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.ssl.KeyManagerFactoryImpl$SunX509",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.ssl.SSLContextImpl$DefaultSSLContext",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.ssl.TrustManagerFactoryImpl$PKIXFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.AuthorityInfoAccessExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.AuthorityKeyIdentifierExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.BasicConstraintsExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.CRLDistributionPointsExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.CertificatePoliciesExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.ExtendedKeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.IssuerAlternativeNameExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.KeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.NetscapeCertTypeExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.PrivateKeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.SubjectAlternativeNameExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.x509.SubjectKeyIdentifierExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
         }
       ]
     },
@@ -7648,6 +8108,9 @@
     }
   ],
   "resources": [
+    {
+      "glob": "META-INF/MANIFEST.MF"
+    },
     {
       "glob": "META-INF/build-info.properties"
     },
@@ -8837,6 +9300,9 @@
       "glob": "sentry-debug-meta.properties"
     },
     {
+      "glob": "sentry-external-modules.txt"
+    },
+    {
       "glob": "sentry.properties"
     },
     {
@@ -8848,6 +9314,14 @@
     {
       "module": "java.base",
       "glob": "jdk/internal/icu/impl/data/icudt74b/nfkc.nrm"
+    },
+    {
+      "module": "java.base",
+      "glob": "jdk/internal/icu/impl/data/icudt74b/uprops.icu"
+    },
+    {
+      "module": "java.base",
+      "glob": "sun/net/idn/uidna.spp"
     }
   ],
   "bundles": [
