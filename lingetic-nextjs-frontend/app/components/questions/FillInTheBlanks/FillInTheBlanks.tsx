@@ -77,9 +77,11 @@ export default function FillInTheBlanks({
           onClick={() => {
             void handleCheckAnswer();
           }}
-          className="bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors"
+          className={`bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors ${
+            isChecking ? "opacity-70" : ""
+          }`}
         >
-          Check
+          {isChecking ? "Checking..." : "Check"}
         </button>
       )}
       {isChecked && result && (
