@@ -7,6 +7,7 @@ from . import insert_into_db
 from . import images_to_sentence_jsons
 from . import pdf_to_images
 from . import tts
+from . import upload_to_r2
 
 __all__ = [
     "hello",
@@ -18,4 +19,5 @@ __all__ = [
     "images_to_sentence_jsons",
     "pdf_to_images",
     "tts",
+    "upload_to_r2",
 ]
