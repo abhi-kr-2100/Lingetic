@@ -44,7 +44,6 @@ dependencies {
 	implementation("com.clerk:backend-api:1.5.0")
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	runtimeOnly("org.postgresql:postgresql")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
