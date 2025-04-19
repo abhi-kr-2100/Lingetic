@@ -7,6 +7,12 @@ export interface LanguageProperty {
 
 export const languages: LanguageProperty[] = [
   {
+    id: "French",
+    name: "French",
+    image: "/img/languages/french-flag.png",
+    isSupported: true,
+  },
+  {
     id: "Turkish",
     name: "Turkish",
     image: "/img/languages/turkish-flag.png",
@@ -16,12 +22,6 @@ export const languages: LanguageProperty[] = [
     id: "Spanish",
     name: "Spanish",
     image: "/img/languages/spanish-flag.png",
-    isSupported: false,
-  },
-  {
-    id: "French",
-    name: "French",
-    image: "/img/languages/french-flag.png",
     isSupported: false,
   },
   {
