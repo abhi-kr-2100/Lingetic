@@ -11,6 +11,10 @@ import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.Ques
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
 import com.munetmo.lingetic.lib.tasks.TaskQueue;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,8 +39,8 @@ public class Beans {
 
     @Bean
     public AttemptQuestionUseCase attemptQuestionUseCase(
-            QuestionRepository questionRepository, TaskQueue taskQueue) {
-        return new AttemptQuestionUseCase(questionRepository, taskQueue);
+            QuestionRepository questionRepository, TaskQueue taskQueue, ExecutorService taskSubmitExecutor) {
+        return new AttemptQuestionUseCase(questionRepository, taskQueue, taskSubmitExecutor);
     }
 
     @Bean
@@ -54,5 +58,10 @@ public class Beans {
     public ReviewQuestionUseCase reviewQuestionUseCase(QuestionRepository questionRepository,
             QuestionReviewRepository questionReviewRepository) {
         return new ReviewQuestionUseCase(questionRepository, questionReviewRepository);
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public ExecutorService taskSubmitExecutor() {
+        return Executors.newCachedThreadPool();
     }
 }
