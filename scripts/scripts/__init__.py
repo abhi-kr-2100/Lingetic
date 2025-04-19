@@ -6,6 +6,7 @@ from . import fill_in_the_blanks
 from . import insert_into_db
 from . import images_to_sentence_jsons
 from . import pdf_to_images
+from . import tts
 
 __all__ = [
     "hello",
@@ -16,4 +17,5 @@ __all__ = [
     "insert_into_db",
     "images_to_sentence_jsons",
     "pdf_to_images",
+    "tts",
 ]
