@@ -10,6 +10,7 @@ export interface FillInTheBlanksQuestion extends Question {
   questionType: "FillInTheBlanks";
   text: string;
   hint: string;
+  fullTextDigest: string;
 }
 
 export interface AttemptRequest {

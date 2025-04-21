@@ -5,6 +5,7 @@ import assert from "@/utilities/assert";
 import useUserAnswer from "./useUserAnswer";
 import type QuestionProps from "../QuestionProps";
 import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import useLocalCheckAnswer from "./useLocalCheckAnswer";
 
 interface FillInTheBlanksProps extends QuestionProps {
   question: FillInTheBlanksQuestion;
@@ -25,6 +26,8 @@ export default function FillInTheBlanks({
     isError,
     result,
   } = useUserAnswer(question.id);
+
+  const isLocallyCorrect = useLocalCheckAnswer(question, answer);
 
   const handleCheckAnswer = async () => {
     const response = await checkAnswer();
@@ -65,7 +68,9 @@ export default function FillInTheBlanks({
               void handleCheckAnswer();
             }
           }}
-          className="p-2 border rounded w-40 text-center"
+          className={`p-2 border rounded w-40 text-center ${
+            isLocallyCorrect ? "text-skin-success" : ""
+          }`}
           disabled={isChecked || isChecking}
         />
         <span>{textAfter}</span>
