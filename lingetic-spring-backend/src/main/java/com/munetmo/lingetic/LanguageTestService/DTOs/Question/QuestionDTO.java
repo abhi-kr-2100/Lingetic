@@ -16,7 +16,7 @@ public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
             case FillInTheBlanks -> {
                 var typedQuestion = (FillInTheBlanksQuestion)question;
                 var fullText = typedQuestion.questionText.replaceAll("_+", typedQuestion.answer);
-                var fullTextDigest = HashUtils.sha1(fullText);
+                var fullTextDigest = HashUtils.sha1(String.format("%s_%s", fullText.trim(), typedQuestion.getLanguage().toString()));
 
                 yield new FillInTheBlanksQuestionDTO(
                     typedQuestion.getID(),

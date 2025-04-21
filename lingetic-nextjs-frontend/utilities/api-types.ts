@@ -8,6 +8,7 @@ export interface Question {
 
 export interface FillInTheBlanksQuestion extends Question {
   questionType: "FillInTheBlanks";
+  language: string;
   text: string;
   hint: string;
   fullTextDigest: string;
