@@ -1,6 +1,7 @@
 import { fireEvent, waitFor } from "@testing-library/react";
 import {
   escapeRegex,
+  mockAudio,
   renderWithQueryClient,
 } from "@/utilities/testing-helpers";
 
@@ -18,6 +19,8 @@ jest.mock("../../../../utilities/helpers", () => ({
   ...jest.requireActual("../../../../utilities/helpers"),
   sha1: jest.fn(() => Promise.resolve("mocked-sha1-hash")),
 }));
+
+mockAudio();
 
 describe("FillInTheBlanks", () => {
   beforeEach(() => {
