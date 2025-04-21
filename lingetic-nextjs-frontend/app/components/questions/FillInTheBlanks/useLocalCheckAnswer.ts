@@ -24,7 +24,9 @@ export default function useLocalCheckAnswer(
 
     const checkAnswer = async () => {
       const fullText = question.text.replace(/_+/, answer);
-      const calculatedDigest = await sha1(fullText);
+      const calculatedDigest = await sha1(
+        `${fullText.trim()}_${question.language}`
+      );
 
       setIsCorrect(calculatedDigest === question.fullTextDigest);
     };

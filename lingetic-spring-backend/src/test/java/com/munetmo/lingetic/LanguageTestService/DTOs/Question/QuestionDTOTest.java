@@ -32,7 +32,7 @@ class QuestionDTOTest {
         assertEquals("This is a hint", ((FillInTheBlanksQuestionDTO) dto).getHint());
 
         var expectedFullText = "Fill in: test answer";
-        var expectedDigest = HashUtils.sha1(expectedFullText);
+        var expectedDigest = HashUtils.sha1(String.format("%s_%s", expectedFullText.trim(), question.getLanguage().toString()));
         assertEquals(expectedDigest, ((FillInTheBlanksQuestionDTO) dto).getFullTextDigest());
     }
 }
