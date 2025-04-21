@@ -13,17 +13,6 @@
   "github.copilot.chat.codesearch.enabled": true,
   "github.copilot.nextEditSuggestions.enabled": true,
 
-  "java.configuration.runtimes": [
-    {
-      "name": "JavaSE-23",
-      "path": "/nix/store/3ibf3vw29jijgdmn3ma7nkm36ys8sgnb-openjdk-23.0.2+7/lib/openjdk",
-      "default": true
-    }
-  ],
-  "java.import.gradle.java.home": "/nix/store/3ibf3vw29jijgdmn3ma7nkm36ys8sgnb-openjdk-23.0.2+7/lib/openjdk",
-  "java.compile.nullAnalysis.mode": "automatic",
-  "java.configuration.updateBuildConfiguration": "automatic",
-
   "mcp": {
     "servers": {
       "playwright": {
