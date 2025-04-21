@@ -11,9 +11,10 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
     private final String id;
     private final Language language;
     public final String text;
+    public final String fullTextDigest;
     public final String hint;
 
-    public FillInTheBlanksQuestionDTO(String id, Language language, String text, @Nullable String hint) {
+    public FillInTheBlanksQuestionDTO(String id, Language language, String text, String fullTextDigest, @Nullable String hint) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("id must not be blank");
         }
@@ -22,9 +23,14 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
             throw new IllegalArgumentException("text must not be blank");
         }
 
+        if (fullTextDigest.isBlank()) {
+            throw new IllegalArgumentException("fullTextDigest must not be blank");
+        }
+
         this.id = id;
         this.language = language;
         this.text = text;
+        this.fullTextDigest = fullTextDigest;
         this.hint = Objects.requireNonNullElse(hint, "");
     }
 
@@ -44,6 +50,10 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
 
     public String getHint() {
         return hint;
+    }
+
+    public String getFullTextDigest() {
+        return fullTextDigest;
     }
 
     @Override
