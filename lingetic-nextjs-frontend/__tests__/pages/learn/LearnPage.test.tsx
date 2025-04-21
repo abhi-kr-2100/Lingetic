@@ -5,6 +5,11 @@ import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 
 global.fetch = jest.fn();
 
+jest.mock("../../../utilities/helpers", () => ({
+  ...jest.requireActual("../../../utilities/helpers"),
+  sha1: jest.fn(() => Promise.resolve("mocked-sha1-hash")),
+}));
+
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
