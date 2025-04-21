@@ -245,6 +245,10 @@
       "allDeclaredFields": true,
       "methods": [
         {
+          "name": "getFullTextDigest",
+          "parameterTypes": []
+        },
+        {
           "name": "getHint",
           "parameterTypes": []
         },

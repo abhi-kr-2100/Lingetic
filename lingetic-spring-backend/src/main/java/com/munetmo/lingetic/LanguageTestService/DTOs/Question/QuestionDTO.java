@@ -4,6 +4,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
+import com.munetmo.lingetic.lib.HashUtils;
 
 public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
     String getID();
@@ -14,10 +15,14 @@ public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
         return switch (question.getQuestionType()) {
             case FillInTheBlanks -> {
                 var typedQuestion = (FillInTheBlanksQuestion)question;
+                var fullText = typedQuestion.questionText.replaceAll("_+", typedQuestion.answer);
+                var fullTextDigest = HashUtils.sha1(fullText);
+
                 yield new FillInTheBlanksQuestionDTO(
                     typedQuestion.getID(),
                     typedQuestion.getLanguage(),
                     typedQuestion.questionText,
+                    fullTextDigest,
                     typedQuestion.hint
                 );
             }
