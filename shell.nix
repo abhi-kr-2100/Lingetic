@@ -3,6 +3,7 @@
 pkgs.mkShell {
   buildInputs = with pkgs; [
     docker
+    ffmpeg
     google-cloud-sdk
     graalvmPackages.graalvm-ce
     gradle

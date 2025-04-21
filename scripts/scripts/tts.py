@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import os
 from gtts import gTTS
+from pydub import AudioSegment
 
 
 LANGUAGE_TO_CODE = {
@@ -14,6 +15,22 @@ LANGUAGE_TO_CODE = {
     "French": "fr",
     "Turkish": "tr",
 }
+
+
+def compress_mp3(
+    file_path: str, target_bitrate: str = "32k", sample_rate: int = 16000
+):
+    """
+    Re-encode an MP3 to reduce size by lowering bitrate and sample rate.
+
+    Args:
+        file_path: Path to the MP3 file to compress.
+        target_bitrate: Desired audio bitrate (e.g., '48k').
+        sample_rate: Target sample rate in Hz (e.g., 22050).
+    """
+    audio = AudioSegment.from_mp3(file_path)
+    audio = audio.set_channels(1).set_frame_rate(sample_rate)
+    audio.export(file_path, format="mp3", bitrate=target_bitrate)
 
 
 def generate_filename(text: str, language: str) -> str:
@@ -61,7 +78,10 @@ def load_questions(filepath: str) -> List[Dict[str, Any]]:
 
 
 def text_to_speech(
-    questions: List[Dict[str, Any]], language: str, output_dir: str
+    questions: List[Dict[str, Any]],
+    language: str,
+    output_dir: str,
+    mode: str = "slow",
 ):
     """
     Convert text to speech for each question and save the audio to the specified directory.
@@ -70,9 +90,12 @@ def text_to_speech(
         questions: List of questions to be converted.
         language: Language of the questions.
         output_dir: Directory where the audio files will be saved.
+        mode: "slow" or "normal" (default is "slow")
     """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+
+    slow = True if mode == "slow" else False
 
     for question in questions:
         text = question.get("text", "")
@@ -80,13 +103,14 @@ def text_to_speech(
             filename = generate_filename(text, language)
             file_path = os.path.join(output_dir, filename)
 
-            tts = gTTS(text=text, lang=LANGUAGE_TO_CODE[language])
+            tts = gTTS(text=text, lang=LANGUAGE_TO_CODE[language], slow=slow)
             tts.save(file_path)
+            compress_mp3(file_path)
 
             print(f"Saved: {file_path}")
 
 
-def main(filepath: str, language: str, output_dir: str):
+def main(filepath: str, language: str, output_dir: str, mode: str):
     """
     Main function to process questions and save them as audio files.
 
@@ -94,6 +118,7 @@ def main(filepath: str, language: str, output_dir: str):
         filepath: Path to the JSON file containing questions, or '-' to read from stdin.
         language: Language of the questions.
         output_dir: Directory where the audio files will be saved.
+        mode: "slow" or "normal"
     """
     if language not in LANGUAGE_TO_CODE:
         print(
@@ -102,8 +127,14 @@ def main(filepath: str, language: str, output_dir: str):
         )
         sys.exit(1)
 
+    if mode not in ("slow", "normal"):
+        print(
+            "Error: --mode must be either 'slow' or 'normal'", file=sys.stderr
+        )
+        sys.exit(1)
+
     questions = load_questions(filepath)
-    text_to_speech(questions, language, output_dir)
+    text_to_speech(questions, language, output_dir, mode)
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -134,6 +165,13 @@ def get_parser() -> argparse.ArgumentParser:
         required=True,
         help="Directory where the audio files will be saved.",
     )
+    parser.add_argument(
+        "-m",
+        "--mode",
+        choices=["slow", "normal"],
+        default="slow",
+        help="Set speech mode: 'slow' (default) or 'normal' speed.",
+    )
     return parser
 
 
@@ -141,4 +179,4 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
 
-    main(args.filepath, args.language, args.output_dir)
+    main(args.filepath, args.language, args.output_dir, args.mode)
