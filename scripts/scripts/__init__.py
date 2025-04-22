@@ -4,6 +4,7 @@ from . import fill_in_the_blanks
 from . import insert_into_db
 from . import tts
 from . import upload_to_r2
+from . import course
 
 __all__ = [
     "tatoeba",
@@ -12,4 +13,5 @@ __all__ = [
     "insert_into_db",
     "tts",
     "upload_to_r2",
+    "course",
 ]
