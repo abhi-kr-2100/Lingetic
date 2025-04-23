@@ -4,6 +4,7 @@
     "GitHub.copilot-chat",
     "Codium.codium",
     "google.geminicodeassist",
+    "sourcegraph.cody-ai",
 
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
