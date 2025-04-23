@@ -109,7 +109,7 @@ class CourseResult(BaseModel):
     data: List[Sentence]
 
 
-def make_gemini_api_call(prompt: str) -> dict:
+def make_gemini_api_call(prompt: str, entry: dict) -> dict:
     """
     Gemini API call using correct import and patterns:
     - Initializes genai.Client
@@ -161,7 +161,16 @@ def make_gemini_api_call(prompt: str) -> dict:
             # Access the parsed Pydantic object directly via response.candidates[0].content.parts[0].function_call
             if hasattr(response, "parsed") and response.parsed is not None:
                 # Use model_dump() for Pydantic v2+
-                return response.parsed.model_dump()
+                dump = response.parsed.model_dump()
+                dump["data"] = [
+                    {
+                        "text": sentence["text"],
+                        "translations": sentence["translations"],
+                        "entry": entry,
+                    }
+                    for sentence in dump["data"]
+                ]
+                return dump
             else:
                 # If response structure is unexpected
                 raw_text = getattr(response, "text", "[No text available]")
@@ -260,7 +269,7 @@ def get_sentences_for_entry(language: str, entry: Dict[str, Any]) -> dict:
         language, theme, level, number, instructions, example
     )
     # The API call function now returns a dict directly and handles retries/raises errors
-    output_dict = make_gemini_api_call(prompt)
+    output_dict = make_gemini_api_call(prompt, entry)
     return output_dict
 
 
