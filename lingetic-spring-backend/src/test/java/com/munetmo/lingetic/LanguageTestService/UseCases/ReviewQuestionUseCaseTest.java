@@ -2,7 +2,7 @@ package com.munetmo.lingetic.LanguageTestService.UseCases;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;

@@ -5,8 +5,8 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.Fil
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.FillInTheBlanksAttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
-import com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels.LanguageModel;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.LanguageModel;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;

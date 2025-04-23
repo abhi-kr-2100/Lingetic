@@ -2,6 +2,7 @@ package com.munetmo.lingetic.LanguageTestService.Entities;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import org.junit.jupiter.api.Test;
 
 class QuestionListTest {

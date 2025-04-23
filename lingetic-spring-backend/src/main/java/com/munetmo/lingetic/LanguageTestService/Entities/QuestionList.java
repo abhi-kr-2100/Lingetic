@@ -1,5 +1,7 @@
 package com.munetmo.lingetic.LanguageTestService.Entities;
 
+import com.munetmo.lingetic.LanguageService.Entities.Language;
+
 public class QuestionList {
     private final String id;
     private final String name;

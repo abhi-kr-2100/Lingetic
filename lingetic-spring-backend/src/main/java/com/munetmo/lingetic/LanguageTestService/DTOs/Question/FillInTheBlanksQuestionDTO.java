@@ -1,6 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import org.jspecify.annotations.Nullable;
 

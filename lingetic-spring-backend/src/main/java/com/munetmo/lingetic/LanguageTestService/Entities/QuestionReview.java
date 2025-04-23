@@ -1,5 +1,7 @@
 package com.munetmo.lingetic.LanguageTestService.Entities;
 
+import com.munetmo.lingetic.LanguageService.Entities.Language;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 

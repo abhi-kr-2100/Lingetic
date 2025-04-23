@@ -1,6 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres;
 
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionListWithIDAlreadyExistsException;
 import org.junit.jupiter.api.*;

@@ -1,6 +1,6 @@
-package com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels;
+package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.lib.Utilities;
 
 import java.util.Map;
