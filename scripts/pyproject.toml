@@ -17,6 +17,7 @@ dependencies = [
     "gtts>=2.5.4",
     "boto3>=1.37.37",
     "pydub>=0.25.1",
+    "google-api-core>=2.24.2",
 ]
 
 [tool.ruff]
