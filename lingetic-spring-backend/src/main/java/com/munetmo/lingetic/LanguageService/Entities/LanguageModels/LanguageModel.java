@@ -1,14 +1,19 @@
 package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
 import com.munetmo.lingetic.LanguageService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Token;
 import com.munetmo.lingetic.lib.Utilities;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLanguageModel, TurkishLanguageModel {
     Language getLanguage();
 
     boolean areEquivalent(String s1, String s2);
+
+    List<Token> tokenize(String sentence);
 
     static final Map<Language, LanguageModel> languageModelInstances = Map.of(
             Language.English, new EnglishLanguageModel(),
