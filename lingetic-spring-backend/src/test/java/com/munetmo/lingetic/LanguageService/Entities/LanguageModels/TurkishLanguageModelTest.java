@@ -219,4 +219,39 @@ class TurkishLanguageModelTest {
         assertEquals(TokenType.Punctuation, tokens.get(5).type());
         assertEquals(".", tokens.get(5).value());
     }
+
+    @Test
+    void shouldHandleConsecutivePunctuationEnding() {
+        var tokens = model.tokenize("Ne?!");
+
+        assertEquals(3, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("Ne", tokens.get(0).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(1).type());
+        assertEquals("?", tokens.get(1).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(2).type());
+        assertEquals("!", tokens.get(2).value());
+    }
+
+    @Test
+    void shouldHandleConsecutivePunctuationBeginning() {
+        var tokens = model.tokenize("--Şimdi!");
+
+        assertEquals(4, tokens.size());
+
+        assertEquals(TokenType.Punctuation, tokens.get(0).type());
+        assertEquals("-", tokens.get(0).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(1).type());
+        assertEquals("-", tokens.get(1).value());
+
+        assertEquals(TokenType.Word, tokens.get(2).type());
+        assertEquals("Şimdi", tokens.get(2).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(3).type());
+        assertEquals("!", tokens.get(3).value());
+    }
 }
