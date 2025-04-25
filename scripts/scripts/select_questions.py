@@ -129,17 +129,23 @@ You should output, {{"choice": 2}} since the second variant is most appropriate 
     return prompt
 
 
-def process_entries(entries: List[Dict[str, Any]], language: str) -> List[Dict[str, Any]]:
+def process_entries(entries: List[Dict[str, Any]], language: str, use_ai: bool) -> List[Dict[str, Any]]:
     selected_questions: List[Dict[str, Any]] = []
     for entry in entries:
         questions = entry.get("questions", [])
         if not questions:
             continue
-        prompt = generate_prompt(entry, language)
-        choice = make_gemini_api_call(prompt)
-        if not 1 <= choice <= len(questions):
-            print(f"Error: choice {choice} out of range for entry '{entry.get('text')}'", file=sys.stderr)
-            continue
+        if use_ai:
+            prompt = generate_prompt(entry, language)
+            choice = make_gemini_api_call(prompt)
+            if not 1 <= choice <= len(questions):
+                print(f"Error: choice {choice} out of range for entry '{entry.get('text')}'", file=sys.stderr)
+                continue
+        else:
+            # Select the variant with the largest answer length
+            lengths = [len(q.get("question_type_specific_data", {}).get("answer", "")) for q in questions]
+            max_idx = max(range(len(lengths)), key=lambda i: lengths[i])
+            choice = max_idx + 1
         selected_questions.append(questions[choice - 1])
     return selected_questions
 
@@ -166,12 +172,17 @@ def get_parser() -> argparse.ArgumentParser:
         required=True,
         help="Language (case-sensitive!)",
     )
+    parser.add_argument(
+        "-a", "--use-ai",
+        action="store_true",
+        help="Use Gemini API for selection (default: pick largest blank locally)",
+    )
     return parser
 
 
-def main(filepath: str, output: str, language: str) -> None:
+def main(filepath: str, output: str, language: str, use_ai: bool) -> None:
     entries = load_entries(filepath)
-    selected = process_entries(entries, language)
+    selected = process_entries(entries, language, use_ai)
     output_file = get_output_file(output)
     needs_closing = output != "-"
     try:
@@ -188,4 +199,4 @@ def main(filepath: str, output: str, language: str) -> None:
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
-    main(args.filepath, args.output, args.language)
+    main(args.filepath, args.output, args.language, args.use_ai)
