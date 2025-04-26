@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.*;
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 

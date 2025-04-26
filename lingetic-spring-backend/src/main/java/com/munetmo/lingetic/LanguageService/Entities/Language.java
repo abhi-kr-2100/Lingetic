@@ -1,4 +1,4 @@
-package com.munetmo.lingetic.LanguageTestService.Entities;
+package com.munetmo.lingetic.LanguageService.Entities;
 
 public enum Language {
     DummyLanguage,

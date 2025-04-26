@@ -1,8 +1,7 @@
 package com.munetmo.lingetic.LanguageTestService.Repositories;
 
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
-import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionListNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionListWithIDAlreadyExistsException;
 
 import java.util.List;

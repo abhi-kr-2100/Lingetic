@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.FillInTheBlanksAttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;

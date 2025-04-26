@@ -1,6 +1,7 @@
-package com.munetmo.lingetic.LanguageTestService.Entities.LanguageModels;
+package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.EnglishLanguageModel;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

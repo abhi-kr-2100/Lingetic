@@ -1,6 +1,6 @@
 package com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres;
 
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionReview;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;

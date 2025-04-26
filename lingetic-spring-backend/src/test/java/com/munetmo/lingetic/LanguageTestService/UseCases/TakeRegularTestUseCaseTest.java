@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO;
-import com.munetmo.lingetic.LanguageTestService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
