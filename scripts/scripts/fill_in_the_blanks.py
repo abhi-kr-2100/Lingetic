@@ -1,169 +1,108 @@
 #!/usr/bin/env python
 
-from typing import Dict, List, TextIO, Any
-from string import punctuation
+import argparse
 import json
 import sys
-import random
-import argparse
+from typing import List, Dict, Any, TextIO
+import requests
 
 
 def load_sentences(filepath: str) -> List[Dict[str, Any]]:
     """
     Load sentences from a JSON file or stdin.
-
-    Args:
-        filepath: Path to the JSON file containing sentences, or '-' to read from stdin
-
-    Returns:
-        A list of dictionaries with text and translation fields
     """
     try:
         if filepath == "-":
-            # Read from stdin
             data = json.load(sys.stdin)
         else:
-            # Read from file
             with open(filepath, "r", encoding="utf-8") as file:
                 data = json.load(file)
-
         return data.get("data", [])
-    except FileNotFoundError:
-        print(f"Error: File '{filepath}' not found", file=sys.stderr)
-        sys.exit(1)
-    except json.JSONDecodeError:
-        source = "stdin" if filepath == "-" else f"file '{filepath}'"
-        print(f"Error: Invalid JSON format in {source}", file=sys.stderr)
-        sys.exit(1)
     except Exception as e:
         print(f"Error loading sentences: {e}", file=sys.stderr)
         sys.exit(1)
 
 
-def create_fill_in_the_blank(sentence: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Create a fill-in-the-blank question from a sentence.
-
-    Args:
-        sentence: Dictionary containing text and translation fields
-
-    Returns:
-        Dictionary with question type and question-specific data
-    """
-    text = sentence.get("text", "")
-    translation = sentence.get("translations", [])[0].get("text", "")
-
-    split_words = text.split()
-    actual_words = []
-
-    for word in split_words:
-        clean_word = word.strip(punctuation)
-        if not clean_word:
-            continue
-
-        actual_words.append(clean_word)
-
-    word_to_mask = random.choice(actual_words)
-    question_text = text.replace(word_to_mask, "_____", 1)
-
-    return {
-        "question_type": "FillInTheBlanks",
-        "question_type_specific_data": {
-            "questionText": question_text,
-            "answer": word_to_mask,
-            "hint": translation,
-        },
-    }
-
-
-def generate_questions(sentences: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """
-    Generate fill-in-the-blank questions from a list of sentences.
-
-    Args:
-        sentences: List of dictionaries containing text and translation
-
-    Returns:
-        List of dictionaries with question type and question-specific data
-    """
-    questions = []
-
-    for sentence in sentences:
-        question = create_fill_in_the_blank(sentence)
-        if question:
-            questions.append(question)
-
-    return questions
-
-
 def get_output_file(output_path: str) -> TextIO:
     """
     Get the output file handle based on the output path.
-
-    Args:
-        output_path: Path to the output file, or '-' for stdout
-
-    Returns:
-        A file-like object for writing output
     """
     if output_path == "-":
         return sys.stdout
-    else:
-        try:
-            return open(output_path, "w", encoding="utf-8")
-        except Exception as e:
-            print(
-                f"Error opening output file '{output_path}': {e}",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-
-def main(filepath: str, output: str) -> None:
-    """
-    Main function to process sentences and generate fill-in-the-blank questions.
-
-    Args:
-        filepath: Path to the JSON file containing sentences, or '-' to read from stdin
-        output_path: Path to the output file, or '-' for stdout
-    """
-    # Load sentences from the JSON file or stdin
-    sentences = load_sentences(filepath)
-
-    # Generate questions
-    questions = generate_questions(sentences)
-
-    # Get output file handle
-    output_file = get_output_file(output)
-
-    # Only need to handle closing for actual files (not stdout)
-    needs_closing = output != "-"
-
     try:
-        # Write questions as JSON to the output file
-        json.dump(questions, output_file, ensure_ascii=False, indent=2)
-
-        # Add a newline at the end of the output
-        output_file.write("\n")
+        return open(output_path, "w", encoding="utf-8")
     except Exception as e:
-        print(f"Error writing to output: {e}", file=sys.stderr)
+        print(f"Error opening output file '{output_path}': {e}", file=sys.stderr)
         sys.exit(1)
-    finally:
-        # Close the output file if it's not stdout
-        if needs_closing:
-            output_file.close()
+
+
+def tokenize_sentence(language: str, sentence: str) -> List[Dict[str, Any]]:
+    """
+    Tokenize a sentence using the local HTTP API.
+    """
+    url = "http://localhost:8000/language-service/tokenize"
+    params = {"language": language, "sentence": sentence}
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error tokenizing sentence '{sentence}': {e}", file=sys.stderr)
+        return []
+
+
+def generate_fill_in_the_blank_questions(sentence_obj: Dict[str, Any], language: str) -> List[Dict[str, Any]]:
+    """
+    Generate all possible fill-in-the-blank questions for a sentence, one for each Word token.
+    """
+    text = sentence_obj.get("text", "")
+    translations = sentence_obj.get("translations", [])
+    translation = translations[0].get("text", "") if translations else ""
+    tokens = tokenize_sentence(language, text)
+
+    # Find indices and values of Word tokens
+    word_indices = [(i, t["value"]) for i, t in enumerate(tokens) if t.get("type") == "Word"]
+    questions = []
+    for idx, word in word_indices:
+        # Reconstruct the sentence with the idx-th Word replaced by blanks
+        masked_tokens = tokens.copy()
+        masked_tokens[idx] = {**masked_tokens[idx], "value": "_____"}
+        # Rebuild the sentence, preserving original spacing/punctuation
+        question_text = ""
+        prev_end = 0
+        for t in masked_tokens:
+            val = t["value"]
+            if question_text and not question_text.endswith(" ") and t["type"] == "Word":
+                question_text += " "
+            question_text += val
+        questions.append({
+            "question_type": "FillInTheBlanks",
+            "question_type_specific_data": {
+                "questionText": question_text,
+                "answer": word,
+                "hint": translation,
+            },
+        })
+    return questions
+
+
+def process_sentences(sentences: List[Dict[str, Any]], language: str) -> List[Dict[str, Any]]:
+    """
+    For each sentence, generate an object with a 'questions' key listing all fill-in-the-blank questions.
+    Preserve any extra keys from the input entry.
+    """
+    result = []
+    for sentence in sentences:
+        questions = generate_fill_in_the_blank_questions(sentence, language)
+        # Copy all keys from the input entry
+        obj = dict(sentence)
+        obj["questions"] = questions
+        result.append(obj)
+    return result
 
 
 def get_parser() -> argparse.ArgumentParser:
-    """
-    Create and configure the argument parser for the script.
-
-    Returns:
-        An ArgumentParser object configured with the script's arguments
-    """
-    parser = argparse.ArgumentParser(
-        description="Generate fill-in-the-blank questions from sentences"
-    )
+    parser = argparse.ArgumentParser(description="Generate grouped fill-in-the-blank questions from sentences.")
     parser.add_argument(
         "filepath",
         nargs="?",
@@ -171,16 +110,31 @@ def get_parser() -> argparse.ArgumentParser:
         help="Path to the JSON file containing sentences (default: '-' to read from stdin)",
     )
     parser.add_argument(
-        "-o",
-        "--output",
-        default="-",
-        help="Path to the output file (default: '-' for stdout)",
+        "-o", "--output", default="-", help="Path to the output file (default: '-' for stdout)"
+    )
+    parser.add_argument(
+        "-l", "--language", required=True, help="Language (e.g., French, Turkish) (case-sensitive!)"
     )
     return parser
+
+
+def main(filepath: str, output: str, language: str) -> None:
+    sentences = load_sentences(filepath)
+    objects_with_questions = process_sentences(sentences, language)
+    output_file = get_output_file(output)
+    needs_closing = output != "-"
+    try:
+        json.dump(objects_with_questions, output_file, ensure_ascii=False, indent=2)
+        output_file.write("\n")
+    except Exception as e:
+        print(f"Error writing to output: {e}", file=sys.stderr)
+        sys.exit(1)
+    finally:
+        if needs_closing:
+            output_file.close()
 
 
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
-
-    main(args.filepath, args.output)
+    main(args.filepath, args.output, args.language)
