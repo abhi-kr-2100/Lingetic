@@ -279,10 +279,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.String",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.String", "java.lang.Object"]
         }
       ]
     },
@@ -387,21 +384,15 @@
         },
         {
           "name": "questionListRepository",
-          "parameterTypes": [
-            "org.springframework.jdbc.core.JdbcTemplate"
-          ]
+          "parameterTypes": ["org.springframework.jdbc.core.JdbcTemplate"]
         },
         {
           "name": "questionRepository",
-          "parameterTypes": [
-            "org.springframework.jdbc.core.JdbcTemplate"
-          ]
+          "parameterTypes": ["org.springframework.jdbc.core.JdbcTemplate"]
         },
         {
           "name": "questionReviewRepository",
-          "parameterTypes": [
-            "org.springframework.jdbc.core.JdbcTemplate"
-          ]
+          "parameterTypes": ["org.springframework.jdbc.core.JdbcTemplate"]
         },
         {
           "name": "reviewQuestionUseCase",
@@ -438,9 +429,7 @@
         },
         {
           "name": "CGLIB$SET_STATIC_CALLBACKS",
-          "parameterTypes": [
-            "org.springframework.cglib.proxy.Callback[]"
-          ]
+          "parameterTypes": ["org.springframework.cglib.proxy.Callback[]"]
         }
       ]
     },
@@ -449,9 +438,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -460,9 +447,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -493,9 +478,7 @@
         },
         {
           "name": "getQuestionLists",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         },
         {
           "name": "getQuestions",
@@ -507,10 +490,7 @@
         },
         {
           "name": "reviewQuestion",
-          "parameterTypes": [
-            "java.lang.String",
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String", "java.lang.String"]
         }
       ]
     },
@@ -532,9 +512,7 @@
       "methods": [
         {
           "name": "main",
-          "parameterTypes": [
-            "java.lang.String[]"
-          ]
+          "parameterTypes": ["java.lang.String[]"]
         }
       ]
     },
@@ -553,9 +531,7 @@
         },
         {
           "name": "CGLIB$SET_STATIC_CALLBACKS",
-          "parameterTypes": [
-            "org.springframework.cglib.proxy.Callback[]"
-          ]
+          "parameterTypes": ["org.springframework.cglib.proxy.Callback[]"]
         }
       ]
     },
@@ -602,9 +578,7 @@
         },
         {
           "name": "CGLIB$SET_STATIC_CALLBACKS",
-          "parameterTypes": [
-            "org.springframework.cglib.proxy.Callback[]"
-          ]
+          "parameterTypes": ["org.springframework.cglib.proxy.Callback[]"]
         }
       ]
     },
@@ -613,9 +587,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -624,9 +596,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -640,9 +610,7 @@
         },
         {
           "name": "jdbcTemplate",
-          "parameterTypes": [
-            "javax.sql.DataSource"
-          ]
+          "parameterTypes": ["javax.sql.DataSource"]
         }
       ]
     },
@@ -661,9 +629,7 @@
         },
         {
           "name": "CGLIB$SET_STATIC_CALLBACKS",
-          "parameterTypes": [
-            "org.springframework.cglib.proxy.Callback[]"
-          ]
+          "parameterTypes": ["org.springframework.cglib.proxy.Callback[]"]
         }
       ]
     },
@@ -672,9 +638,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -683,9 +647,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -734,9 +696,7 @@
         },
         {
           "name": "CGLIB$SET_STATIC_CALLBACKS",
-          "parameterTypes": [
-            "org.springframework.cglib.proxy.Callback[]"
-          ]
+          "parameterTypes": ["org.springframework.cglib.proxy.Callback[]"]
         }
       ]
     },
@@ -745,9 +705,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -756,9 +714,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -1284,21 +1240,15 @@
       "methods": [
         {
           "name": "setDsn",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         },
         {
           "name": "setEnvironment",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         },
         {
           "name": "setSendDefaultPii",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         }
       ]
     },
@@ -1393,9 +1343,7 @@
         },
         {
           "name": "contextTagsEventProcessor",
-          "parameterTypes": [
-            "io.sentry.SentryOptions"
-          ]
+          "parameterTypes": ["io.sentry.SentryOptions"]
         }
       ]
     },
@@ -1409,9 +1357,7 @@
         },
         {
           "name": "sentrySpanRestTemplateCustomizer",
-          "parameterTypes": [
-            "io.sentry.IScopes"
-          ]
+          "parameterTypes": ["io.sentry.IScopes"]
         }
       ]
     },
@@ -1425,9 +1371,7 @@
         },
         {
           "name": "sentrySpanRestClientCustomizer",
-          "parameterTypes": [
-            "io.sentry.IScopes"
-          ]
+          "parameterTypes": ["io.sentry.IScopes"]
         }
       ]
     },
@@ -1441,9 +1385,7 @@
         },
         {
           "name": "sentryRequestResolver",
-          "parameterTypes": [
-            "io.sentry.IScopes"
-          ]
+          "parameterTypes": ["io.sentry.IScopes"]
         },
         {
           "name": "sentrySpringFilter",
@@ -1503,9 +1445,7 @@
         },
         {
           "name": "springSecuritySentryUserProvider",
-          "parameterTypes": [
-            "io.sentry.SentryOptions"
-          ]
+          "parameterTypes": ["io.sentry.SentryOptions"]
         }
       ]
     },
@@ -1528,9 +1468,7 @@
         },
         {
           "name": "springProfilesEventProcessor",
-          "parameterTypes": [
-            "org.springframework.core.env.Environment"
-          ]
+          "parameterTypes": ["org.springframework.core.env.Environment"]
         }
       ]
     },
@@ -1544,9 +1482,7 @@
         },
         {
           "name": "sentryLogbackInitializer",
-          "parameterTypes": [
-            "io.sentry.spring.boot.jakarta.SentryProperties"
-          ]
+          "parameterTypes": ["io.sentry.spring.boot.jakarta.SentryProperties"]
         }
       ]
     },
@@ -1616,9 +1552,7 @@
         },
         {
           "name": "httpServletRequestSentryUserProvider",
-          "parameterTypes": [
-            "io.sentry.SentryOptions"
-          ]
+          "parameterTypes": ["io.sentry.SentryOptions"]
         }
       ]
     },
@@ -1834,9 +1768,7 @@
       "methods": [
         {
           "name": "checkPermission",
-          "parameterTypes": [
-            "java.security.Permission"
-          ]
+          "parameterTypes": ["java.security.Permission"]
         }
       ]
     },
@@ -1973,10 +1905,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.String",
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String", "java.lang.String"]
         }
       ]
     },
@@ -1997,9 +1926,7 @@
       "methods": [
         {
           "name": "doPrivileged",
-          "parameterTypes": [
-            "java.security.PrivilegedExceptionAction"
-          ]
+          "parameterTypes": ["java.security.PrivilegedExceptionAction"]
         }
       ]
     },
@@ -2353,22 +2280,15 @@
         },
         {
           "name": "getProperty",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         },
         {
           "name": "setPort",
-          "parameterTypes": [
-            "int"
-          ]
+          "parameterTypes": ["int"]
         },
         {
           "name": "setProperty",
-          "parameterTypes": [
-            "java.lang.String",
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String", "java.lang.String"]
         }
       ]
     },
@@ -2434,9 +2354,7 @@
       "methods": [
         {
           "name": "setBindOnInit",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         }
       ]
     },
@@ -2524,9 +2442,7 @@
         },
         {
           "name": "setBaselineMigrationPrefix",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         }
       ]
     },
@@ -2590,9 +2506,7 @@
         },
         {
           "name": "setScriptFilename",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         }
       ]
     },
@@ -2610,9 +2524,7 @@
         },
         {
           "name": "setScriptFilename",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         }
       ]
     },
@@ -2672,15 +2584,11 @@
         },
         {
           "name": "setCheckDriftOnMigrate",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         },
         {
           "name": "setPublishResult",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         }
       ]
     },
@@ -2720,9 +2628,7 @@
         },
         {
           "name": "setTransactionalLock",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         }
       ]
     },
@@ -2956,9 +2862,7 @@
       "methods": [
         {
           "name": "setProxyTargetClass",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         }
       ]
     },
@@ -2968,9 +2872,7 @@
       "methods": [
         {
           "name": "setOrder",
-          "parameterTypes": [
-            "int"
-          ]
+          "parameterTypes": ["int"]
         }
       ]
     },
@@ -3104,9 +3006,7 @@
       "methods": [
         {
           "name": "setAllowCircularReferences",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         }
       ]
     },
@@ -3167,9 +3067,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.String[]"
-          ]
+          "parameterTypes": ["java.lang.String[]"]
         }
       ]
     },
@@ -3629,9 +3527,7 @@
         },
         {
           "name": "persistenceExceptionTranslationPostProcessor",
-          "parameterTypes": [
-            "org.springframework.core.env.Environment"
-          ]
+          "parameterTypes": ["org.springframework.core.env.Environment"]
         }
       ]
     },
@@ -3645,9 +3541,7 @@
         },
         {
           "name": "flywayDefaultDdlModeProvider",
-          "parameterTypes": [
-            "org.springframework.beans.factory.ObjectProvider"
-          ]
+          "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"]
         },
         {
           "name": "stringOrNumberMigrationVersionConverter",
@@ -3755,9 +3649,7 @@
         },
         {
           "name": "setEnabled",
-          "parameterTypes": [
-            "boolean"
-          ]
+          "parameterTypes": ["boolean"]
         }
       ]
     },
@@ -3807,9 +3699,7 @@
         },
         {
           "name": "messageConverters",
-          "parameterTypes": [
-            "org.springframework.beans.factory.ObjectProvider"
-          ]
+          "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"]
         }
       ]
     },
@@ -3835,9 +3725,7 @@
         },
         {
           "name": "stringHttpMessageConverter",
-          "parameterTypes": [
-            "org.springframework.core.env.Environment"
-          ]
+          "parameterTypes": ["org.springframework.core.env.Environment"]
         }
       ]
     },
@@ -3861,9 +3749,7 @@
         },
         {
           "name": "mappingJackson2HttpMessageConverter",
-          "parameterTypes": [
-            "com.fasterxml.jackson.databind.ObjectMapper"
-          ]
+          "parameterTypes": ["com.fasterxml.jackson.databind.ObjectMapper"]
         }
       ]
     },
@@ -4011,9 +3897,7 @@
         },
         {
           "name": "jsonMixinModuleEntries",
-          "parameterTypes": [
-            "org.springframework.context.ApplicationContext"
-          ]
+          "parameterTypes": ["org.springframework.context.ApplicationContext"]
         }
       ]
     },
@@ -4124,27 +4008,19 @@
         },
         {
           "name": "setDriverClassName",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         },
         {
           "name": "setPassword",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         },
         {
           "name": "setUrl",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         },
         {
           "name": "setUsername",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         }
       ]
     },
@@ -4228,9 +4104,7 @@
         },
         {
           "name": "namedParameterJdbcTemplate",
-          "parameterTypes": [
-            "org.springframework.jdbc.core.JdbcTemplate"
-          ]
+          "parameterTypes": ["org.springframework.jdbc.core.JdbcTemplate"]
         }
       ]
     },
@@ -4468,9 +4342,7 @@
         },
         {
           "name": "sslBundleRegistry",
-          "parameterTypes": [
-            "org.springframework.beans.factory.ObjectProvider"
-          ]
+          "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"]
         },
         {
           "name": "sslPropertiesSslBundleRegistrar",
@@ -4685,15 +4557,11 @@
         },
         {
           "name": "platformTransactionManagerCustomizers",
-          "parameterTypes": [
-            "org.springframework.beans.factory.ObjectProvider"
-          ]
+          "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"]
         },
         {
           "name": "transactionExecutionListeners",
-          "parameterTypes": [
-            "org.springframework.beans.factory.ObjectProvider"
-          ]
+          "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"]
         }
       ]
     },
@@ -4739,9 +4607,7 @@
         },
         {
           "name": "setPort",
-          "parameterTypes": [
-            "java.lang.Integer"
-          ]
+          "parameterTypes": ["java.lang.Integer"]
         }
       ]
     },
@@ -4785,9 +4651,7 @@
         },
         {
           "name": "httpMessageConvertersRestClientCustomizer",
-          "parameterTypes": [
-            "org.springframework.beans.factory.ObjectProvider"
-          ]
+          "parameterTypes": ["org.springframework.beans.factory.ObjectProvider"]
         },
         {
           "name": "restClientBuilderConfigurer",
@@ -5159,9 +5023,7 @@
         },
         {
           "name": "viewResolver",
-          "parameterTypes": [
-            "org.springframework.beans.factory.BeanFactory"
-          ]
+          "parameterTypes": ["org.springframework.beans.factory.BeanFactory"]
         }
       ]
     },
@@ -5423,9 +5285,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "org.springframework.core.io.ResourceLoader"
-          ]
+          "parameterTypes": ["org.springframework.core.io.ResourceLoader"]
         }
       ]
     },
@@ -5780,9 +5640,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "org.springframework.core.env.Environment"
-          ]
+          "parameterTypes": ["org.springframework.core.env.Environment"]
         }
       ]
     },
@@ -5791,9 +5649,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "org.springframework.core.env.Environment"
-          ]
+          "parameterTypes": ["org.springframework.core.env.Environment"]
         }
       ]
     },
@@ -5889,9 +5745,7 @@
       "methods": [
         {
           "name": "byAnnotation",
-          "parameterTypes": [
-            "java.lang.Class"
-          ]
+          "parameterTypes": ["java.lang.Class"]
         }
       ]
     },
@@ -6596,33 +6450,23 @@
         },
         {
           "name": "enableGlobalAuthenticationAutowiredConfigurer",
-          "parameterTypes": [
-            "org.springframework.context.ApplicationContext"
-          ]
+          "parameterTypes": ["org.springframework.context.ApplicationContext"]
         },
         {
           "name": "initializeAuthenticationProviderBeanManagerConfigurer",
-          "parameterTypes": [
-            "org.springframework.context.ApplicationContext"
-          ]
+          "parameterTypes": ["org.springframework.context.ApplicationContext"]
         },
         {
           "name": "initializeUserDetailsBeanManagerConfigurer",
-          "parameterTypes": [
-            "org.springframework.context.ApplicationContext"
-          ]
+          "parameterTypes": ["org.springframework.context.ApplicationContext"]
         },
         {
           "name": "setApplicationContext",
-          "parameterTypes": [
-            "org.springframework.context.ApplicationContext"
-          ]
+          "parameterTypes": ["org.springframework.context.ApplicationContext"]
         },
         {
           "name": "setGlobalAuthenticationConfigurers",
-          "parameterTypes": [
-            "java.util.List"
-          ]
+          "parameterTypes": ["java.util.List"]
         },
         {
           "name": "setObjectPostProcessor",
@@ -6703,9 +6547,7 @@
         },
         {
           "name": "setApplicationContext",
-          "parameterTypes": [
-            "org.springframework.context.ApplicationContext"
-          ]
+          "parameterTypes": ["org.springframework.context.ApplicationContext"]
         },
         {
           "name": "setAuthenticationConfiguration",
@@ -6824,9 +6666,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.util.List"
-          ]
+          "parameterTypes": ["java.util.List"]
         }
       ]
     },
@@ -6869,9 +6709,7 @@
         },
         {
           "name": "setFilterChains",
-          "parameterTypes": [
-            "java.util.List"
-          ]
+          "parameterTypes": ["java.util.List"]
         },
         {
           "name": "springSecurityFilterChain",
@@ -7376,9 +7214,7 @@
       "methods": [
         {
           "name": "setConfigurers",
-          "parameterTypes": [
-            "java.util.List"
-          ]
+          "parameterTypes": ["java.util.List"]
         }
       ]
     },
@@ -7740,9 +7576,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.security.SecureRandomParameters"
-          ]
+          "parameterTypes": ["java.security.SecureRandomParameters"]
         }
       ]
     },
@@ -7886,10 +7720,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7898,10 +7729,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7910,10 +7738,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7922,10 +7747,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7934,10 +7756,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7946,10 +7765,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7958,10 +7774,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7970,10 +7783,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7982,10 +7792,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -7994,10 +7801,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -8006,10 +7810,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -8018,10 +7819,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "java.lang.Boolean",
-            "java.lang.Object"
-          ]
+          "parameterTypes": ["java.lang.Boolean", "java.lang.Object"]
         }
       ]
     },
@@ -8063,30 +7861,22 @@
     },
     {
       "type": {
-        "proxy": [
-          "java.sql.Connection"
-        ]
+        "proxy": ["java.sql.Connection"]
       }
     },
     {
       "type": {
-        "proxy": [
-          "org.springframework.amqp.rabbit.connection.ChannelProxy"
-        ]
+        "proxy": ["org.springframework.amqp.rabbit.connection.ChannelProxy"]
       }
     },
     {
       "type": {
-        "proxy": [
-          "org.springframework.beans.factory.annotation.Qualifier"
-        ]
+        "proxy": ["org.springframework.beans.factory.annotation.Qualifier"]
       }
     },
     {
       "type": {
-        "proxy": [
-          "org.springframework.boot.SpringBootConfiguration"
-        ]
+        "proxy": ["org.springframework.boot.SpringBootConfiguration"]
       }
     },
     {
@@ -8098,16 +7888,12 @@
     },
     {
       "type": {
-        "proxy": [
-          "org.springframework.web.bind.annotation.RequestMapping"
-        ]
+        "proxy": ["org.springframework.web.bind.annotation.RequestMapping"]
       }
     },
     {
       "type": {
-        "proxy": [
-          "org.springframework.web.bind.annotation.RequestParam"
-        ]
+        "proxy": ["org.springframework.web.bind.annotation.RequestParam"]
       }
     }
   ],
@@ -9331,201 +9117,135 @@
   "bundles": [
     {
       "name": "jakarta.servlet.LocalStrings",
-      "locales": [
-        "en-US"
-      ]
+      "locales": ["en-US"]
     },
     {
       "name": "jakarta.servlet.http.LocalStrings",
-      "locales": [
-        "en-US"
-      ]
+      "locales": ["en-US"]
     },
     {
       "name": "org.apache.catalina.authenticator.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.authenticator.jaspic.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.connector.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.core.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.deploy.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.loader.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.mapper.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.mbeans.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.realm.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.security.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.session.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.startup.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.util.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.valves.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.catalina.webresources.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.coyote.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.coyote.http11.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.coyote.http11.filters.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.naming.LocalStrings",
-      "locales": [
-        "en-US"
-      ]
+      "locales": ["en-US"]
     },
     {
       "name": "org.apache.tomcat.util.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.buf.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.compat.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.descriptor.web.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.http.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.http.parser.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.modeler.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.net.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.scan.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.util.threads.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.websocket.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     },
     {
       "name": "org.apache.tomcat.websocket.server.LocalStrings",
-      "locales": [
-        "und"
-      ]
+      "locales": ["und"]
     }
   ],
   "jni": [
@@ -9534,9 +9254,7 @@
       "methods": [
         {
           "name": "getBoolean",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
+          "parameterTypes": ["java.lang.String"]
         }
       ]
     },

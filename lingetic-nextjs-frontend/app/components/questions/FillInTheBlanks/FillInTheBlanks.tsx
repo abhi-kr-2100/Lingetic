@@ -5,9 +5,6 @@ import assert from "@/utilities/assert";
 import useUserAnswer from "./useUserAnswer";
 import type QuestionProps from "../QuestionProps";
 import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
-import useLocalCheckAnswer from "./useLocalCheckAnswer";
-import useQuestionAudioPlayback from "./useQuestionAudioPlayback";
-import { Volume2 } from "lucide-react"; // Lucide icon import
 
 interface FillInTheBlanksProps extends QuestionProps {
   question: FillInTheBlanksQuestion;
@@ -29,18 +26,9 @@ export default function FillInTheBlanks({
     result,
   } = useUserAnswer(question.id);
 
-  const { playAudio } = useQuestionAudioPlayback({
-    question,
-    autoplay: true,
-  });
-
-  const isLocallyCorrect = useLocalCheckAnswer(question, answer);
-
   const handleCheckAnswer = async () => {
     const response = await checkAnswer();
     afterAnswerCheck?.(response?.attemptStatus);
-
-    playAudio();
   };
 
   const [textBefore, textAfter] = question.text.split(/_+/);
@@ -64,14 +52,6 @@ export default function FillInTheBlanks({
   return (
     <div className="shadow-lg rounded-lg p-6">
       <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
-        <button
-          aria-label="Play question audio"
-          type="button"
-          onClick={playAudio}
-        >
-          <Volume2 className="w-6 h-6 text-skin-base" />
-        </button>
-
         <span>{textBefore}</span>
         <input
           type="text"
@@ -85,9 +65,7 @@ export default function FillInTheBlanks({
               void handleCheckAnswer();
             }
           }}
-          className={`p-2 border rounded w-40 text-center ${
-            isLocallyCorrect ? "text-skin-success" : ""
-          }`}
+          className={`p-2 border rounded w-40 text-center`}
           disabled={isChecked || isChecking}
         />
         <span>{textAfter}</span>
