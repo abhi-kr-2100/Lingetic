@@ -1,9 +1,13 @@
 package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
 import com.munetmo.lingetic.LanguageService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Token;
+import com.munetmo.lingetic.LanguageService.Entities.TokenType;
+import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.LatinScriptLanguageModelHelper;
+import org.jspecify.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Locale;
+import java.util.List;
 
 public final class TurkishLanguageModel implements LanguageModel {
     @Override
@@ -11,28 +15,19 @@ public final class TurkishLanguageModel implements LanguageModel {
         return Language.Turkish;
     }
 
-    private static final String turkishSpecificCharacters = "çğıöşü";
+    private final LatinScriptLanguageModelHelper helper;
+
+    public TurkishLanguageModel() {
+        this.helper = new LatinScriptLanguageModelHelper(Locale.forLanguageTag("tr-TR"));
+    }
 
     @Override
     public boolean areEquivalent(String s1, String s2) {
-        var normalized1 = normalizeString(s1);
-        var normalized2 = normalizeString(s2);
-
-        return normalized1.equals(normalized2);
+        return helper.areEquivalent(s1, s2);
     }
 
-    private String normalizeString(String input) {
-        var words = input.split("\\s+");
-        var normalizedWords = Arrays.stream(words)
-                .map(w -> w.trim().toLowerCase(Locale.forLanguageTag("tr-TR")))
-                .map(w -> {
-                    var regex = String.format("^[^a-z0-9%s]+|[^a-z0-9%s]+$", turkishSpecificCharacters,
-                            turkishSpecificCharacters);
-
-                    return w.replaceAll(regex, "");
-                })
-                .filter(w -> !w.isBlank());
-
-        return String.join(" ", normalizedWords.toList());
+    @Override
+    public List<Token> tokenize(String input) {
+        return helper.tokenize(input);
     }
 }

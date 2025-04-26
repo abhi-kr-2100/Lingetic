@@ -2,6 +2,8 @@ package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
 import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.TurkishLanguageModel;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Token;
+import com.munetmo.lingetic.LanguageService.Entities.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -80,5 +82,176 @@ class TurkishLanguageModelTest {
     void areEquivalentShouldHandleApostrophes() {
         assertFalse(model.areEquivalent("İstanbul'da", "istanbulda"));
         assertFalse(model.areEquivalent("Ali'nin", "alinin"));
+    }
+
+    @Test
+    void tokenizeShouldTokenizeSimpleSentences() {
+        var tokens = model.tokenize("Merhaba, dünya!");
+
+        assertEquals(4, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("Merhaba", tokens.get(0).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(1).type());
+        assertEquals(",", tokens.get(1).value());
+
+        assertEquals(TokenType.Word, tokens.get(2).type());
+        assertEquals("dünya", tokens.get(2).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(3).type());
+        assertEquals("!", tokens.get(3).value());
+    }
+
+    @Test
+    void tokenizeShouldKeepPunctuationBetweenLettersAsOneWord() {
+        var tokens = model.tokenize("Ben'im kitabım ve Ali'nin kalemi.");
+
+        assertEquals(6, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("Ben'im", tokens.get(0).value());
+
+        assertEquals(TokenType.Word, tokens.get(1).type());
+        assertEquals("kitabım", tokens.get(1).value());
+
+        assertEquals(TokenType.Word, tokens.get(2).type());
+        assertEquals("ve", tokens.get(2).value());
+
+        assertEquals(TokenType.Word, tokens.get(3).type());
+        assertEquals("Ali'nin", tokens.get(3).value());
+
+        assertEquals(TokenType.Word, tokens.get(4).type());
+        assertEquals("kalemi", tokens.get(4).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(5).type());
+        assertEquals(".", tokens.get(5).value());
+    }
+
+    @Test
+    void tokenizeShouldTokenizeNumbers() {
+        var tokens = model.tokenize("Ben 10 yaşındayım.");
+        assertEquals(4, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("Ben", tokens.get(0).value());
+
+        assertEquals(TokenType.Number, tokens.get(1).type());
+        assertEquals("10", tokens.get(1).value());
+
+        assertEquals(TokenType.Word, tokens.get(2).type());
+        assertEquals("yaşındayım", tokens.get(2).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(3).type());
+        assertEquals(".", tokens.get(3).value());
+    }
+
+    @Test
+    void tokenizeShouldTreatNumbersWithPunctuationAsNumbers() {
+        var tokens = model.tokenize("(123) 1+2 4.500 3,14 4#2");
+        assertEquals(5, tokens.size());
+
+        assertEquals(new Token(TokenType.Number, "(123)"), tokens.get(0));
+        assertEquals(new Token(TokenType.Number, "1+2"), tokens.get(1));
+        assertEquals(new Token(TokenType.Number, "4.500"), tokens.get(2));
+        assertEquals(new Token(TokenType.Number, "3,14"), tokens.get(3));
+        assertEquals(new Token(TokenType.Number, "4#2"), tokens.get(4));
+    }
+
+    @Test
+    void tokenizeShouldTreatAMixOfNumbersAndLettersAsWords() {
+        var tokens = model.tokenize("Oda 10A'da.");
+        assertEquals(3, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("Oda", tokens.get(0).value());
+
+        assertEquals(TokenType.Word, tokens.get(1).type());
+        assertEquals("10A'da", tokens.get(1).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(2).type());
+        assertEquals(".", tokens.get(2).value());
+    }
+
+    @Test
+    void tokenizeShouldHandleIsolatedPunctuations() {
+        var tokens = model.tokenize("Bu bir sembol: .");
+
+        assertEquals(5, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("Bu", tokens.get(0).value());
+
+        assertEquals(TokenType.Word, tokens.get(1).type());
+        assertEquals("bir", tokens.get(1).value());
+
+        assertEquals(TokenType.Word, tokens.get(2).type());
+        assertEquals("sembol", tokens.get(2).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(3).type());
+        assertEquals(":", tokens.get(3).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(4).type());
+        assertEquals(".", tokens.get(4).value());
+    }
+
+    @Test
+    void tokenizeShouldHandleTurkishQuotations() {
+        var tokens = model.tokenize("O \"Merhaba\" dedi.");
+        
+        assertEquals(6, tokens.size());
+        
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("O", tokens.get(0).value());
+        
+        assertEquals(TokenType.Punctuation, tokens.get(1).type());
+        assertEquals("\"", tokens.get(1).value());
+        
+        assertEquals(TokenType.Word, tokens.get(2).type());
+        assertEquals("Merhaba", tokens.get(2).value());
+        
+        assertEquals(TokenType.Punctuation, tokens.get(3).type());
+        assertEquals("\"", tokens.get(3).value());
+        
+        assertEquals(TokenType.Word, tokens.get(4).type());
+        assertEquals("dedi", tokens.get(4).value());
+        
+        assertEquals(TokenType.Punctuation, tokens.get(5).type());
+        assertEquals(".", tokens.get(5).value());
+    }
+
+    @Test
+    void shouldHandleConsecutivePunctuationEnding() {
+        var tokens = model.tokenize("Ne?!");
+
+        assertEquals(3, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("Ne", tokens.get(0).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(1).type());
+        assertEquals("?", tokens.get(1).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(2).type());
+        assertEquals("!", tokens.get(2).value());
+    }
+
+    @Test
+    void shouldHandleConsecutivePunctuationBeginning() {
+        var tokens = model.tokenize("--Şimdi!");
+
+        assertEquals(4, tokens.size());
+
+        assertEquals(TokenType.Punctuation, tokens.get(0).type());
+        assertEquals("-", tokens.get(0).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(1).type());
+        assertEquals("-", tokens.get(1).value());
+
+        assertEquals(TokenType.Word, tokens.get(2).type());
+        assertEquals("Şimdi", tokens.get(2).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(3).type());
+        assertEquals("!", tokens.get(3).value());
     }
 }

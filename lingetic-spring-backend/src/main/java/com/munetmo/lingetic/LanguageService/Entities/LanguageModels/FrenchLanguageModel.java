@@ -1,36 +1,30 @@
 package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
 import com.munetmo.lingetic.LanguageService.Entities.Language;
-
-import java.util.Arrays;
+import com.munetmo.lingetic.LanguageService.Entities.Token;
+import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.LatinScriptLanguageModelHelper;
+import java.util.List;
 import java.util.Locale;
 
 public final class FrenchLanguageModel implements LanguageModel {
+    private final LatinScriptLanguageModelHelper helper;
+
+    public FrenchLanguageModel() {
+        this.helper = new LatinScriptLanguageModelHelper(Locale.FRANCE);
+    }
+
     @Override
     public Language getLanguage() {
         return Language.French;
     }
 
-    private static final String frenchSpecificCharacters = "àâäæçéèêëîïôœùûüÿ";
-
     @Override
     public boolean areEquivalent(String s1, String s2) {
-        var normalized1 = normalizeString(s1);
-        var normalized2 = normalizeString(s2);
-
-        return normalized1.equals(normalized2);
+        return helper.areEquivalent(s1, s2);
     }
 
-    private String normalizeString(String input) {
-        var regex = String.format("^[^a-z0-9%s]+|[^a-z0-9%s]+$", frenchSpecificCharacters,
-                frenchSpecificCharacters);
-
-        var words = input.split("\\s+");
-        var normalizedWords = Arrays.stream(words)
-                .map(w -> w.trim().toLowerCase(Locale.FRANCE))
-                .map(w -> w.replaceAll(regex, ""))
-                .filter(w -> !w.isBlank());
-
-        return String.join(" ", normalizedWords.toList());
+    @Override
+    public List<Token> tokenize(String input) {
+        return helper.tokenize(input);
     }
 }
