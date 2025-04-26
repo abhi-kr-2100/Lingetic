@@ -15,13 +15,6 @@ import type {
 
 global.fetch = jest.fn();
 
-jest.mock("../../../../utilities/helpers", () => ({
-  ...jest.requireActual("../../../../utilities/helpers"),
-  sha1: jest.fn(() => Promise.resolve("mocked-sha1-hash")),
-}));
-
-mockAudio();
-
 describe("FillInTheBlanks", () => {
   beforeEach(() => {
     jest.clearAllMocks();

@@ -11,7 +11,6 @@ export interface FillInTheBlanksQuestion extends Question {
   language: string;
   text: string;
   hint: string;
-  fullTextDigest: string;
 }
 
 export interface AttemptRequest {

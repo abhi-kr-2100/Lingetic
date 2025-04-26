@@ -1,22 +1,15 @@
 import { fireEvent, waitFor } from "@testing-library/react";
 import LearnPageComponent from "@/app/languages/[language]/[questionListId]/LearnPageComponent";
-import { mockAudio, renderWithQueryClient } from "@/utilities/testing-helpers";
+import { renderWithQueryClient } from "@/utilities/testing-helpers";
 import type { FillInTheBlanksQuestion, Question } from "@/utilities/api-types";
 
 global.fetch = jest.fn();
-
-jest.mock("../../../utilities/helpers", () => ({
-  ...jest.requireActual("../../../utilities/helpers"),
-  sha1: jest.fn(() => Promise.resolve("mocked-sha1-hash")),
-}));
 
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
   useParams: () => ({ language: "spanish", questionListId: "1" }),
 }));
-
-mockAudio();
 
 describe("LearnPageComponent", () => {
   beforeEach(() => {
