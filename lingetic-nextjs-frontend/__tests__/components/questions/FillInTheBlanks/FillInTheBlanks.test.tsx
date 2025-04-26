@@ -1,7 +1,6 @@
 import { fireEvent, waitFor } from "@testing-library/react";
 import {
   escapeRegex,
-  mockAudio,
   renderWithQueryClient,
 } from "@/utilities/testing-helpers";
 
