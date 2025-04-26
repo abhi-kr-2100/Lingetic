@@ -289,4 +289,31 @@ class TakeRegularTestUseCaseTest {
             q.getID().equals(question3.getID()) || q.getID().equals(question4.getID())
         ));
     }
+
+    @Test
+    void shouldReturnQuestionsFromAllListsWhenQuestionListIdIsNull() {
+        var questionListId1 = UUID.randomUUID().toString();
+        var questionListId2 = UUID.randomUUID().toString();
+
+        questionListRepository.addQuestionList(new QuestionList(questionListId1, "List1", Language.English));
+        questionListRepository.addQuestionList(new QuestionList(questionListId2, "List2", Language.English));
+
+        // Add questions to both lists
+        var q1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 1", "hint1", "answer1", 1, questionListId1);
+        var q2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 2", "hint2", "answer2", 2, questionListId1);
+        var q3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 3", "hint3", "answer3", 3, questionListId2);
+        var q4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 4", "hint4", "answer4", 4, questionListId2);
+        questionRepository.addQuestion(q1);
+        questionRepository.addQuestion(q2);
+        questionRepository.addQuestion(q3);
+        questionRepository.addQuestion(q4);
+
+        // Execute with null questionListId
+        List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English, null);
+
+        // Expect all questions from both lists
+        assertEquals(4, result.size());
+        var returnedIds = result.stream().map(QuestionDTO::getID).toList();
+        assertTrue(returnedIds.containsAll(List.of(q1.getID(), q2.getID(), q3.getID(), q4.getID())));
+    }
 }

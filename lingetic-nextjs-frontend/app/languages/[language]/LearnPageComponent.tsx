@@ -14,9 +14,9 @@ import type {
 import type QuestionProps from "@/app/components/questions/QuestionProps";
 
 export default function LearnPageComponent() {
-  const { language, questionListId } = useParams<LearnPageParams>();
+  const params = useParams() as LearnPageParams;
+  const { language } = params;
   assert(language.trim().length > 0, "language is required");
-  assert(questionListId.trim().length > 0, "questionListId is required");
 
   const router = useRouter();
   const nextButtonRef = useRef<HTMLButtonElement>(null);
@@ -24,7 +24,6 @@ export default function LearnPageComponent() {
 
   const result = useQuestions({
     language,
-    questionListId,
     onFinish: () => {
       assert(
         result.hasQuestions,
@@ -35,9 +34,7 @@ export default function LearnPageComponent() {
         total: (result as SuccessState).totalQuestions.toString(),
         correct: correctAnswers.toString(),
       });
-      router.push(
-        `/languages/${language}/${questionListId}/results?${searchParams.toString()}`
-      );
+      router.push(`/languages/${language}/results?${searchParams.toString()}`);
     },
   });
 
@@ -141,10 +138,9 @@ export default function LearnPageComponent() {
 
 interface LearnPageParams {
   language: string;
-  questionListId: string;
 
   // Not used, but required by useParams
-  [key: string]: string;
+  [key: string]: string | undefined;
 }
 
 interface RenderQuestionProps {

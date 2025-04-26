@@ -8,7 +8,6 @@ import { useAuth } from "@clerk/nextjs";
 interface UseQuestionsParams {
   onFinish: () => void;
   language: string;
-  questionListId: string;
 }
 
 interface LoadingState {
@@ -48,10 +47,8 @@ type UseQuestionsResult =
 export default function useQuestions({
   onFinish,
   language,
-  questionListId,
 }: UseQuestionsParams): UseQuestionsResult {
   assert(language.trim().length > 0, "language is required");
-  assert(questionListId.trim().length > 0, "questionListId is required");
 
   const { getToken } = useAuth();
 
@@ -60,8 +57,8 @@ export default function useQuestions({
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["questions", language, questionListId],
-    queryFn: () => fetchQuestions(language, questionListId, getToken),
+    queryKey: ["questions", language],
+    queryFn: () => fetchQuestions(language, getToken),
 
     // The same questions should not be displayed on different renders
     // of the component. This is because the questions that Lingetic thinks

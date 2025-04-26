@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.*;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
@@ -23,7 +25,7 @@ public class TakeRegularTestUseCase {
         this.questionReviewRepository = questionReviewRepository;
     }
 
-    public List<QuestionDTO> execute(String userId, Language language, String questionListId) {
+    public List<QuestionDTO> execute(String userId, Language language, @Nullable String questionListId) {
         var now = Instant.now();
 
         // Some of the questions to review get filtered out by the question list filter.
@@ -33,7 +35,7 @@ public class TakeRegularTestUseCase {
         var questionsToReviewNow = questionReviews.stream()
             .filter(r -> r.getNextReviewInstant().isBefore(now))
             .map(r -> questionRepository.getQuestionByID(r.questionID))
-            .filter(q -> q.getQuestionListID().equals(questionListId))
+            .filter(q -> questionListId == null || q.getQuestionListID().equals(questionListId))
             .toList();
         var questionList = new ArrayList<>(questionsToReviewNow);
 
@@ -41,7 +43,7 @@ public class TakeRegularTestUseCase {
         var unreviewedQuestions = questionRepository
             .getUnreviewedQuestions(userId, language, remainingCount)
             .stream()
-            .filter(q -> q.getQuestionListID().equals(questionListId))
+            .filter(q -> questionListId == null || q.getQuestionListID().equals(questionListId))
             .toList();
         questionList.addAll(
                 unreviewedQuestions.subList(0, Math.min(unreviewedQuestions.size(), remainingCount)));
@@ -50,7 +52,7 @@ public class TakeRegularTestUseCase {
         var questionsToReviewLater = questionReviews.stream()
             .filter(r -> !r.getNextReviewInstant().isBefore(now))
             .map(r -> questionRepository.getQuestionByID(r.questionID))
-            .filter(q -> q.getQuestionListID().equals(questionListId))
+            .filter(q -> questionListId == null || q.getQuestionListID().equals(questionListId))
             .limit(stillRemainingCount)
             .toList();
         questionList.addAll(questionsToReviewLater);
