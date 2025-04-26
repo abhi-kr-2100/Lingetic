@@ -5,6 +5,7 @@ from . import insert_into_db
 from . import course
 from . import select_questions
 from . import db_dump
+from . import tts
 
 __all__ = [
     "tatoeba",
@@ -14,4 +15,5 @@ __all__ = [
     "course",
     "select_questions",
     "db_dump",
+    "tts",
 ]
