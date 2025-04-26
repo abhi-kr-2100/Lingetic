@@ -10,6 +10,10 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
   useParams: () => ({ language: "spanish" }),
 }));
+jest.mock("../../../app/components/questions/FillInTheBlanks/useQuestionAudioPlayback", () => ({
+  __esModule: true,
+  default: () => ({ playAudio: jest.fn() }),
+}));
 
 describe("LearnPageComponent", () => {
   beforeEach(() => {
