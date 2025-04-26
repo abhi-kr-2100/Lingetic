@@ -1,13 +1,13 @@
 "use client";
 
 import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
-import QuestionListComponent from "./QuestionListComponent";
+import LearnPageComponent from "./LearnPageComponent";
 
 export default function LanguagePage() {
   return (
     <>
       <SignedIn>
-        <QuestionListComponent />
+        <LearnPageComponent />
       </SignedIn>
       <SignedOut>
         <RedirectToSignIn />

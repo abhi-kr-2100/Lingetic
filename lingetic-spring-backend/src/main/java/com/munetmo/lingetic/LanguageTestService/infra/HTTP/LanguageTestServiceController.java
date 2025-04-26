@@ -50,7 +50,7 @@ public class LanguageTestServiceController {
     @GetMapping("/questions")
     public ResponseEntity<?> getQuestions(
             @RequestParam String language,
-            @RequestParam String questionListId,
+            @RequestParam(required = false) String questionListId,
             @AuthenticationPrincipal Claims user) {
         if (language == null || language.isBlank()) {
             return ResponseEntity
@@ -58,10 +58,9 @@ public class LanguageTestServiceController {
                     .body("Language parameter cannot be null or empty");
         }
 
-        if (questionListId == null || questionListId.isBlank()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Question list ID parameter cannot be null or empty");
+        // Convert blank questionListId to null for optional filtering
+        if (questionListId != null && questionListId.isBlank()) {
+            questionListId = null;
         }
 
         Language languageEnum;

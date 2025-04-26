@@ -22,7 +22,6 @@ export default function ResultsPage() {
 
 interface ResultsPageParams {
   language: string;
-  questionListId: string;
   [key: string]: string;
 }
 
@@ -33,7 +32,7 @@ function ResultsPageComponent() {
   }, []);
 
   const searchParams = useSearchParams();
-  const { language, questionListId } = useParams<ResultsPageParams>();
+  const { language } = useParams<ResultsPageParams>();
 
   const totalStr = searchParams.get("total") ?? "NaN";
   const correctStr = searchParams.get("correct") ?? "NaN";
@@ -66,16 +65,10 @@ function ResultsPageComponent() {
         <div className="flex flex-col gap-4">
           <Link
             ref={playAgainRef}
-            href={`/languages/${language}/${questionListId}`}
+            href={`/languages/${language}`}
             className="w-full bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors inline-block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Play Again
-          </Link>
-          <Link
-            href={`/languages/${language}`}
-            className="w-full border border-[#2563eb] text-[#2563eb] px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors inline-block text-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Go to Question Lists
           </Link>
         </div>
       </div>
