@@ -155,11 +155,11 @@ class EnglishLanguageModelTest {
         var tokens = model.tokenize("(123) 1+2 4,500 3.14 4#2");
         assertEquals(5, tokens.size());
 
-        assertEquals(new Token(TokenType.Number, "(123)"), tokens.get(0));
-        assertEquals(new Token(TokenType.Number, "1+2"), tokens.get(1));
-        assertEquals(new Token(TokenType.Number, "4,500"), tokens.get(2));
-        assertEquals(new Token(TokenType.Number, "3.14"), tokens.get(3));
-        assertEquals(new Token(TokenType.Number, "4#2"), tokens.get(4));
+        assertEquals(new Token(TokenType.Number, "(123)", 1), tokens.get(0));
+        assertEquals(new Token(TokenType.Number, "1+2", 2), tokens.get(1));
+        assertEquals(new Token(TokenType.Number, "4,500", 3), tokens.get(2));
+        assertEquals(new Token(TokenType.Number, "3.14", 4), tokens.get(3));
+        assertEquals(new Token(TokenType.Number, "4#2", 5), tokens.get(4));
     }
 
     @Test
@@ -238,5 +238,41 @@ class EnglishLanguageModelTest {
 
         assertEquals(TokenType.Punctuation, tokens.get(3).type());
         assertEquals("!", tokens.get(3).value());
+    }
+
+    @Test
+    void tokenizeShouldAssignCorrectSequenceNumbers() {
+        var tokens = model.tokenize("Hello, world!");
+        
+        assertEquals(4, tokens.size());
+        
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(i + 1, tokens.get(i).sequenceNumber(), 
+                "Token at position " + i + " should have sequence number " + (i + 1));
+        }
+        
+        // Test with a more complex sentence
+        tokens = model.tokenize("I'll see you when you've finished!");
+        
+        assertEquals(7, tokens.size());
+        assertEquals(1, tokens.get(0).sequenceNumber()); // I'll
+        assertEquals(2, tokens.get(1).sequenceNumber()); // see
+        assertEquals(3, tokens.get(2).sequenceNumber()); // you
+        assertEquals(4, tokens.get(3).sequenceNumber()); // when
+        assertEquals(5, tokens.get(4).sequenceNumber()); // you've
+        assertEquals(6, tokens.get(5).sequenceNumber()); // finished
+        assertEquals(7, tokens.get(6).sequenceNumber()); // !
+    }
+
+    @Test
+    void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
+        var tokens = model.tokenize("Hello! What's up?");
+        
+        assertEquals(5, tokens.size());
+        assertEquals(1, tokens.get(0).sequenceNumber()); // Hello
+        assertEquals(2, tokens.get(1).sequenceNumber()); // !
+        assertEquals(3, tokens.get(2).sequenceNumber()); // What's
+        assertEquals(4, tokens.get(3).sequenceNumber()); // up
+        assertEquals(5, tokens.get(4).sequenceNumber()); // ?
     }
 }

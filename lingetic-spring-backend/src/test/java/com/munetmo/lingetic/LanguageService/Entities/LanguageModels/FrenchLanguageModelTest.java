@@ -222,11 +222,11 @@ class FrenchLanguageModelTest {
         var tokens = frenchLanguageModel.tokenize("(123) 1+2 4,500 3.14 4#2");
         assertEquals(5, tokens.size());
 
-        assertEquals(new Token(TokenType.Number, "(123)"), tokens.get(0));
-        assertEquals(new Token(TokenType.Number, "1+2"), tokens.get(1));
-        assertEquals(new Token(TokenType.Number, "4,500"), tokens.get(2));
-        assertEquals(new Token(TokenType.Number, "3.14"), tokens.get(3));
-        assertEquals(new Token(TokenType.Number, "4#2"), tokens.get(4));
+        assertEquals(new Token(TokenType.Number, "(123)", 1), tokens.get(0));
+        assertEquals(new Token(TokenType.Number, "1+2", 2), tokens.get(1));
+        assertEquals(new Token(TokenType.Number, "4,500", 3), tokens.get(2));
+        assertEquals(new Token(TokenType.Number, "3.14", 4), tokens.get(3));
+        assertEquals(new Token(TokenType.Number, "4#2", 5), tokens.get(4));
     }
 
     @Test
@@ -369,5 +369,38 @@ class FrenchLanguageModelTest {
 
         assertEquals(TokenType.Punctuation, tokens.get(3).type());
         assertEquals("!", tokens.get(3).value());
+    }
+
+    @Test
+    void tokenizeShouldAssignCorrectSequenceNumbers() {
+        var tokens = frenchLanguageModel.tokenize("Bonjour, monde!");
+        
+        assertEquals(4, tokens.size());
+        
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(i + 1, tokens.get(i).sequenceNumber(), 
+                "Token at position " + i + " should have sequence number " + (i + 1));
+        }
+        
+        // Test with a more complex sentence
+        tokens = frenchLanguageModel.tokenize("J'ai besoin d'aide!");
+        
+        assertEquals(4, tokens.size());
+        assertEquals(1, tokens.get(0).sequenceNumber()); // J'ai
+        assertEquals(2, tokens.get(1).sequenceNumber()); // besoin
+        assertEquals(3, tokens.get(2).sequenceNumber()); // d'aide
+        assertEquals(4, tokens.get(3).sequenceNumber()); // !
+    }
+
+    @Test
+    void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
+        var tokens = frenchLanguageModel.tokenize("Salut! Ça va?");
+        
+        assertEquals(5, tokens.size());
+        assertEquals(1, tokens.get(0).sequenceNumber()); // Salut
+        assertEquals(2, tokens.get(1).sequenceNumber()); // !
+        assertEquals(3, tokens.get(2).sequenceNumber()); // Ça
+        assertEquals(4, tokens.get(3).sequenceNumber()); // va
+        assertEquals(5, tokens.get(4).sequenceNumber()); // ?
     }
 }

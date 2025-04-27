@@ -36,37 +36,37 @@ public final class LatinScriptLanguageModelHelper {
         List<Token> tokens = new ArrayList<>();
         if (input.isBlank()) return tokens;
 
+        int sequenceNumber = 1;
         for (var part : input.split("\\s+")) {
             if (part.isBlank()) continue;
 
-
             var leadingPunct = getLeadingPunctuations(part);
             for (var punct : leadingPunct) {
-                tokens.add(new Token(TokenType.Punctuation, punct));
+                tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
             }
             part = part.substring(leadingPunct.size());
             if (part.isBlank()) continue;
 
-            var trailingTokens = new ArrayList<Token>();
             var trailingPunct = getTrailingPunctuations(part);
-            for (var punct : trailingPunct) {
-                trailingTokens.add(new Token(TokenType.Punctuation, punct));
-            }
             part = part.substring(0, part.length() - trailingPunct.size());
             if (part.isBlank()) {
-                tokens.addAll(trailingTokens);
+                for (var punct : trailingPunct) {
+                    tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
+                }
                 continue;
             }
 
             if (containsLetter(part)) {
-                tokens.add(new Token(TokenType.Word, part));
+                tokens.add(new Token(TokenType.Word, part, sequenceNumber++));
             } else if (containsDigit(part)) {
-                tokens.add(new Token(TokenType.Number, part));
+                tokens.add(new Token(TokenType.Number, part, sequenceNumber++));
             } else {
-                tokens.add(new Token(TokenType.Punctuation, part));
+                tokens.add(new Token(TokenType.Punctuation, part, sequenceNumber++));
             }
 
-            tokens.addAll(trailingTokens);
+            for (var punct : trailingPunct) {
+                tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
+            }
         }
         return tokens;
     }
