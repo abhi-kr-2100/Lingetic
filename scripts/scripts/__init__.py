@@ -6,6 +6,7 @@ from . import course
 from . import select_questions
 from . import db_dump
 from . import tts
+from . import upload_to_r2
 
 __all__ = [
     "tatoeba",
@@ -16,4 +17,5 @@ __all__ = [
     "select_questions",
     "db_dump",
     "tts",
+    "upload_to_r2",
 ]
