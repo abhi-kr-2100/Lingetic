@@ -13,6 +13,10 @@ import type {
 } from "@/utilities/api-types";
 
 global.fetch = jest.fn();
+jest.mock("../../../../app/components/questions/FillInTheBlanks/useQuestionAudioPlayback", () => ({
+  __esModule: true,
+  default: () => ({ playAudio: jest.fn() }),
+}));
 
 describe("FillInTheBlanks", () => {
   beforeEach(() => {

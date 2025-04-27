@@ -5,6 +5,8 @@ import assert from "@/utilities/assert";
 import useUserAnswer from "./useUserAnswer";
 import type QuestionProps from "../QuestionProps";
 import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import useQuestionAudioPlayback from "./useQuestionAudioPlayback";
+import { Volume2 } from "lucide-react";
 
 interface FillInTheBlanksProps extends QuestionProps {
   question: FillInTheBlanksQuestion;
@@ -25,6 +27,11 @@ export default function FillInTheBlanks({
     isError,
     result,
   } = useUserAnswer(question.id);
+
+  const { playAudio } = useQuestionAudioPlayback({
+    question,
+    autoplay: true,
+  });
 
   const handleCheckAnswer = async () => {
     const response = await checkAnswer();
@@ -52,6 +59,13 @@ export default function FillInTheBlanks({
   return (
     <div className="shadow-lg rounded-lg p-6">
       <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
+        <button
+          onClick={playAudio}
+          type="button"
+          className="p-1 rounded hover:bg-skin-button-accent transition-colors"
+        >
+          <Volume2 className="w-6 h-6 text-skin-primary" />
+        </button>
         <span>{textBefore}</span>
         <input
           type="text"
