@@ -54,8 +54,8 @@ export default function useQuestions({
 
   const {
     data: questions = [],
-    isLoading,
     isError,
+    isFetching,
   } = useQuery({
     queryKey: ["questions", language],
     queryFn: () => fetchQuestions(language, getToken),
@@ -73,7 +73,7 @@ export default function useQuestions({
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  if (isLoading) {
+  if (isFetching) {
     return {
       isLoading: true,
       isError: false,
