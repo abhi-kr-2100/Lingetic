@@ -7,6 +7,7 @@ from . import select_questions
 from . import db_dump
 from . import tts
 from . import upload_to_r2
+from . import explanation
 
 __all__ = [
     "tatoeba",
@@ -18,4 +19,5 @@ __all__ = [
     "db_dump",
     "tts",
     "upload_to_r2",
+    "explanation",
 ]
