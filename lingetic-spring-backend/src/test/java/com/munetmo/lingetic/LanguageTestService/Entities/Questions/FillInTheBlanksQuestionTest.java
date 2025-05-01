@@ -101,8 +101,11 @@ class FillInTheBlanksQuestionTest {
 
     @Test
     void assessAttemptShouldReturnSuccessForCorrectAnswer() {
-        var question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "correct", 5, defaultQuestionListId
+        var explanation = List.of(
+            new FillInTheBlanksQuestion.WordExplanation(1, "blank", List.of("article", "plural", "definite"), "test comment")
+        );
+        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
+            "id", Language.English, "Fill in the ___", "hint", "blank", 5, defaultQuestionListId, explanation
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), question.answer);
 
@@ -110,12 +113,16 @@ class FillInTheBlanksQuestionTest {
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());
         assertEquals(question.answer, response.getCorrectAnswer());
+        assertEquals(explanation, response.getExplanation());
     }
 
     @Test
     void assessAttemptShouldReturnFailureForIncorrectAnswer() {
-        var question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "correct", 5, defaultQuestionListId
+        var explanation = List.of(
+            new FillInTheBlanksQuestion.WordExplanation(1, "blank", List.of("article", "plural", "definite"), "test comment")
+        );
+        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
+            "id", Language.English, "Fill in the ___", "hint", "blank", 5, defaultQuestionListId, explanation
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong");
 
@@ -123,6 +130,7 @@ class FillInTheBlanksQuestionTest {
 
         assertEquals(AttemptStatus.Failure, response.getAttemptStatus());
         assertEquals(question.answer, response.getCorrectAnswer());
+        assertEquals(explanation, response.getExplanation());
     }
 
     @Test
