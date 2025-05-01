@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from scripts.questions import tokenize_sentence
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 # System prompt and examples for explanation
 SYSTEM_PROMPT = """
@@ -178,23 +179,58 @@ def get_parser() -> argparse.ArgumentParser:
 
 
 def main(filepath: str, output: str) -> None:
+    # Set log file path
+    log_path = (
+        Path(output).with_suffix(".log")
+        if output != "-"
+        else Path("output.log")
+    )
+
     # Load entries from filepath or stdin
     if filepath == "-":
         entries = json.load(sys.stdin)
     else:
         entries = load_schema(filepath)
 
-    results: List[Dict[str, Any]] = []
-    # Prepare only the relevant entries for processing
+    # Load already processed entries from log
+    processed_ids = set()
+    log_results = {}
+    if log_path.exists():
+        with open(log_path, "r", encoding="utf-8") as logf:
+            for line in logf:
+                try:
+                    entry = json.loads(line)
+                    if "id" in entry:
+                        processed_ids.add(entry["id"])
+                        log_results[entry["id"]] = entry
+                except Exception as e:
+                    print(f"Error reading log line: {e}", file=sys.stderr)
+
+    # Prepare only the relevant entries for processing (skip already processed)
     fill_entries = [
         (i, entry)
         for i, entry in enumerate(entries)
         if entry.get("question_type") == "FillInTheBlanks"
+        and entry.get("id") not in processed_ids
     ]
-    results_map = {}
+    results_map = {
+        i: log_results[entry["id"]]
+        for i, entry in enumerate(entries)
+        if entry.get("id") in processed_ids
+    }
+    log_lock = threading.Lock()
+
+    def process_and_log(idx, entry):
+        result = get_explanation_for_entry(entry)
+        # Write to log immediately
+        with log_lock:
+            with open(log_path, "a", encoding="utf-8") as logf:
+                logf.write(json.dumps(result, ensure_ascii=False) + "\n")
+        return result
+
     with ThreadPoolExecutor() as executor:
         future_to_idx = {
-            executor.submit(get_explanation_for_entry, entry): idx
+            executor.submit(process_and_log, idx, entry): idx
             for idx, entry in fill_entries
         }
         for future in as_completed(future_to_idx):
@@ -205,7 +241,9 @@ def main(filepath: str, output: str) -> None:
             except Exception as e:
                 entry_id = entries[idx].get("id")
                 print(f"Error on entry {entry_id}: {e}", file=sys.stderr)
+
     # Reconstruct the results list in input order, skipping non-FillInTheBlanks
+    results = []
     for i, entry in enumerate(entries):
         if entry.get("question_type") == "FillInTheBlanks" and i in results_map:
             results.append(results_map[i])
