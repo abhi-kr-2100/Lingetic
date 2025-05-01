@@ -13,10 +13,13 @@ import type {
 } from "@/utilities/api-types";
 
 global.fetch = jest.fn();
-jest.mock("../../../../app/components/questions/FillInTheBlanks/useQuestionAudioPlayback", () => ({
-  __esModule: true,
-  default: () => ({ playAudio: jest.fn() }),
-}));
+jest.mock(
+  "../../../../app/components/questions/FillInTheBlanks/useQuestionAudioPlayback",
+  () => ({
+    __esModule: true,
+    default: () => ({ playAudio: jest.fn() }),
+  })
+);
 
 describe("FillInTheBlanks", () => {
   beforeEach(() => {
@@ -181,6 +184,16 @@ const mockQuestion = {
   questionType: "FillInTheBlanks" as const,
   text: "The cat ____ lazily on the windowsill.",
   hint: "straighten or extend one's body",
+  language: "spanish",
+  explanation: [
+    {
+      sequenceNumber: 1,
+      word: "stretched",
+      properties: ["verb", "past tense"],
+      comment:
+        "To stretch means to straighten or extend one's body to its full length.",
+    },
+  ],
 } as FillInTheBlanksQuestion;
 
 const mockSuccessfulAttempt = () => {
@@ -191,6 +204,15 @@ const mockSuccessfulAttempt = () => {
         attemptStatus: "Success",
         correctAnswer: "stretched",
         questionType: "FillInTheBlanks",
+        explanation: [
+          {
+            sequenceNumber: 1,
+            word: "stretched",
+            properties: ["verb", "past tense"],
+            comment:
+              "To stretch means to straighten or extend one's body to its full length.",
+          },
+        ],
       } as FillInTheBlanksAttemptResponse),
   });
 };

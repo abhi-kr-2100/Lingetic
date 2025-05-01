@@ -29,4 +29,12 @@ export interface AttemptResponse {
 
 export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
   correctAnswer: string;
+  explanation: WordExplanation[];
+}
+
+export interface WordExplanation {
+  sequenceNumber: number;
+  word: string;
+  properties: string[];
+  comment: string;
 }

@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+
 import assert from "@/utilities/assert";
-import useUserAnswer from "./useUserAnswer";
 import type QuestionProps from "../QuestionProps";
-import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
-import useQuestionAudioPlayback from "./useQuestionAudioPlayback";
-import { Volume2 } from "lucide-react";
+import type {
+  FillInTheBlanksQuestion,
+  FillInTheBlanksAttemptResponse,
+} from "@/utilities/api-types";
+
+import Question from "./Question";
+import Result from "./Result";
 
 interface FillInTheBlanksProps extends QuestionProps {
   question: FillInTheBlanksQuestion;
@@ -18,103 +22,29 @@ export default function FillInTheBlanks({
 }: FillInTheBlanksProps) {
   validateQuestionOrDie(question);
 
-  const {
-    answer,
-    setAnswer,
-    checkAnswer,
-    isChecking,
-    isChecked,
-    isError,
-    result,
-  } = useUserAnswer(question.id);
-
-  const { playAudio } = useQuestionAudioPlayback({
-    question,
-    autoplay: true,
-  });
-
-  const handleCheckAnswer = async () => {
-    const response = await checkAnswer();
-    afterAnswerCheck?.(response?.attemptStatus);
-  };
-
-  const [textBefore, textAfter] = question.text.split(/_+/);
-
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [attemptResponse, setAttemptResponse] = useState<
+    FillInTheBlanksAttemptResponse | undefined
+  >(undefined);
 
   useEffect(() => {
-    // Focus the input field on first render, and also when the question
-    // changes.
-
-    if (!inputRef.current) {
-      return;
-    }
-
-    // The input field could be disabled due to a previous question. A disabled
-    // input field cannot be focused.
-    inputRef.current.disabled = false;
-    inputRef.current.focus();
+    // Reset the attempt response when the question changes.
+    setAttemptResponse(undefined);
   }, [question.id]);
+
+  function onUserAnswerCheck(response?: FillInTheBlanksAttemptResponse) {
+    setAttemptResponse(response);
+    afterAnswerCheck?.(response?.attemptStatus);
+  }
 
   return (
     <div className="shadow-lg rounded-lg p-6">
-      <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
-        <button
-          onClick={playAudio}
-          type="button"
-          className="p-1 rounded hover:bg-skin-button-accent transition-colors"
-        >
-          <Volume2 className="w-6 h-6 text-skin-primary" />
-        </button>
-        <span>{textBefore}</span>
-        <input
-          type="text"
-          value={answer}
-          ref={inputRef}
-          onChange={(e) => {
-            setAnswer(e.target.value);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !isChecked) {
-              void handleCheckAnswer();
-            }
-          }}
-          className={`p-2 border rounded w-40 text-center`}
-          disabled={isChecked || isChecking}
-        />
-        <span>{textAfter}</span>
+      <div className="mb-4">
+        {attemptResponse === undefined ? (
+          <Question question={question} onUserAnswerCheck={onUserAnswerCheck} />
+        ) : (
+          <Result question={question} attemptResponse={attemptResponse} />
+        )}
       </div>
-      <p className="text-skin-base mb-4">Hint: {question.hint}</p>
-      {!isChecked && (
-        <button
-          disabled={isChecking}
-          onClick={() => {
-            void handleCheckAnswer();
-          }}
-          className={`bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors ${
-            isChecking ? "opacity-70" : ""
-          }`}
-        >
-          {isChecking ? "Checking..." : "Check"}
-        </button>
-      )}
-      {isChecked && result && (
-        <div>
-          <p
-            className={`mb-4 ${
-              result.attemptStatus === "Success"
-                ? "text-skin-success"
-                : "text-skin-error"
-            }`}
-          >
-            {result.attemptStatus === "Success" ? "Correct!" : "Incorrect."}
-          </p>
-          {result.attemptStatus === "Failure" && result.correctAnswer && (
-            <p>Correct answer: {result.correctAnswer}</p>
-          )}
-        </div>
-      )}
-      {isError && <p>An error occurred! Please try again after some time.</p>}
     </div>
   );
 }
