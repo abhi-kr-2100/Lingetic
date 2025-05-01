@@ -151,7 +151,9 @@ def get_explanation_for_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
         + f"\n\nInput: {token_str}\n\nOutput:"
     )
     result = make_explanation_api_call(prompt)
-    entry["explanation"] = result.get("explanation", [])
+    entry["question_type_specific_data"]["explanation"] = result.get(
+        "explanation", []
+    )
     return entry
 
 
