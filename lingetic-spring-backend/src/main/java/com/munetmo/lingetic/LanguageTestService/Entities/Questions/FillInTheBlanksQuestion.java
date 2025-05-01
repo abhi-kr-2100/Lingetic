@@ -114,7 +114,8 @@ public final class FillInTheBlanksQuestion implements Question {
 
         return new FillInTheBlanksAttemptResponse(
             areEquivalent ? AttemptStatus.Success : AttemptStatus.Failure,
-            answer
+            answer,
+            this.explanation
         );
     }
 
