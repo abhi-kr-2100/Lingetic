@@ -11,6 +11,7 @@ from google.api_core import exceptions as google_exceptions
 from pydantic import BaseModel
 from scripts.questions import tokenize_sentence
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # System prompt and examples for explanation
 SYSTEM_PROMPT = """
@@ -182,14 +183,32 @@ def main(filepath: str, output: str) -> None:
         entries = json.load(sys.stdin)
     else:
         entries = load_schema(filepath)
+
     results: List[Dict[str, Any]] = []
-    for entry in entries:
-        if entry.get("question_type") != "FillInTheBlanks":
-            continue
-        try:
-            results.append(get_explanation_for_entry(entry))
-        except Exception as e:
-            print(f"Error on entry {entry.get('id')}: {e}", file=sys.stderr)
+    # Prepare only the relevant entries for processing
+    fill_entries = [
+        (i, entry)
+        for i, entry in enumerate(entries)
+        if entry.get("question_type") == "FillInTheBlanks"
+    ]
+    results_map = {}
+    with ThreadPoolExecutor() as executor:
+        future_to_idx = {
+            executor.submit(get_explanation_for_entry, entry): idx
+            for idx, entry in fill_entries
+        }
+        for future in as_completed(future_to_idx):
+            idx = future_to_idx[future]
+            try:
+                result = future.result()
+                results_map[idx] = result
+            except Exception as e:
+                entry_id = entries[idx].get("id")
+                print(f"Error on entry {entry_id}: {e}", file=sys.stderr)
+    # Reconstruct the results list in input order, skipping non-FillInTheBlanks
+    for i, entry in enumerate(entries):
+        if entry.get("question_type") == "FillInTheBlanks" and i in results_map:
+            results.append(results_map[i])
 
     if output == "-":
         print(json.dumps(results, ensure_ascii=False, indent=2))
