@@ -10,17 +10,22 @@ export default {
     extend: {
       textColor: {
         skin: {
-          base: 'var(--color-text-base)',
-          inverted: 'var(--color-text-inverted)',
-          error: 'var(--color-text-error)',
-          success: 'var(--color-text-success)',
-        }
+          base: "var(--color-text-base)",
+          inverted: "var(--color-text-inverted)",
+          error: "var(--color-text-error)",
+          success: "var(--color-text-success)",
+        },
+      },
+      borderColor: {
+        skin: {
+          base: "var(--color-text-base)",
+        },
       },
       backgroundColor: {
         skin: {
-          'button-primary': 'var(--color-button-primary)'
-        }
-      }
+          "button-primary": "var(--color-button-primary)",
+        },
+      },
     },
   },
   plugins: [],
