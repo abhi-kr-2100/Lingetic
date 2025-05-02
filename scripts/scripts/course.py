@@ -80,7 +80,7 @@ def load_schema(schema_path: str) -> List[Dict[str, Any]]:
     """Load and parse the course schema JSON file"""
     try:
         with open(schema_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            return json.load(f)["schema"]
     except FileNotFoundError:
         print(f"Error: Schema file '{schema_path}' not found", file=sys.stderr)
         sys.exit(1)
