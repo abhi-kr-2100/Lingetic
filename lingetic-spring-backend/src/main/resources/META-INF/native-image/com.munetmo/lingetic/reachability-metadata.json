@@ -224,6 +224,36 @@
     },
     {
       "type": "com.munetmo.lingetic.LanguageService.Entities.Language",
+      "allDeclaredFields": true,
+      "fields": [
+        {
+          "name": "Swedish"
+        }
+      ]
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageService.Entities.LanguageEditor"
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageService.Entities.Token",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "sequenceNumber",
+          "parameterTypes": []
+        },
+        {
+          "name": "type",
+          "parameterTypes": []
+        },
+        {
+          "name": "value",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageService.Entities.TokenType",
       "allDeclaredFields": true
     },
     {
@@ -233,6 +263,13 @@
         {
           "name": "<init>",
           "parameterTypes": []
+        },
+        {
+          "name": "tokenize",
+          "parameterTypes": [
+            "com.munetmo.lingetic.LanguageService.Entities.Language",
+            "java.lang.String"
+          ]
         }
       ]
     },
@@ -2184,6 +2221,14 @@
         },
         {
           "name": "cellsBusy"
+        }
+      ]
+    },
+    {
+      "type": "java.util.concurrent.atomic.Striped64$Cell",
+      "fields": [
+        {
+          "name": "value"
         }
       ]
     },
@@ -8325,6 +8370,9 @@
     },
     {
       "glob": "db/migration/V4__Change_Difficulty_To_Int.sql"
+    },
+    {
+      "glob": "db/migration/V5__Add_Swedish_Language.sql"
     },
     {
       "glob": "git.properties"

@@ -14,6 +14,7 @@ LANGUAGE_TO_CODE = {
     "English": "en",
     "French": "fr",
     "Turkish": "tr",
+    "Swedish": "sv",
 }
 
 

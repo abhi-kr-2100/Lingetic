@@ -51,6 +51,19 @@ Output:
     ]
 }
 """,
+    "Swedish": """
+Example:
+
+Input: 1: Jag 2: vet
+
+Output:
+{
+    "explanation": [
+        {"sequenceNumber": 1, "word": "Jag", "properties": ["pronoun", "first-person", "singular"], "comment": "Subject pronoun meaning 'I'."},
+        {"sequenceNumber": 2, "word": "vet", "properties": ["verb", "present", "first-person", "singular"], "comment": "Present tense, first-person singular of 'veta' (to know)."}
+    ]
+}
+""",
 }
 
 

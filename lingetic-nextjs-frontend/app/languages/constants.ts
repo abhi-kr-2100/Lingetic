@@ -13,6 +13,12 @@ export const languages: LanguageProperty[] = [
     isSupported: true,
   },
   {
+    id: "Swedish",
+    name: "Swedish",
+    image: "/img/languages/swedish-flag.png",
+    isSupported: true,
+  },
+  {
     id: "Turkish",
     name: "Turkish",
     image: "/img/languages/turkish-flag.png",
@@ -70,12 +76,6 @@ export const languages: LanguageProperty[] = [
     id: "Dutch",
     name: "Dutch",
     image: "/img/languages/dutch-flag.png",
-    isSupported: false,
-  },
-  {
-    id: "Swedish",
-    name: "Swedish",
-    image: "/img/languages/swedish-flag.png",
     isSupported: false,
   },
   {

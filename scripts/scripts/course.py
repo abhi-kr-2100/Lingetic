@@ -73,6 +73,34 @@ Output:
 ]
 }
 """,
+    "Swedish": """
+Example:
+
+Theme: Basic verbs, Level: Intermediate, Number: 2
+
+Output:
+
+{
+"data": [
+    {
+        "text": "Jag vet!",
+        "translations": [
+            {
+                "text": "I know!"
+            }
+        ]
+    },
+    {
+        "text": "Tom vinner.",
+        "translations": [
+            {
+                "text": "Tom is winning."
+            }
+        ]
+    }
+]
+}
+""",
 }
 
 

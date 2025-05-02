@@ -4,5 +4,6 @@ public enum Language {
     DummyLanguage,
     English,
     French,
-    Turkish
+    Turkish,
+    Swedish
 }
