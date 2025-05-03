@@ -51,44 +51,46 @@ export default function QuestionBox({
 
   return (
     <>
-      <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
+      <div className="text-skin-base text-xl flex items-start gap-2 mb-4">
         <Speaker question={question} autoplay />
-        <span>{textBefore}</span>
-        <input
-          type="text"
-          value={answer}
-          ref={inputRef}
-          onChange={(e) => {
-            setAnswer(e.target.value);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !isChecked) {
-              void handleCheckAnswer();
-            }
-          }}
-          className={`p-2 border rounded w-40 text-center`}
-          disabled={isChecked || isChecking}
-          lang={languageCode}
-          spellCheck
-          autoCorrect="off"
-          autoCapitalize="off"
-          autoComplete="off"
-        />
-        <span>{textAfter}</span>
+        <div>
+          <span>{textBefore}</span>
+          <input
+            type="text"
+            value={answer}
+            ref={inputRef}
+            onChange={(e) => {
+              setAnswer(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !isChecked) {
+                void handleCheckAnswer();
+              }
+            }}
+            className={`p-2 border rounded w-40 text-center text-xl`}
+            disabled={isChecked || isChecking}
+            lang={languageCode}
+            spellCheck
+            autoCorrect="off"
+            autoCapitalize="off"
+            autoComplete="off"
+          />
+          <span>{textAfter}</span>
+        </div>
       </div>
       <p className="text-skin-base mb-4">Hint: {question.hint}</p>
       {!isChecked && (
-        <button
-          disabled={isChecking}
-          onClick={() => {
-            void handleCheckAnswer();
-          }}
-          className={`bg-skin-button-primary text-skin-inverted px-4 py-2 rounded transition-colors ${
-            isChecking ? "opacity-70" : ""
-          }`}
-        >
-          {isChecking ? "Checking..." : "Check"}
-        </button>
+        <div className="flex justify-end">
+          <button
+            disabled={isChecking}
+            onClick={() => {
+              void handleCheckAnswer();
+            }}
+            className="bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center"
+          >
+            {isChecking ? "Checking..." : "Check"}
+          </button>
+        </div>
       )}
       {isError && <p>An error occurred! Please try again after some time.</p>}
     </>

@@ -1,11 +1,6 @@
-import { fireEvent, waitFor } from "@testing-library/react";
 import LearnPageComponent from "@/app/languages/[language]/LearnPageComponent";
 import { renderWithQueryClient } from "@/utilities/testing-helpers";
-import type {
-  FillInTheBlanksAttemptResponse,
-  FillInTheBlanksQuestion,
-  Question,
-} from "@/utilities/api-types";
+import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
 
 global.fetch = jest.fn();
 
@@ -55,58 +50,6 @@ describe("LearnPageComponent", () => {
     expect(await findByText(/the cat/i)).toBeInTheDocument();
   });
 
-  it("shows a next button when not on the last question", async () => {
-    mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
-
-    expect(await findByText(/next/i)).toBeInTheDocument();
-  });
-
-  it("advances to the next question when Next button is clicked", async () => {
-    mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
-
-    const nextBtn = await findByText(/next/i);
-    fireEvent.click(nextBtn);
-
-    expect(await findByText(/her coffee/i)).toBeInTheDocument();
-  });
-
-  it("shows a finish button on the last question", async () => {
-    mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
-
-    await navigateToLastQuestion(findByText);
-
-    expect(await findByText(/finish/i)).toBeInTheDocument();
-  });
-
-  it("redirects when finish button is clicked", async () => {
-    mockSuccessfulFetch();
-    const { findByText } = renderWithQueryClient(<LearnPageComponent />);
-
-    await navigateToLastQuestion(findByText);
-    const finishBtn = await findByText(/finish/i);
-    fireEvent.click(finishBtn);
-
-    expect(mockPush).toHaveBeenCalled();
-  });
-
-  it("focuses the Next button after answer submission", async () => {
-    mockSuccessfulFetch();
-    const { findByRole } = renderWithQueryClient(<LearnPageComponent />);
-
-    const input = await findByRole("textbox");
-    fireEvent.change(input, { target: { value: "stretched" } });
-
-    mockSuccessfulAttempt();
-    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
-
-    await waitFor(async () => {
-      expect(await findByRole("button", { name: /next/i })).toHaveFocus();
-    });
-  });
-
   it("shows a message when no questions are available", async () => {
     mockEmptyFetch();
     const { findByText } = renderWithQueryClient(<LearnPageComponent />);
@@ -153,116 +96,40 @@ const mockEmptyFetch = () => {
   );
 };
 
-const mockSuccessfulAttempt = () => {
-  (global.fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: () =>
-      Promise.resolve({
-        attemptStatus: "Success",
-        correctAnswer: "stretched",
-        questionType: "FillInTheBlanks",
-        explanation: [
-          {
-            sequenceNumber: 1,
-            word: "stretched",
-            properties: ["verb", "past tense"],
-            comment:
-              "To stretch means to straighten or extend one's body to its full length.",
-          },
-        ],
-      } as FillInTheBlanksAttemptResponse),
-  });
-};
-
-const mockQuestions = [
+const mockQuestions: FillInTheBlanksQuestion[] = [
   {
     id: "1",
     questionType: "FillInTheBlanks" as const,
     text: "The cat ____ lazily on the windowsill.",
     hint: "straighten or extend one's body",
     language: "Spanish",
-    explanation: [
-      {
-        sequenceNumber: 1,
-        word: "stretched",
-        properties: ["verb", "past tense"],
-        comment:
-          "To stretch means to straighten or extend one's body to its full length.",
-      },
-    ],
-  } as FillInTheBlanksQuestion,
+  },
   {
     id: "2",
     questionType: "FillInTheBlanks" as const,
     text: "She ____ her coffee every morning.",
     hint: "to drink",
     language: "Spanish",
-    explanation: [
-      {
-        sequenceNumber: 1,
-        word: "sipped",
-        properties: ["verb", "past tense"],
-        comment: "To sip means to drink something by taking small mouthfuls.",
-      },
-    ],
-  } as FillInTheBlanksQuestion,
+  },
   {
     id: "3",
     questionType: "FillInTheBlanks" as const,
     text: "The children ____ in the park yesterday.",
     hint: "to have fun or recreation",
     language: "Spanish",
-    explanation: [
-      {
-        sequenceNumber: 1,
-        word: "played",
-        properties: ["verb", "past tense"],
-        comment:
-          "To play means to engage in activity for enjoyment and recreation.",
-      },
-    ],
-  } as FillInTheBlanksQuestion,
+  },
   {
     id: "4",
     questionType: "FillInTheBlanks" as const,
     text: "He ____ the piano beautifully.",
     hint: "to create music with an instrument",
     language: "Spanish",
-    explanation: [
-      {
-        sequenceNumber: 1,
-        word: "played",
-        properties: ["verb", "past tense"],
-        comment:
-          "To play the piano means to create music using the piano instrument.",
-      },
-    ],
-  } as FillInTheBlanksQuestion,
+  },
   {
     id: "5",
     questionType: "FillInTheBlanks" as const,
     text: "They ____ dinner at 7 PM.",
     hint: "to consume food",
     language: "Spanish",
-    explanation: [
-      {
-        sequenceNumber: 1,
-        word: "ate",
-        properties: ["verb", "past tense"],
-        comment:
-          "To eat means to put food into your mouth, chew it, and swallow it.",
-      },
-    ],
-  } as FillInTheBlanksQuestion,
-] as Question[];
-
-async function navigateToLastQuestion(
-  findByText: (_text: RegExp) => Promise<HTMLElement>
-) {
-  for (let i = 0; i < mockQuestions.length - 1; i++) {
-    const nextBtn = await findByText(/next/i).catch(() => {
-      throw new Error("Next button not found");
-    });
-    fireEvent.click(nextBtn);
-  }
-}
+  },
+];

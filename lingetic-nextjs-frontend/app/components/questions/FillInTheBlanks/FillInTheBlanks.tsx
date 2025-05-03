@@ -19,6 +19,7 @@ interface FillInTheBlanksProps extends QuestionProps {
 export default function FillInTheBlanks({
   question,
   afterAnswerCheck,
+  NextButton,
 }: FillInTheBlanksProps) {
   validateQuestionOrDie(question);
 
@@ -42,7 +43,10 @@ export default function FillInTheBlanks({
         {attemptResponse === undefined ? (
           <Question question={question} onUserAnswerCheck={onUserAnswerCheck} />
         ) : (
-          <Result question={question} attemptResponse={attemptResponse} />
+          <>
+            <Result question={question} attemptResponse={attemptResponse} />
+            <div className="flex justify-end mt-4">{NextButton}</div>
+          </>
         )}
       </div>
     </div>
