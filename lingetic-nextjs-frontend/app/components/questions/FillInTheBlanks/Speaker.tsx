@@ -14,13 +14,8 @@ export default function Speaker({ question, autoplay = false }: SpeakerProps) {
   const { playAudio } = useQuestionAudioPlayback({ question, autoplay });
 
   return (
-    <button
-      onClick={playAudio}
-      type="button"
-      className="p-1 rounded hover:bg-skin-button-accent transition-colors"
-      aria-label="Play audio"
-    >
-      <Volume2 className="w-6 h-6 text-skin-primary" />
+    <button onClick={playAudio} type="button" aria-label="Play audio">
+      <Volume2 size={46} strokeWidth={1} />
     </button>
   );
 }

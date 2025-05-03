@@ -11,6 +11,7 @@ import type {
   FillInTheBlanksAttemptResponse,
   FillInTheBlanksQuestion,
 } from "@/utilities/api-types";
+import NextButton from "@/app/languages/[language]/NextButton";
 
 global.fetch = jest.fn();
 jest.mock(
@@ -28,7 +29,10 @@ describe("FillInTheBlanks", () => {
 
   it("renders the question parts and hint", async () => {
     const { findByText } = renderWithQueryClient(
-      <FillInTheBlanks question={mockQuestion} />
+      <FillInTheBlanks
+        question={mockQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
     );
 
     expect(await findByText(/the cat/i)).toBeInTheDocument();
@@ -40,7 +44,10 @@ describe("FillInTheBlanks", () => {
 
   it("allows user to input an answer", async () => {
     const { findByRole } = renderWithQueryClient(
-      <FillInTheBlanks question={mockQuestion} />
+      <FillInTheBlanks
+        question={mockQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
     );
 
     const input = await findByRole("textbox");
@@ -54,7 +61,10 @@ describe("FillInTheBlanks", () => {
   it("submits the answer when Enter key is pressed", async () => {
     mockSuccessfulAttempt();
     const { findByRole, findByText } = renderWithQueryClient(
-      <FillInTheBlanks question={mockQuestion} />
+      <FillInTheBlanks
+        question={mockQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
     );
 
     const input = await findByRole("textbox");
@@ -67,7 +77,10 @@ describe("FillInTheBlanks", () => {
   it("does not allow checking twice", async () => {
     mockSuccessfulAttempt();
     const { findByRole, findByText, queryByText } = renderWithQueryClient(
-      <FillInTheBlanks question={mockQuestion} />
+      <FillInTheBlanks
+        question={mockQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
     );
 
     await checkAnswer("stretched", findByRole, findByText);
@@ -80,7 +93,10 @@ describe("FillInTheBlanks", () => {
   it("displays an error when the API request fails", async () => {
     mockServerError();
     const { findByRole, findByText } = renderWithQueryClient(
-      <FillInTheBlanks question={mockQuestion} />
+      <FillInTheBlanks
+        question={mockQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
     );
 
     await checkAnswer("stretched", findByRole, findByText);
@@ -91,7 +107,10 @@ describe("FillInTheBlanks", () => {
   it("displays an error when there is a network failure", async () => {
     mockNetworkError();
     const { findByText, findByRole } = renderWithQueryClient(
-      <FillInTheBlanks question={mockQuestion} />
+      <FillInTheBlanks
+        question={mockQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
     );
 
     await checkAnswer("stretched", findByRole, findByText);
@@ -101,7 +120,10 @@ describe("FillInTheBlanks", () => {
 
   it("automatically focuses the input box on render", async () => {
     const { findByRole } = renderWithQueryClient(
-      <FillInTheBlanks question={mockQuestion} />
+      <FillInTheBlanks
+        question={mockQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
     );
 
     const input = await findByRole("textbox");
@@ -243,7 +265,10 @@ const ComponentWithChangeQuestionBtn = () => {
 
   return (
     <>
-      <FillInTheBlanks question={currentQuestion} />
+      <FillInTheBlanks
+        question={currentQuestion}
+        NextButton={<NextButton isLastQuestion={false} onNext={() => {}} />}
+      />
       <button
         onClick={() => {
           setCurrentQuestion({ ...mockQuestion, id: "different-id" });

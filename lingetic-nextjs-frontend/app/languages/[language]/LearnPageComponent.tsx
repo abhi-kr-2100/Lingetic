@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter, useParams } from "next/navigation";
-import { useRef, useState } from "react";
-import { ArrowRight, BookOpen, XCircle, Loader2 } from "lucide-react";
+import { ReactNode, useRef, useState } from "react";
+import { BookOpen, XCircle, Loader2 } from "lucide-react";
 import useQuestions, { SuccessState } from "./useQuestions";
 import assert from "@/utilities/assert";
 import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
@@ -12,6 +12,7 @@ import type {
   Question,
 } from "@/utilities/api-types";
 import type QuestionProps from "@/app/components/questions/QuestionProps";
+import NextButton from "./NextButton";
 
 export default function LearnPageComponent() {
   const params = useParams() as LearnPageParams;
@@ -106,32 +107,17 @@ export default function LearnPageComponent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-[#374151]">
-            Learning <span className="text-[#2563eb]">{language}</span>
-          </h1>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-          <RenderQuestion
-            question={result.currentQuestion}
-            afterAnswerCheck={afterAnswerCheck}
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <button
+      <RenderQuestion
+        question={result.currentQuestion}
+        afterAnswerCheck={afterAnswerCheck}
+        NextButton={
+          <NextButton
             ref={nextButtonRef}
-            type="button"
-            onClick={result.onNext}
-            className="bg-[#2563eb] text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center"
-          >
-            {result.isLastQuestion ? "Finish" : "Next"}
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </button>
-        </div>
-      </div>
+            onNext={result.onNext}
+            isLastQuestion={result.isLastQuestion}
+          />
+        }
+      />
     </div>
   );
 }
@@ -146,16 +132,24 @@ interface LearnPageParams {
 interface RenderQuestionProps {
   question: Question;
   afterAnswerCheck?: (attemptStatus?: AttemptStatus) => void;
+  NextButton: ReactNode;
 }
 
 const RenderQuestion = ({
   question,
   afterAnswerCheck,
+  NextButton,
 }: RenderQuestionProps) => {
   validateQuestionOrDie(question);
 
   const Component = questionTypeToComponentMap[question.questionType];
-  return <Component question={question} afterAnswerCheck={afterAnswerCheck} />;
+  return (
+    <Component
+      question={question}
+      afterAnswerCheck={afterAnswerCheck}
+      NextButton={NextButton}
+    />
+  );
 };
 
 const validateQuestionOrDie = (question: Question) => {
@@ -175,6 +169,7 @@ const questionTypeToComponentMap = {
     <FillInTheBlanks
       question={props.question as FillInTheBlanksQuestion}
       afterAnswerCheck={props.afterAnswerCheck}
+      NextButton={props.NextButton}
     />
   ),
 };
