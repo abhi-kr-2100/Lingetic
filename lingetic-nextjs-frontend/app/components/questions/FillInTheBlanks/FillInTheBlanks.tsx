@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import assert from "@/utilities/assert";
 import type QuestionProps from "../QuestionProps";
@@ -9,8 +9,10 @@ import type {
   FillInTheBlanksAttemptResponse,
 } from "@/utilities/api-types";
 
-import Question from "./Question";
-import Result from "./Result";
+import ActionButton from "./ActionButton";
+import AnswerCheckStatus from "./AnswerCheckStatus";
+import useUserAnswer from "./useUserAnswer";
+import MainComponent from "./MainComponent";
 
 interface FillInTheBlanksProps extends QuestionProps {
   question: FillInTheBlanksQuestion;
@@ -27,28 +29,49 @@ export default function FillInTheBlanks({
     FillInTheBlanksAttemptResponse | undefined
   >(undefined);
 
-  useEffect(() => {
-    // Reset the attempt response when the question changes.
-    setAttemptResponse(undefined);
-  }, [question.id]);
+  const { answer, setAnswer, checkAnswer, isChecking, isChecked, isError } =
+    useUserAnswer(question.id);
 
-  function onUserAnswerCheck(response?: FillInTheBlanksAttemptResponse) {
+  async function handleCheckAnswer() {
+    const response = await checkAnswer();
     setAttemptResponse(response);
     afterAnswerCheck?.(response?.attemptStatus);
   }
 
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setAnswer(e.target.value);
+  }
+
+  function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" && !isChecked) {
+      void handleCheckAnswer();
+    }
+  }
+
   return (
-    <div className="shadow-lg rounded-lg p-6">
-      <div className="mb-4">
-        {attemptResponse === undefined ? (
-          <Question question={question} onUserAnswerCheck={onUserAnswerCheck} />
-        ) : (
-          <>
-            <Result question={question} attemptResponse={attemptResponse} />
-            <div className="flex justify-end mt-4">{NextButton}</div>
-          </>
-        )}
-      </div>
+    <div className="shadow-lg rounded-lg p-6 flex flex-col gap-2">
+      <MainComponent
+        isChecked={isChecked}
+        attemptResponse={attemptResponse}
+        question={question}
+        answer={answer}
+        handleInputChange={handleInputChange}
+        handleInputKeyDown={handleInputKeyDown}
+        isChecking={isChecking}
+      />
+      <AnswerCheckStatus
+        isError={isError}
+        isChecked={isChecked}
+        attemptResponse={attemptResponse}
+      />
+      <ActionButton
+        isChecked={isChecked}
+        isChecking={isChecking}
+        onCheck={handleCheckAnswer}
+        NextButton={NextButton}
+        question={question}
+        value={answer}
+      />
     </div>
   );
 }

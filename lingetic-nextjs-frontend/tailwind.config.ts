@@ -24,6 +24,7 @@ export default {
       backgroundColor: {
         skin: {
           "button-primary": "var(--color-button-primary)",
+          "button-primary-hover": "var(--color-button-primary-hover)",
         },
       },
     },
