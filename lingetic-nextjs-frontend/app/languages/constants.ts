@@ -85,3 +85,19 @@ export const languages: LanguageProperty[] = [
     isSupported: false,
   },
 ];
+
+export const languageNameToCode: Record<string, string> = {
+  French: "fr",
+  Swedish: "sv",
+  Turkish: "tr",
+  Spanish: "es",
+  German: "de",
+  Italian: "it",
+  Portuguese: "pt",
+  Japanese: "ja",
+  Korean: "ko",
+  Chinese: "zh",
+  Russian: "ru",
+  Dutch: "nl",
+  Danish: "da",
+};

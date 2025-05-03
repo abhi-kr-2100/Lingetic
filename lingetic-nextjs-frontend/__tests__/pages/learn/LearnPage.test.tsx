@@ -12,7 +12,7 @@ global.fetch = jest.fn();
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
-  useParams: () => ({ language: "spanish" }),
+  useParams: () => ({ language: "Spanish" }),
 }));
 jest.mock(
   "../../../app/components/questions/FillInTheBlanks/useQuestionAudioPlayback",
@@ -180,7 +180,7 @@ const mockQuestions = [
     questionType: "FillInTheBlanks" as const,
     text: "The cat ____ lazily on the windowsill.",
     hint: "straighten or extend one's body",
-    language: "spanish",
+    language: "Spanish",
     explanation: [
       {
         sequenceNumber: 1,
@@ -196,7 +196,7 @@ const mockQuestions = [
     questionType: "FillInTheBlanks" as const,
     text: "She ____ her coffee every morning.",
     hint: "to drink",
-    language: "spanish",
+    language: "Spanish",
     explanation: [
       {
         sequenceNumber: 1,
@@ -211,7 +211,7 @@ const mockQuestions = [
     questionType: "FillInTheBlanks" as const,
     text: "The children ____ in the park yesterday.",
     hint: "to have fun or recreation",
-    language: "spanish",
+    language: "Spanish",
     explanation: [
       {
         sequenceNumber: 1,
@@ -227,7 +227,7 @@ const mockQuestions = [
     questionType: "FillInTheBlanks" as const,
     text: "He ____ the piano beautifully.",
     hint: "to create music with an instrument",
-    language: "spanish",
+    language: "Spanish",
     explanation: [
       {
         sequenceNumber: 1,
@@ -243,7 +243,7 @@ const mockQuestions = [
     questionType: "FillInTheBlanks" as const,
     text: "They ____ dinner at 7 PM.",
     hint: "to consume food",
-    language: "spanish",
+    language: "Spanish",
     explanation: [
       {
         sequenceNumber: 1,
