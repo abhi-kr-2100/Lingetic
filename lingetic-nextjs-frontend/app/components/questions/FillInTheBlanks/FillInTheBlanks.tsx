@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import assert from "@/utilities/assert";
 import type QuestionProps from "../QuestionProps";
@@ -28,6 +28,10 @@ export default function FillInTheBlanks({
   const [attemptResponse, setAttemptResponse] = useState<
     FillInTheBlanksAttemptResponse | undefined
   >(undefined);
+
+  useEffect(() => {
+    setAttemptResponse(undefined);
+  }, [question.id]);
 
   const { answer, setAnswer, checkAnswer, isChecking, isChecked, isError } =
     useUserAnswer(question.id);
