@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.16.0",
+    "@floating-ui/react": "^0.27.8",
     "@sentry/nextjs": "^8.55.0",
     "@tanstack/react-query": "^5.74.4",
     "@tanstack/react-query-devtools": "^5.74.4",
