@@ -184,7 +184,7 @@ const mockQuestion = {
   questionType: "FillInTheBlanks" as const,
   text: "The cat ____ lazily on the windowsill.",
   hint: "straighten or extend one's body",
-  language: "spanish",
+  language: "Spanish",
   explanation: [
     {
       sequenceNumber: 1,

@@ -8,6 +8,8 @@ import type {
 } from "@/utilities/api-types";
 import Speaker from "./Speaker";
 import useUserAnswer from "./useUserAnswer";
+import { languageNameToCode } from "@/app/languages/constants";
+import assert from "@/utilities/assert";
 
 interface QuestionBoxProps {
   question: FillInTheBlanksQuestion;
@@ -44,6 +46,9 @@ export default function QuestionBox({
     inputRef.current.focus();
   }, [question.id]);
 
+  const languageCode = languageNameToCode[question.language];
+  assert(languageCode !== undefined, `Unknown language: ${question.language}`);
+
   return (
     <>
       <div className="text-skin-base text-xl mb-4 flex items-center gap-2">
@@ -63,6 +68,11 @@ export default function QuestionBox({
           }}
           className={`p-2 border rounded w-40 text-center`}
           disabled={isChecked || isChecking}
+          lang={languageCode}
+          spellCheck
+          autoCorrect="off"
+          autoCapitalize="off"
+          autoComplete="off"
         />
         <span>{textAfter}</span>
       </div>
