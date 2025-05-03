@@ -22,7 +22,7 @@ export const languages: LanguageProperty[] = [
     id: "Turkish",
     name: "Turkish",
     image: "/img/languages/turkish-flag.png",
-    isSupported: true,
+    isSupported: false,
   },
   {
     id: "Spanish",
