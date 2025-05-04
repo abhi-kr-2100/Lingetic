@@ -10,7 +10,7 @@ const DiffHighlight: React.FC<DiffHighlightProps> = ({
   userAnswer,
   correctAnswer,
 }) => {
-  const diff = diffChars(correctAnswer, userAnswer);
+  const diff = diffChars(userAnswer, correctAnswer);
 
   return (
     <span>
