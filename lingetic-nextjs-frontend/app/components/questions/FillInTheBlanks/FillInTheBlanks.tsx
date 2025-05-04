@@ -67,6 +67,7 @@ export default function FillInTheBlanks({
         isError={isError}
         isChecked={isChecked}
         attemptResponse={attemptResponse}
+        userAnswer={answer}
       />
       <ActionButton
         isChecked={isChecked}
