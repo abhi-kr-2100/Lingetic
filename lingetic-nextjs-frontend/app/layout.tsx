@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "./components/NavBar";
 import Providers from "./providers";
+import PostHogUserIdentifier from "./components/PostHogUserIdentifier";
 
 export const metadata: Metadata = {
   title: "Lingetic",
@@ -17,6 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
+          <PostHogUserIdentifier />
           <Navbar />
           {children}
         </Providers>
