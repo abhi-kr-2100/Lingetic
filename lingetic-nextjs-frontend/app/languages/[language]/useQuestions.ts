@@ -58,7 +58,15 @@ export default function useQuestions({
     isFetching,
   } = useQuery({
     queryKey: ["questions", language],
-    queryFn: () => fetchQuestions(language, getToken),
+    queryFn: async () => {
+      const questions = await fetchQuestions(language, getToken);
+      // Shuffle the questions using Fisher-Yates algorithm
+      for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+      }
+      return questions;
+    },
 
     // The same questions should not be displayed on different renders
     // of the component. This is because the questions that Lingetic thinks
