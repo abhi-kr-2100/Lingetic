@@ -2,6 +2,7 @@
 
 {
   packages = with pkgs; [
+    awscli2
     docker
     ffmpeg
     google-cloud-sdk
