@@ -18,6 +18,14 @@
       "playwright": {
         "command": "pnpx",
         "args": ["@playwright/mcp@latest"]
+      },
+      "codacy": {
+        "command": "npx",
+        "args": ["-y", "@codacy/codacy-mcp"],
+        "env": {
+          "CODACY_ACCOUNT_TOKEN": "${env:CODACY_ACCOUNT_TOKEN}",
+          "CODACY_CLI_VERSION": "${env:CODACY_CLI_VERSION}"
+        }
       }
     }
   }
