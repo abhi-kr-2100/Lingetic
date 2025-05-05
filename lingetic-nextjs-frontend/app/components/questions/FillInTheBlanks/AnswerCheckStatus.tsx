@@ -3,6 +3,7 @@ import type { FillInTheBlanksAttemptResponse } from "@/utilities/api-types";
 import assert from "@/utilities/assert";
 import AnswerFeedbackBox from "./AnswerFeedbackBox";
 import DiffHighlight from "./DiffHighlight";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 interface AnswerCheckStatusProps {
   isError: boolean;
@@ -38,16 +39,22 @@ export default function AnswerCheckStatus({
 
   if (attemptResponse.attemptStatus === "Success") {
     return (
-      <AnswerFeedbackBox>
-        <p className="text-skin-success">Correct!</p>
+      <AnswerFeedbackBox className="bg-green-50">
+        <p className="text-skin-success text-lg flex items-center gap-2">
+          <CheckCircle2 className="w-6 h-6" />
+          Correct!
+        </p>
       </AnswerFeedbackBox>
     );
   }
 
   if (attemptResponse.attemptStatus === "Failure") {
     return (
-      <AnswerFeedbackBox className="flex flex-col gap-2">
-        <p className="text-skin-error">Incorrect.</p>
+      <AnswerFeedbackBox className="bg-red-50 flex flex-col gap-2">
+        <p className="text-skin-error text-lg flex items-center gap-2">
+          <XCircle className="w-6 h-6" />
+          Incorrect.
+        </p>
         <p>
           Correct Answer:{" "}
           <span className="text-green-800">
