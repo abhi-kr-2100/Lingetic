@@ -41,7 +41,7 @@ export default function LearnPageComponent() {
 
   if (result.isLoading) {
     return (
-      <div className="bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+      <div className="h-full bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
           <Loader2 className="h-12 w-12 text-[#2563eb] animate-spin mx-auto mb-4" />
           <p className="text-[#374151] text-lg">
@@ -54,7 +54,7 @@ export default function LearnPageComponent() {
 
   if (result.isError) {
     return (
-      <div className="bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+      <div className="h-full bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
           <XCircle className="h-12 w-12 text-[#dc2626] mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-[#374151] mb-2">Oops!</h2>
@@ -76,7 +76,7 @@ export default function LearnPageComponent() {
 
   if (!result.hasQuestions) {
     return (
-      <div className="bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+      <div className="h-full bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
           <BookOpen className="h-12 w-12 text-[#2563eb] mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-[#374151] mb-2">
