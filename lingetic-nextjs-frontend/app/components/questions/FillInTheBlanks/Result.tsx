@@ -1,7 +1,6 @@
 import type { FillInTheBlanksAttemptResponse } from "@/utilities/api-types";
 import WordExplanationHover from "./WordExplanationHover";
 import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
-import assert from "@/utilities/assert";
 
 interface ResultBoxProps {
   question: FillInTheBlanksQuestion;
@@ -12,10 +11,13 @@ export default function ResultBox({
   question,
   attemptResponse,
 }: ResultBoxProps) {
-  assert(
-    attemptResponse.explanation.length > 0,
-    `explanation not available for question ${question.id}`
-  );
+  if (attemptResponse.explanation.length === 0) {
+    const fullSentence = question.text.replace(
+      /_+/,
+      attemptResponse.correctAnswer
+    );
+    return <div>{fullSentence}</div>;
+  }
 
   return (
     <div className="flex flex-wrap gap-1">
