@@ -29,22 +29,29 @@ export default function MainComponent({
 }: MainComponentProps) {
   return (
     <div className="flex flex-col gap-4">
-      {!isChecked ? (
-        <Question
-          question={question}
-          value={answer}
-          onChange={handleInputChange}
-          onKeyDown={handleInputKeyDown}
-          disabled={isChecked || isChecking}
-        />
-      ) : attemptResponse !== undefined ? (
-        <Result question={question} attemptResponse={attemptResponse} />
-      ) : (
-        <>
-          {assert(false, "attemptResponse is undefined after successful check")}
-        </>
+      <div className="text-xl font-semibold">
+        {!isChecked ? (
+          <Question
+            question={question}
+            value={answer}
+            onChange={handleInputChange}
+            onKeyDown={handleInputKeyDown}
+            disabled={isChecked || isChecking}
+          />
+        ) : attemptResponse !== undefined ? (
+          <Result question={question} attemptResponse={attemptResponse} />
+        ) : (
+          <>
+            {assert(
+              false,
+              "attemptResponse is undefined after successful check"
+            )}
+          </>
+        )}
+      </div>
+      {question.hint.length > 0 && (
+        <p className="text-skin-base italic">{question.hint}</p>
       )}
-      <p className="text-skin-base">Hint: {question.hint}</p>
     </div>
   );
 }

@@ -33,7 +33,8 @@ export default function QuestionBox({
         autoFocus
         onChange={onChange}
         onKeyDown={onKeyDown}
-        className={`mx-1.5 py-0.5 w-40 text-center`}
+        className={`border-b-2 border-teal-700 focus:outline-none focus:border-teal-800 text-center max-w-[15ch]`}
+        placeholder="type here"
         disabled={disabled}
         lang={languageCode}
         spellCheck

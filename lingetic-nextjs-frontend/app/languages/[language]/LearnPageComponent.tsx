@@ -106,7 +106,7 @@ export default function LearnPageComponent() {
   };
 
   return (
-    <div className="flex items-center justify-center h-full">
+    <div className="flex items-center justify-center h-full px-[10%] py-[5%]">
       <RenderQuestion
         question={result.currentQuestion}
         afterAnswerCheck={afterAnswerCheck}
