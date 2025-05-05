@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Languages() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="flex-1 bg-gradient-to-b from-blue-50 to-white">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-4">

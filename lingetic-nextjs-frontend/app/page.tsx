@@ -4,9 +4,9 @@ import { languages } from "./languages/constants";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <div className="flex-1">
       <HeroSection languages={languages} />
       <WakeUpBackend />
-    </main>
+    </div>
   );
 }
