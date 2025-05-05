@@ -7,7 +7,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ languages }: HeroSectionProps) {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 md:px-8 lg:px-24 py-16">
+    <section className="relative flex flex-col items-center justify-center px-4 md:px-8 lg:px-24 py-16">
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50 to-white" />
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 text-[#374151] tracking-tight">

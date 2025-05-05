@@ -53,7 +53,7 @@ export default function FillInTheBlanks({
   }
 
   return (
-    <div className="shadow-lg rounded-lg p-6 flex flex-col gap-2">
+    <div className="w-full shadow-lg rounded-lg p-6 flex flex-col gap-2">
       <MainComponent
         isChecked={isChecked}
         attemptResponse={attemptResponse}

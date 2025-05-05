@@ -51,7 +51,7 @@ function ResultsPageComponent() {
   const percentage = Math.round((correct / total) * 100);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+    <div className="flex-1 bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
         <Trophy className="h-16 w-16 text-[#2563eb] mx-auto mb-6" />
         <h1 className="text-3xl font-bold text-[#374151] mb-4">

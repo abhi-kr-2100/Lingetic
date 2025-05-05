@@ -12,7 +12,7 @@ export default function ErrorPage({ error }: ErrorPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="flex-1 flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow rounded-xl">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-[#374151] mb-2">
