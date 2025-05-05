@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-from typing import Dict, List, Any, Optional
-import argparse
-import os
 import sys
+import os
+import logging
+import argparse
+import mimetypes
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Dict, List, Any, Optional
 import boto3
 from botocore.exceptions import ClientError
-import mimetypes
-import logging
-
 
 logging.basicConfig(
     level=logging.INFO,
@@ -118,7 +118,7 @@ def process_directory(
     recursive: bool = False,
 ) -> Dict[str, List[Any]]:
     """
-    Process a directory and upload files to R2.
+    Process a directory and upload files to R2 asynchronously.
 
     Args:
         client: Boto3 S3 client configured for R2.
@@ -138,37 +138,56 @@ def process_directory(
         logger.error(f"'{directory}' is not a directory")
         sys.exit(1)
 
-    results = {"successful": [], "failed": []}
-
+    # Collect all files to process
+    files_to_process = []
     for root, dirs, files in os.walk(directory):
         if not recursive and root != directory:
             continue
 
         for filename in files:
-            filepath = os.path.join(root, filename)
+            if not filename.startswith("."):
+                filepath = os.path.join(root, filename)
+                relative_path = os.path.relpath(filepath, directory)
+                dir_part = os.path.dirname(relative_path)
 
-            relative_path = os.path.relpath(filepath, directory)
-            dir_part = os.path.dirname(relative_path)
+                if prefix and dir_part and recursive:
+                    full_prefix = f"{prefix.rstrip('/')}/{dir_part}"
+                elif prefix:
+                    full_prefix = prefix
+                elif dir_part and recursive:
+                    full_prefix = dir_part
+                else:
+                    full_prefix = None
 
-            if prefix and dir_part and recursive:
-                full_prefix = f"{prefix.rstrip('/')}/{dir_part}"
-            elif prefix:
-                full_prefix = prefix
-            elif dir_part and recursive:
-                full_prefix = dir_part
-            else:
-                full_prefix = None
+                object_key = generate_object_key(filepath, full_prefix)
+                files_to_process.append((filepath, object_key))
 
-            object_key = generate_object_key(filepath, full_prefix)
+    results = {"successful": [], "failed": []}
 
-            if upload_file(client, filepath, bucket_name, object_key):
-                results["successful"].append(
-                    {"file": filepath, "object_key": object_key}
-                )
-                logger.info(f"Uploaded: {filepath} -> {object_key}")
-            else:
+    # Process files in parallel
+    with ThreadPoolExecutor() as executor:
+        future_to_file = {
+            executor.submit(
+                upload_file, client, filepath, bucket_name, object_key
+            ): (filepath, object_key)
+            for filepath, object_key in files_to_process
+        }
+
+        for future in as_completed(future_to_file):
+            filepath, object_key = future_to_file[future]
+            try:
+                success = future.result()
+                if success:
+                    results["successful"].append(
+                        {"file": filepath, "object_key": object_key}
+                    )
+                    logger.info(f"Uploaded: {filepath} -> {object_key}")
+                else:
+                    results["failed"].append(filepath)
+                    logger.warning(f"Failed to upload: {filepath}")
+            except Exception as e:
+                logger.error(f"Error processing {filepath}: {e}")
                 results["failed"].append(filepath)
-                logger.warning(f"Failed to upload: {filepath}")
 
     return results
 
