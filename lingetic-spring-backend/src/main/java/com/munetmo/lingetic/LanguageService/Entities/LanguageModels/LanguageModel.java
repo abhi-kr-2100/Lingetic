@@ -27,7 +27,7 @@ public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLangua
                 try {
                     yield new JapaneseLanguageModel();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Failed to initialize Japanese language model: " + e.getMessage(), e);
                 }
             }
         };
