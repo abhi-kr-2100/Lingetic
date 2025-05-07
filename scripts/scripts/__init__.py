@@ -7,11 +7,11 @@ from . import tts
 from . import upload_to_r2
 
 __all__ = [
-    "questions",
-    "insert_into_db",
     "course",
+    "questions",
     "select_questions",
-    "db_dump",
+    "insert_into_db",
     "tts",
     "upload_to_r2",
+    "db_dump",
 ]
