@@ -8375,6 +8375,9 @@
       "glob": "db/migration/V5__Add_Swedish_Language.sql"
     },
     {
+      "glob": "db/migration/V6__Add_Japanese_Language.sql"
+    },
+    {
       "glob": "git.properties"
     },
     {
