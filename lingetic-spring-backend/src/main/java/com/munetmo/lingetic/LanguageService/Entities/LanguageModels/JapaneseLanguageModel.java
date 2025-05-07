@@ -23,13 +23,21 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
         @Nullable
         private Tokenizer tokenizer = null;
 
-        public void reinit() throws IOException {
+        public void reinit() {
             if (dictionary != null) {
-                dictionary.close();
+                try {
+                    dictionary.close();
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to close dictionary: " + e.getMessage(), e);
+                }
             }
 
-            var config = Config.fromClasspath("sudachi/sudachi.json");
-            dictionary = new DictionaryFactory().create(config);
+            try {
+                var config = Config.fromClasspath("sudachi/sudachi.json");
+                dictionary = new DictionaryFactory().create(config);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create dictionary: " + e.getMessage(), e);
+            }
             tokenizer = dictionary.create();
         }
 
@@ -37,7 +45,7 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
             reinit();
         }
 
-        public MorphemeList tokenize(String input) throws IOException {
+        public MorphemeList tokenize(String input) {
             // Sudachi doesn't handle whitespace properly
             // Thankfully, Japanese is a whitespace-free language
             input = input.replaceAll("\\s+", "").trim();
@@ -109,12 +117,7 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
         }
 
         List<Token> tokens = new ArrayList<>();
-        MorphemeList morphemes = null;
-        try {
-            morphemes = tokenizer.tokenize(input);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        var morphemes = tokenizer.tokenize(input);
         int sequenceNumber = 1;
 
         for (var morpheme : morphemes) {
@@ -141,12 +144,7 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
             return "";
         }
 
-        MorphemeList morphemes = null;
-        try {
-            morphemes = tokenizer.tokenize(input);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        MorphemeList morphemes = tokenizer.tokenize(input);
         List<String> normalizedParts = new ArrayList<>();
 
         for (var morpheme : morphemes) {
