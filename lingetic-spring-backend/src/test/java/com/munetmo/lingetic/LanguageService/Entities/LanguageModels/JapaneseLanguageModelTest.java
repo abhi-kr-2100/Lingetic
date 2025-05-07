@@ -6,6 +6,7 @@ import com.munetmo.lingetic.LanguageService.Entities.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +15,7 @@ class JapaneseLanguageModelTest {
     private JapaneseLanguageModel model;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         model = new JapaneseLanguageModel();
     }
 

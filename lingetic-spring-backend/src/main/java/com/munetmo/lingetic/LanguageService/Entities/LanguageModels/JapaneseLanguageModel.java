@@ -12,11 +12,9 @@ import java.util.List;
 import java.util.Locale;
 
 public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable {
-
     /**
      * Sudachi's tokenizer often fails due to transient issues. The SafeTokenizer class wraps
      * tokenizer calls in a retry loop.
-     *
      */
     private static class SafeTokenizer implements AutoCloseable {
         @Nullable
@@ -81,14 +79,10 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
         }
     }
 
-    private static final SafeTokenizer tokenizer;
+    private final SafeTokenizer tokenizer;
 
-    static {
-        try {
-            tokenizer = new SafeTokenizer();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public JapaneseLanguageModel() throws IOException {
+        tokenizer = new SafeTokenizer();
     }
 
     @Override
