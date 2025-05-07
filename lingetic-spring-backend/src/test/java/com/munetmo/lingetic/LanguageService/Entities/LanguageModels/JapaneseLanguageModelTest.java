@@ -25,7 +25,7 @@ class JapaneseLanguageModelTest {
     }
 
     @Test
-    void tokenizeShouldHandleEmptyAndNull() {
+    void tokenizeShouldHandleEmptyStrings() {
         assertTrue(model.tokenize("").isEmpty());
         assertTrue(model.tokenize(" ").isEmpty());
     }
