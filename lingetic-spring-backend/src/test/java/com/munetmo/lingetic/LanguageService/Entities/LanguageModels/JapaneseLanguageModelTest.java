@@ -56,6 +56,7 @@ class JapaneseLanguageModelTest {
         assertEquals(5, tokens.get(4).sequenceNumber());
     }
 
+    @Test
     void tokenizeShouldIgnoreWhitespaces() {
         var tokens = model.tokenize("で  す");
 
