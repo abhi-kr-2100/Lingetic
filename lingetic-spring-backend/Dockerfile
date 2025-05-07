@@ -12,6 +12,7 @@ RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
     ./gradlew dependencies --no-daemon
 
 COPY src/main src/main
+COPY src/main/resources/dictionaries/system_full.dic src/main/resources/dictionaries/system_full.dic
 
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
     export SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) && \
