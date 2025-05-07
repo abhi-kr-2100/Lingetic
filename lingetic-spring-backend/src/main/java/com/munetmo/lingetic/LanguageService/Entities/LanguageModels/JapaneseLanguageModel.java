@@ -58,7 +58,7 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
                 throw new IllegalStateException("Impossible state: tokenizer is null even after init");
             }
 
-            final int maxRetries = 10;
+            final int maxRetries = 5;
             int retryCount = 0;
             while (true) {
                 try {
