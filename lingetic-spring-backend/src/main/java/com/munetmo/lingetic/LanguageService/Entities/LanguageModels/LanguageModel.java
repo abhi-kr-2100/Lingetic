@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLanguageModel, TurkishLanguageModel, SwedishLanguageModel {
+public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLanguageModel, TurkishLanguageModel, SwedishLanguageModel, JapaneseLanguageModel {
     Language getLanguage();
 
     boolean areEquivalent(String s1, String s2);
@@ -19,7 +19,8 @@ public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLangua
             Language.English, new EnglishLanguageModel(),
             Language.French, new FrenchLanguageModel(),
             Language.Turkish, new TurkishLanguageModel(),
-            Language.Swedish, new SwedishLanguageModel());
+            Language.Swedish, new SwedishLanguageModel(),
+            Language.Japanese, new JapaneseLanguageModel());
 
     static LanguageModel getLanguageModel(Language language) {
         Utilities.assert_(languageModelInstances.containsKey(language), "Language not supported");

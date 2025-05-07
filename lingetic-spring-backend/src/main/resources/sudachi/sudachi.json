@@ -1,0 +1,14 @@
+{
+  "systemDict": "dictionaries/system_full.dic",
+  "splitMode": "C",
+  "oovProviderPlugin": [
+    {
+      "class": "com.worksap.nlp.sudachi.MeCabOovProviderPlugin"
+    }
+  ],
+  "pathRewritePlugin": [
+    {
+      "class": "com.worksap.nlp.sudachi.JoinNumericPlugin"
+    }
+  ]
+}
