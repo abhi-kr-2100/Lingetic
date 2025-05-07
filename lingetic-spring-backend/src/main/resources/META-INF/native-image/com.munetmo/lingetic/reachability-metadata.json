@@ -1048,6 +1048,24 @@
       "type": "com.unboundid.ldap.listener.InMemoryDirectoryServer"
     },
     {
+      "type": "com.worksap.nlp.sudachi.JoinNumericPlugin",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.worksap.nlp.sudachi.MeCabOovProviderPlugin",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.zaxxer.hikari.HikariConfig",
       "allDeclaredFields": true,
       "methods": [
@@ -2826,6 +2844,15 @@
     },
     {
       "type": "org.glassfish.jersey.server.spring.SpringComponentProvider"
+    },
+    {
+      "type": "org.glassfish.json.JsonProviderImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "org.graalvm.nativeimage.ImageInfo",
@@ -8237,6 +8264,9 @@
       "glob": "META-INF/services/java.util.spi.ResourceBundleControlProvider"
     },
     {
+      "glob": "META-INF/services/javax.json.spi.JsonProvider"
+    },
+    {
       "glob": "META-INF/services/org.apache.commons.logging.LogFactory"
     },
     {
@@ -8292,6 +8322,9 @@
     },
     {
       "glob": "banner.txt"
+    },
+    {
+      "glob": "char.def"
     },
     {
       "glob": "com/munetmo/lingetic/"
@@ -8376,6 +8409,9 @@
     },
     {
       "glob": "db/migration/V6__Add_Japanese_Language.sql"
+    },
+    {
+      "glob": "dictionaries/system_full.dic"
     },
     {
       "glob": "git.properties"
@@ -9417,6 +9453,12 @@
     },
     {
       "glob": "static/index.html"
+    },
+    {
+      "glob": "sudachi/sudachi.json"
+    },
+    {
+      "glob": "unk.def"
     },
     {
       "module": "java.base",
