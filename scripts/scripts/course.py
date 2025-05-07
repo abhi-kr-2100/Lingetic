@@ -461,6 +461,7 @@ def main(language: str, schema: str, output: str):
                     language, theme, level, number, instructions, example
                 )
                 result = make_gemini_api_call(prompt, entry)
+                result["_seq_id"] = entry["_seq_id"]
 
                 # Write to log immediately
                 with log_lock:
