@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public final class LatinScriptLanguageModelHelper {
     private static final String TERMINAL_PUNCTUATION = ".?!;,:-";
-    private static final String SPECIFIC_CHARACTERS = "àâäæçéèêëîïôœùûüÿçğıöşüåäö";
+    private static final String SPECIFIC_CHARACTERS = "àâäæçéèêëîïôœùûüÿçğıöşüåäöāīūēō";
     private static final String SURROUNDING_PUNCTUATION = "'\"«»";
 
     private static final Pattern LEADING_PUNCTUATION_PATTERN = Pattern.compile(
