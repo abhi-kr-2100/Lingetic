@@ -16,6 +16,7 @@ LANGUAGE_TO_CODE = {
     "Turkish": "tr",
     "Swedish": "sv",
     "Japanese": "ja",
+    "JapaneseModifiedHepburn": "ja",
 }
 
 

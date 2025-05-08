@@ -132,6 +132,34 @@ Output:
 ]
 }
 """,
+    "JapaneseModifiedHepburn": """
+Example:
+
+Theme: Basic verbs, Level: Intermediate, Number: 2
+
+Output:
+
+{
+"data": [
+    {
+        "text": "Watashi wa shitte imasu!",
+        "translations": [
+            {
+                "text": "I know!"
+            }
+        ]
+    },
+    {
+        "text": "Tomu ga katteimasu.",
+        "translations": [
+            {
+                "text": "Tom is winning."
+            }
+        ]
+    }
+]
+}
+""",
 }
 
 
