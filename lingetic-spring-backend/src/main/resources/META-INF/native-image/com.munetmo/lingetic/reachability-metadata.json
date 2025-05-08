@@ -8411,6 +8411,9 @@
       "glob": "db/migration/V6__Add_Japanese_Language.sql"
     },
     {
+      "glob": "db/migration/V7__Add_Japanese_Modified_Hepburn_Language.sql"
+    },
+    {
       "glob": "dictionaries/system_full.dic"
     },
     {
