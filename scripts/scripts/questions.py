@@ -79,6 +79,28 @@ Output:
 Reason: Both words `駅` (station) and `へ` (direction particle) are relevant to the theme and instructions, as they deal with locations and particles used for indicating direction.
         """,
     },
+    "JapaneseModifiedHepburn": {
+        "sentence": "gakusei wa toshokan de benkyou shimasu",
+        "word1": "de",
+        "word2": ["gakusei", "toshokan"],
+        "blank1": "gakusei wa toshokan ____ benkyou shimasu",
+        "blank2": [
+            "_____ wa toshokan de benkyou shimasu",
+            "gakusei wa _____ de benkyou shimasu",
+        ],
+        "example": """
+Example:
+Words: [{{"type":"Word","value":"watashi","sequenceNumber":1}},{{"type":"Word","value":"wa","sequenceNumber":2}},{{"type":"Word","value":"eki","sequenceNumber":3}},{{"type":"Word","value":"e","sequenceNumber":4}},{{"type":"Word","value":"ikimasu","sequenceNumber":5}}]
+
+Theme: Basic Locations and Transportation
+Instructions: Teach basic location particles (e, ni, de) and verbs of motion (iku, kuru). Focus on simple sentence structures using basic particles. Average sentence length: 3-5 words.
+
+Output:
+{{ "selectedWordsSequenceNumbers": [3, 4] }}
+
+Reason: Both words `eki` (station) and `e` (direction particle) are relevant to the theme and instructions, as they deal with locations and particles used for indicating direction.
+        """,
+    },
 }
 
 PROMPT_TEMPLATE = """Your job is to create fill-in-the-blank questions. To create a fill-in-the-blank question, start with a set of words: "{sentence}" Then choose a word to hide, say, "{word1}". The fill-in-the-blank question becomes: "{blank1}"
