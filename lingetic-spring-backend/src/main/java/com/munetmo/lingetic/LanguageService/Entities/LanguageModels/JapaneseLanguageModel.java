@@ -87,15 +87,14 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
         }
     }
 
-    private final SafeTokenizer tokenizer;
-
-    public JapaneseLanguageModel() throws IOException {
-        tokenizer = new SafeTokenizer();
-    }
+    @Nullable
+    private SafeTokenizer tokenizer;
 
     @Override
     public void close() throws IOException {
-        tokenizer.close();
+        if (tokenizer != null) {
+            tokenizer.close();
+        }
     }
 
     @Override
@@ -114,6 +113,14 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
     public List<Token> tokenize(String input) {
         if (input.isBlank()) {
             return List.of();
+        }
+
+        if (tokenizer == null) {
+            try {
+                tokenizer = new SafeTokenizer();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to initialize tokenizer: " + e.getMessage(), e);
+            }
         }
 
         List<Token> tokens = new ArrayList<>();
@@ -140,25 +147,9 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
     }
 
     private String normalizeString(String input) {
-        if (input.isBlank()) {
-            return "";
-        }
-
-        MorphemeList morphemes = tokenizer.tokenize(input);
-        List<String> normalizedParts = new ArrayList<>();
-
-        for (var morpheme : morphemes) {
-            var surface = morpheme.surface().trim();
-            if (surface.isBlank()) {
-                continue;
-            }
-            // This RegEx matches most Unicode punctuation and symbols,
-            // including almost all Japanese ones
-            if (!surface.matches("[\\p{P}\\p{S}]+")) {
-                normalizedParts.add(surface);
-            }
-        }
-
-        return String.join(" ", normalizedParts).toLowerCase(Locale.JAPANESE);
+        return input
+                .replaceAll("\\s+", "")
+                .replaceAll("[\\p{P}\\p{S}]+", "")
+                .trim();
     }
 }
