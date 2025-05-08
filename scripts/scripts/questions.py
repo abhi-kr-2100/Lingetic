@@ -60,6 +60,25 @@ Output:
 Reason: Both words `bok` and `biblioteket` are relevant to the theme and instructions. The word `Studenten` is not relevant to the theme and instructions, as it is a proper noun and does not fit the context of basic everyday objects.
         """,
     },
+    "Japanese": {
+        "sentence": "学生は図書館で勉強します",
+        "word1": "で",
+        "word2": ["学生", "図書館"],
+        "blank1": "学生は図書館____勉強します",
+        "blank2": ["_____は図書館で勉強します", "学生は_____で勉強します"],
+        "example": """
+Example:
+Words: [{{"type":"Word","value":"私","sequenceNumber":1}},{{"type":"Word","value":"は","sequenceNumber":2}},{{"type":"Word","value":"駅","sequenceNumber":3}},{{"type":"Word","value":"へ","sequenceNumber":4}},{{"type":"Word","value":"行きます","sequenceNumber":5}}]
+
+Theme: Basic Locations and Transportation
+Instructions: Teach basic location particles (へ, に, で) and verbs of motion (行く, 来る). Focus on simple sentence structures using basic particles. Average sentence length: 3-5 words.
+
+Output:
+{{ "selectedWordsSequenceNumbers": [3, 4] }}
+
+Reason: Both words `駅` (station) and `へ` (direction particle) are relevant to the theme and instructions, as they deal with locations and particles used for indicating direction.
+        """,
+    },
 }
 
 PROMPT_TEMPLATE = """Your job is to create fill-in-the-blank questions. To create a fill-in-the-blank question, start with a set of words: "{sentence}" Then choose a word to hide, say, "{word1}". The fill-in-the-blank question becomes: "{blank1}"
@@ -112,19 +131,36 @@ def get_output_file(output_path: str) -> TextIO:
         sys.exit(1)
 
 
-def tokenize_sentence(language: str, sentence: str) -> List[Dict[str, Any]]:
+def tokenize_sentences(
+    sentences: List[Dict[str, Any]], language: str
+) -> List[Dict[str, Any]]:
     """
-    Tokenize a sentence using the local HTTP API.
+    Tokenize all sentences using a single connection pool.
+    Returns the sentences with their tokens added.
     """
+    session = requests.Session()
     url = "http://localhost:8000/language-service/tokenize"
-    params = {"language": language, "sentence": sentence}
-    try:
-        response = requests.get(url, params=params, timeout=5)
-        response.raise_for_status()
-        return response.json()
-    except Exception as e:
-        print(f"Error tokenizing sentence '{sentence}': {e}", file=sys.stderr)
-        return []
+
+    sentences_with_tokens = []
+    for sentence in sentences:
+        text = sentence.get("text", "")
+        try:
+            params = {"language": language, "sentence": text}
+            response = session.get(url, params=params, timeout=5)
+            response.raise_for_status()
+            tokens = response.json()
+            sentence_with_tokens = dict(sentence)
+            sentence_with_tokens["tokens"] = tokens
+            sentences_with_tokens.append(sentence_with_tokens)
+        except Exception as e:
+            print(
+                f"Error tokenizing sentence '{text}': {e}; Aborting...",
+                file=sys.stderr,
+            )
+            raise SystemError(f"Tokenization error: {e}")
+
+    session.close()
+    return sentences_with_tokens
 
 
 def make_gemini_api_call(prompt: str) -> List[int]:
@@ -193,10 +229,14 @@ def make_gemini_api_call(prompt: str) -> List[int]:
 
 
 def generate_prompt(
-    tokens: List[Dict[str, Any]], theme: str, instructions: str, language: str
+    tokens: List[Dict[str, Any]],
+    theme: str,
+    instructions: str,
+    language: str,
+    valid_ints: List[int],
 ) -> str:
     """Generate a prompt for the Gemini API based on the tokens and context."""
-    # Get language-specific examples or use French as default
+    # Get language-specific examples
     examples = PROMPT_EXAMPLES.get(language)
 
     # Format the prompt with language-specific examples
@@ -206,89 +246,19 @@ def generate_prompt(
     prompt += f"\nNow select words from this sentence:\nWords: {json.dumps(tokens)}\n\n"
     prompt += f"Theme: {theme}\n"
     prompt += f"Instructions: {instructions}\n\n"
+    prompt += f"You must select one or more integers from the following: {valid_ints}\n\n"
     prompt += "Output:\n"
 
     return prompt
-
-
-def generate_fill_in_the_blank_questions(
-    sentence_obj: Dict[str, Any], language: str
-) -> List[Dict[str, Any]]:
-    """
-    Generate fill-in-the-blank questions for a sentence by using Gemini API to select tokens to mask.
-    Only masks the first occurrence of each selected word.
-    """
-    text = sentence_obj.get("text", "")
-    translations = sentence_obj.get("translations", [])
-    translation = translations[0].get("text", "") if translations else ""
-    theme = sentence_obj.get("theme", "")
-    instructions = sentence_obj.get("instructions", "")
-
-    # Get tokens
-    tokens = tokenize_sentence(language, text)
-
-    # Keep track of word tokens with their original sequence numbers
-    word_tokens = [token for token in tokens if token.get("type") == "Word"]
-
-    if not word_tokens:
-        return []
-
-    # Ask Gemini which tokens to mask
-    prompt = generate_prompt(word_tokens, theme, instructions, language)
-    try:
-        selected_sequence_numbers = make_gemini_api_call(prompt)
-    except Exception as e:
-        print(f"Error from Gemini API: {e}", file=sys.stderr)
-        # Fallback to selecting a random word token
-        selected_sequence_numbers = [
-            random.choice(word_tokens)["sequenceNumber"]
-        ]
-
-    # Create questions for each selected token
-    questions = []
-    seen_words = set()  # Track words we've already masked
-
-    for seq_num in selected_sequence_numbers:
-        # Find the token in the original tokens list
-        selected_token = None
-        for token in tokens:
-            if token.get("sequenceNumber") == seq_num:
-                selected_token = token
-                break
-
-        if selected_token is None:
-            print(
-                "Error: Selected token not found in original tokens list.",
-                file=sys.stderr,
-            )
-            continue
-
-        if selected_token["value"] in seen_words:
-            continue
-
-        seen_words.add(selected_token["value"])
-        question_text = text.replace(selected_token["value"], "_____", 1)
-
-        questions.append(
-            {
-                "question_type": "FillInTheBlanks",
-                "question_type_specific_data": {
-                    "questionText": question_text,
-                    "answer": selected_token["value"],
-                    "hint": translation,
-                },
-            }
-        )
-
-    return questions
 
 
 def process_sentences(
     sentences: List[Dict[str, Any]], language: str, output: str
 ) -> List[Dict[str, Any]]:
     """
-    Process sentences asynchronously using ThreadPoolExecutor while maintaining order.
-    Uses a cache file to store intermediate results.
+    Process sentences in two steps:
+    1. Synchronously tokenize all sentences using a connection pool
+    2. Asynchronously process tokens with Gemini API while maintaining order
     """
     # Set log file path for caching
     log_path = (
@@ -315,16 +285,94 @@ def process_sentences(
                 except Exception as e:
                     print(f"Error reading log line: {e}", file=sys.stderr)
 
-    # Filter out already processed sentences
+    # Step 1: Synchronously tokenize all sentences that need processing
     to_process = [
         (i, sent) for i, sent in enumerate(sentences) if i not in processed_ids
     ]
-    results_map = {i: log_results[i] for i in processed_ids}
+    if to_process:
+        sentences_to_tokenize = [sent for _, sent in to_process]
+        tokenized_sentences = tokenize_sentences(
+            sentences_to_tokenize, language
+        )
 
+        # Map tokenized sentences back to their indices
+        tokenized_map = {
+            i: sent
+            for i, sent in zip(
+                [idx for idx, _ in to_process], tokenized_sentences
+            )
+        }
+    else:
+        tokenized_map = {}
+
+    results_map = {i: log_results[i] for i in processed_ids}
     log_lock = threading.Lock()
 
-    def process_and_log(idx: int, sentence: Dict[str, Any]) -> Dict[str, Any]:
-        questions = generate_fill_in_the_blank_questions(sentence, language)
+    def process_with_gemini(
+        idx: int, sentence: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        tokens = sentence.get("tokens", [])
+        theme = sentence.get("theme", "")
+        instructions = sentence.get("instructions", "")
+        text = sentence.get("text", "")
+        translations = sentence.get("translations", [])
+        translation = translations[0].get("text", "") if translations else ""
+
+        # Filter word tokens
+        word_tokens = [token for token in tokens if token.get("type") == "Word"]
+        valid_sequence_numbers = [
+            token["sequenceNumber"] for token in word_tokens
+        ]
+
+        if not word_tokens:
+            questions = []
+        else:
+            # Generate prompt and get selected tokens from Gemini
+            prompt = generate_prompt(
+                word_tokens,
+                theme,
+                instructions,
+                language,
+                valid_sequence_numbers,
+            )
+            try:
+                selected_sequence_numbers = make_gemini_api_call(prompt)
+            except Exception as e:
+                print(f"Error from Gemini API: {e}", file=sys.stderr)
+                selected_sequence_numbers = [
+                    random.choice(word_tokens)["sequenceNumber"]
+                ]
+
+            # Create questions
+            questions = []
+            seen_words = set()
+
+            for seq_num in selected_sequence_numbers:
+                selected_token = next(
+                    (t for t in tokens if t.get("sequenceNumber") == seq_num),
+                    None,
+                )
+                if (
+                    selected_token is None
+                    or selected_token["value"] in seen_words
+                ):
+                    continue
+
+                seen_words.add(selected_token["value"])
+                question_text = text.replace(
+                    selected_token["value"], "_____", 1
+                )
+                questions.append(
+                    {
+                        "question_type": "FillInTheBlanks",
+                        "question_type_specific_data": {
+                            "questionText": question_text,
+                            "answer": selected_token["value"],
+                            "hint": translation,
+                        },
+                    }
+                )
+
         result = dict(sentence)
         result["questions"] = questions
         # Write to log immediately
@@ -333,10 +381,11 @@ def process_sentences(
                 logf.write(json.dumps(result, ensure_ascii=False) + "\n")
         return result
 
+    # Step 2: Asynchronously process tokenized sentences with Gemini
     with ThreadPoolExecutor() as executor:
         future_to_idx = {
-            executor.submit(process_and_log, idx, sentence): idx
-            for idx, sentence in to_process
+            executor.submit(process_with_gemini, idx, tokenized_map[idx]): idx
+            for idx in tokenized_map
         }
         for future in as_completed(future_to_idx):
             idx = future_to_idx[future]
@@ -377,7 +426,7 @@ def get_parser() -> argparse.ArgumentParser:
         "-l",
         "--language",
         required=True,
-        help="Language (e.g., French, Turkish) (case-sensitive!)",
+        help="Language (e.g., French, Japanese) (case-sensitive!)",
     )
     return parser
 
