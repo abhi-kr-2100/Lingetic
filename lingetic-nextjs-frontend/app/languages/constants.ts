@@ -49,8 +49,14 @@ export const languages: LanguageProperty[] = [
     isSupported: false,
   },
   {
+    id: "JapaneseModifiedHepburn",
+    name: "Japanese 1",
+    image: "/img/languages/japanese-flag.png",
+    isSupported: true,
+  },
+  {
     id: "Japanese",
-    name: "Japanese",
+    name: "Japanese 2",
     image: "/img/languages/japanese-flag.png",
     isSupported: true,
   },
@@ -95,6 +101,7 @@ export const languageNameToCode: Record<string, string> = {
   Italian: "it",
   Portuguese: "pt",
   Japanese: "ja",
+  JapaneseModifiedHepburn: "ja-hepburn",
   Korean: "ko",
   Chinese: "zh",
   Russian: "ru",
