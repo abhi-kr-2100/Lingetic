@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -155,5 +156,69 @@ class JapaneseLanguageModelTest {
         assertEquals("使い", tokens.get(2).value());
         assertEquals("ます", tokens.get(3).value());
         assertEquals("。", tokens.get(4).value());
+    }
+
+    @Test
+    void combineTokensShouldHandleEmptyList() {
+        assertEquals("", model.combineTokens(List.of()));
+    }
+
+    @Test
+    void combineTokensShouldHandleSimpleSentence() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "私", 1),
+            new Token(TokenType.Word, "は", 2),
+            new Token(TokenType.Word, "学生", 3),
+            new Token(TokenType.Word, "です", 4),
+            new Token(TokenType.Punctuation, "。", 5)
+        );
+        assertEquals("私は学生です。", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNumbersWithSpace() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "クラス", 1),
+            new Token(TokenType.Word, "に", 2),
+            new Token(TokenType.Number, "42", 3),
+            new Token(TokenType.Word, "人", 4),
+            new Token(TokenType.Word, "います", 5),
+            new Token(TokenType.Punctuation, "。", 6)
+        );
+
+        assertEquals("クラスに42人います。", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMixedScriptsAndPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "彼", 1),
+            new Token(TokenType.Word, "は", 2),
+            new Token(TokenType.Word, "Java", 3),
+            new Token(TokenType.Word, "プログラマー", 4),
+            new Token(TokenType.Word, "です", 5),
+            new Token(TokenType.Punctuation, "。", 6)
+        );
+
+        assertEquals("彼はJavaプログラマーです。", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMultipleSentences() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "おはよう", 1),
+            new Token(TokenType.Punctuation, "。", 2),
+            new Token(TokenType.Word, "お", 3),
+            new Token(TokenType.Word, "元気", 4),
+            new Token(TokenType.Word, "です", 5),
+            new Token(TokenType.Word, "か", 6),
+            new Token(TokenType.Punctuation, "？", 7),
+            new Token(TokenType.Word, "はい", 8),
+            new Token(TokenType.Punctuation, "、", 9),
+            new Token(TokenType.Word, "元気", 10),
+            new Token(TokenType.Word, "です", 11),
+            new Token(TokenType.Punctuation, "。", 12)
+        );
+        assertEquals("おはよう。お元気ですか？はい、元気です。", model.combineTokens(tokens));
     }
 }

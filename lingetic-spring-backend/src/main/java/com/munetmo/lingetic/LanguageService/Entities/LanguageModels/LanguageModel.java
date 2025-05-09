@@ -14,6 +14,8 @@ public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLangua
 
     List<Token> tokenize(String sentence);
 
+    String combineTokens(List<Token> tokens);
+
     static Map<Language, LanguageModel> languageModels = Map.of(
             Language.English, new EnglishLanguageModel(),
             Language.French, new FrenchLanguageModel(),

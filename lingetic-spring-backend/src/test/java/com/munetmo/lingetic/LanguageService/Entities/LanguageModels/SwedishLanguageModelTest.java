@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -193,5 +194,77 @@ class SwedishLanguageModelTest {
     void testEquivalentWithOnlyNumbers() {
         assertTrue(model.areEquivalent("123", "123"));
         assertFalse(model.areEquivalent("123", "321"));
+    }
+
+    @Test
+    void combineTokensShouldHandleEmptyList() {
+        assertEquals("", model.combineTokens(List.of()));
+    }
+
+    @Test
+    void combineTokensShouldHandleSimpleSentence() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Hej", 1),
+            new Token(TokenType.Punctuation, ",", 2),
+            new Token(TokenType.Word, "världen", 3),
+            new Token(TokenType.Punctuation, "!", 4)
+        );
+        assertEquals("Hej, världen!", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleSwedishCharacters() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Får", 1),
+            new Token(TokenType.Word, "äter", 2),
+            new Token(TokenType.Word, "hö", 3),
+            new Token(TokenType.Punctuation, ".", 4)
+        );
+        assertEquals("Får äter hö.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNumbersAndPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Jag", 1),
+            new Token(TokenType.Word, "har", 2),
+            new Token(TokenType.Number, "42", 3),
+            new Token(TokenType.Word, "äpplen", 4),
+            new Token(TokenType.Punctuation, ".", 5)
+        );
+        assertEquals("Jag har 42 äpplen.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMultipleSentences() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Hej", 1),
+            new Token(TokenType.Punctuation, ".", 2),
+            new Token(TokenType.Word, "Hur", 3),
+            new Token(TokenType.Word, "mår", 4),
+            new Token(TokenType.Word, "du", 5),
+            new Token(TokenType.Punctuation, "?", 6),
+            new Token(TokenType.Word, "Jag", 7),
+            new Token(TokenType.Word, "mår", 8),
+            new Token(TokenType.Word, "bra", 9),
+            new Token(TokenType.Punctuation, "!", 10)
+        );
+        assertEquals("Hej. Hur mår du? Jag mår bra!", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNestedPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Han", 1),
+            new Token(TokenType.Word, "sa", 2),
+            new Token(TokenType.Punctuation, ",", 3),
+            new Token(TokenType.Punctuation, "\"", 4),
+            new Token(TokenType.Word, "Hej", 5),
+            new Token(TokenType.Punctuation, ",", 6),
+            new Token(TokenType.Word, "världen", 7),
+            new Token(TokenType.Punctuation, "!", 8),
+            new Token(TokenType.Punctuation, "\"", 9)
+        );
+        assertEquals("Han sa, \"Hej, världen!\"", model.combineTokens(tokens));
     }
 }

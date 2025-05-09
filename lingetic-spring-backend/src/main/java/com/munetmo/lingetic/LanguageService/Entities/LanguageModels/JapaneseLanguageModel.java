@@ -9,7 +9,6 @@ import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable {
     /**
@@ -144,6 +143,11 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
         }
 
         return tokens;
+    }
+
+    @Override
+    public String combineTokens(List<Token> tokens) {
+        return String.join("", tokens.stream().map(Token::value).toList());
     }
 
     private String normalizeString(String input) {

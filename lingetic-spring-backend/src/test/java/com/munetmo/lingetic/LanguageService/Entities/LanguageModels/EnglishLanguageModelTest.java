@@ -6,6 +6,9 @@ import com.munetmo.lingetic.LanguageService.Entities.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EnglishLanguageModelTest {
@@ -243,17 +246,17 @@ class EnglishLanguageModelTest {
     @Test
     void tokenizeShouldAssignCorrectSequenceNumbers() {
         var tokens = model.tokenize("Hello, world!");
-        
+
         assertEquals(4, tokens.size());
-        
+
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(i + 1, tokens.get(i).sequenceNumber(), 
+            assertEquals(i + 1, tokens.get(i).sequenceNumber(),
                 "Token at position " + i + " should have sequence number " + (i + 1));
         }
-        
+
         // Test with a more complex sentence
         tokens = model.tokenize("I'll see you when you've finished!");
-        
+
         assertEquals(7, tokens.size());
         assertEquals(1, tokens.get(0).sequenceNumber()); // I'll
         assertEquals(2, tokens.get(1).sequenceNumber()); // see
@@ -267,7 +270,7 @@ class EnglishLanguageModelTest {
     @Test
     void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
         var tokens = model.tokenize("Hello! What's up?");
-        
+
         assertEquals(5, tokens.size());
         assertEquals(1, tokens.get(0).sequenceNumber()); // Hello
         assertEquals(2, tokens.get(1).sequenceNumber()); // !
@@ -275,4 +278,78 @@ class EnglishLanguageModelTest {
         assertEquals(4, tokens.get(3).sequenceNumber()); // up
         assertEquals(5, tokens.get(4).sequenceNumber()); // ?
     }
+
+    @Test
+    void combineTokensShouldHandleEmptyList() {
+        assertEquals("", model.combineTokens(List.of()));
+    }
+
+    @Test
+    void combineTokensShouldHandleSimpleSentence() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Hello", 1),
+            new Token(TokenType.Punctuation, ",", 2),
+            new Token(TokenType.Word, "world", 3),
+            new Token(TokenType.Punctuation, "!", 4)
+        );
+        assertEquals("Hello, world!", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNumbersAndPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "I", 1),
+            new Token(TokenType.Word, "have", 2),
+            new Token(TokenType.Number, "42", 3),
+            new Token(TokenType.Word, "apples", 4),
+            new Token(TokenType.Punctuation, ".", 5)
+        );
+        assertEquals("I have 42 apples.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleContractionsAndApostrophes() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "I'm", 1),
+            new Token(TokenType.Word, "don't", 2),
+            new Token(TokenType.Word, "know", 3),
+            new Token(TokenType.Punctuation, ".", 4)
+        );
+        assertEquals("I'm don't know.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMultipleSentences() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Hello", 1),
+            new Token(TokenType.Punctuation, ".", 2),
+            new Token(TokenType.Word, "How", 3),
+            new Token(TokenType.Word, "are", 4),
+            new Token(TokenType.Word, "you", 5),
+            new Token(TokenType.Punctuation, "?", 6),
+            new Token(TokenType.Word, "I", 7),
+            new Token(TokenType.Word, "am", 8),
+            new Token(TokenType.Word, "fine", 9),
+            new Token(TokenType.Punctuation, "!", 10)
+        );
+        assertEquals("Hello. How are you? I am fine!", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNestedPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "He", 1),
+            new Token(TokenType.Word, "said", 2),
+            new Token(TokenType.Punctuation, ",", 3),
+            new Token(TokenType.Punctuation, "\"", 4),
+            new Token(TokenType.Word, "Hello", 5),
+            new Token(TokenType.Punctuation, ",", 6),
+            new Token(TokenType.Word, "world", 7),
+            new Token(TokenType.Punctuation, "!", 8),
+            new Token(TokenType.Punctuation, "\"", 9)
+        );
+        assertEquals("He said, \"Hello, world!\"", model.combineTokens(tokens));
+    }
 }
+
+

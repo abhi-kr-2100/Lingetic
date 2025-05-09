@@ -1,9 +1,13 @@
 package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
 import com.munetmo.lingetic.LanguageService.Entities.Language;
+import com.munetmo.lingetic.LanguageService.Entities.Token;
 import com.munetmo.lingetic.LanguageService.Entities.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -251,5 +255,85 @@ class JapaneseModifiedHepburnLanguageModelTest {
         assertEquals("ka", tokens.get(5).value());
         assertEquals(TokenType.Punctuation, tokens.get(6).type());
         assertEquals("?", tokens.get(6).value());
+    }
+
+    @Test
+    void combineTokensShouldHandleEmptyList() {
+        assertEquals("", model.combineTokens(List.of()));
+    }
+
+    @Test
+    void combineTokensShouldHandleSimpleSentence() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Watashi", 1),
+            new Token(TokenType.Word, "wa", 2),
+            new Token(TokenType.Word, "gakusei", 3),
+            new Token(TokenType.Word, "desu", 4),
+            new Token(TokenType.Punctuation, ".", 5)
+        );
+        assertEquals("Watashi wa gakusei desu.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMacrons() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Tōkyō", 1),
+            new Token(TokenType.Word, "wa", 2),
+            new Token(TokenType.Word, "ōkii", 3),
+            new Token(TokenType.Word, "desu", 4),
+            new Token(TokenType.Punctuation, ".", 5)
+        );
+        assertEquals("Tōkyō wa ōkii desu.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleQuotationsAndNumbers() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Sensei", 1),
+            new Token(TokenType.Word, "wa", 2),
+            new Token(TokenType.Punctuation, "\"", 3),
+            new Token(TokenType.Number, "42", 4),
+            new Token(TokenType.Word, "desu", 5),
+            new Token(TokenType.Punctuation, "\"", 6),
+            new Token(TokenType.Word, "to", 7),
+            new Token(TokenType.Word, "iimashita", 8),
+            new Token(TokenType.Punctuation, ".", 9)
+        );
+        assertEquals("Sensei wa \"42 desu\" to iimashita.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMultipleSentences() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Ohayō", 1),
+            new Token(TokenType.Punctuation, ".", 2),
+            new Token(TokenType.Word, "Ogenki", 3),
+            new Token(TokenType.Word, "desu", 4),
+            new Token(TokenType.Word, "ka", 5),
+            new Token(TokenType.Punctuation, "?", 6),
+            new Token(TokenType.Word, "Hai", 7),
+            new Token(TokenType.Punctuation, ",", 8),
+            new Token(TokenType.Word, "genki", 9),
+            new Token(TokenType.Word, "desu", 10),
+            new Token(TokenType.Punctuation, ".", 11)
+        );
+        assertEquals("Ohayō. Ogenki desu ka? Hai, genki desu.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNestedPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Kare", 1),
+            new Token(TokenType.Word, "wa", 2),
+            new Token(TokenType.Word, "iimashita", 3),
+            new Token(TokenType.Punctuation, ",", 4),
+            new Token(TokenType.Punctuation, "\"", 5),
+            new Token(TokenType.Word, "Konnichiwa", 6),
+            new Token(TokenType.Punctuation, ",", 7),
+            new Token(TokenType.Word, "sekai", 8),
+            new Token(TokenType.Punctuation, "!", 9),
+            new Token(TokenType.Punctuation, "\"", 10)
+        );
+        assertEquals("Kare wa iimashita, \"Konnichiwa, sekai!\"", model.combineTokens(tokens));
     }
 }
