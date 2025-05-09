@@ -21,4 +21,13 @@ public class LanguageServiceController {
         var tokens = model.tokenize(sentence);
         return ResponseEntity.ok(tokens);
     }
+
+    @PostMapping("/combine-tokens")
+    public ResponseEntity<String> combineTokens(
+            @RequestParam("language") Language language,
+            @RequestBody List<Token> tokens) {
+        var model = LanguageModel.getLanguageModel(language);
+        var sentence = model.combineTokens(tokens);
+        return ResponseEntity.ok(sentence);
+    }
 }
