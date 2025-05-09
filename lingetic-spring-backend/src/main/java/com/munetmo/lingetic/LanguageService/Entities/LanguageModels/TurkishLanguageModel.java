@@ -30,4 +30,9 @@ public final class TurkishLanguageModel implements LanguageModel {
     public List<Token> tokenize(String input) {
         return helper.tokenize(input);
     }
+
+    @Override
+    public String combineTokens(List<Token> tokens) {
+        return helper.combineTokens(tokens);
+    }
 }

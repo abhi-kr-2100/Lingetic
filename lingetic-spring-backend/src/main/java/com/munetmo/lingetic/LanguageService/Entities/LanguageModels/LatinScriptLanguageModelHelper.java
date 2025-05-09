@@ -71,6 +71,68 @@ public final class LatinScriptLanguageModelHelper {
         return tokens;
     }
 
+    /**
+     * For now, combineTokens only correctly combines one level of nesting.
+     * Example: `He said, "Hello, world!"` works.
+     *          `He said, "She said, "Hello, world!"" does not work.
+     */
+    public String combineTokens(List<Token> tokens) {
+        if (tokens.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder result = new StringBuilder();
+        Token previousToken = null;
+        boolean inQuote = false;
+
+        for (var token : tokens) {
+            if (previousToken != null) {
+                if (previousToken.type() == TokenType.Word || previousToken.type() == TokenType.Number) {
+                    if (token.type() == TokenType.Word || token.type() == TokenType.Number) {
+                        // space between words/numbers
+                        result.append(" ");
+                    } else if (SURROUNDING_PUNCTUATION.contains(token.value())) {
+                        if (!inQuote) {
+                            inQuote = true;
+                            // space before opening quote/other surrounding punctuation
+                            result.append(" ");
+                        } else {
+                            inQuote = false;
+                        }
+                    }
+                } else if (token.type() == TokenType.Word || token.type() == TokenType.Number) {
+                    if (SURROUNDING_PUNCTUATION.contains(previousToken.value())) {
+                        if (!inQuote) {
+                            // space after closing quote/other surrounding punctuation
+                            result.append(" ");
+                        }
+                    } else {
+                        // space between punctuation
+                        result.append(" ");
+                    }
+                } else if (SURROUNDING_PUNCTUATION.contains(previousToken.value())) {
+                    if (!inQuote) {
+                        // space after closing quote/other surrounding punctuation
+                        result.append(" ");
+                    }
+                } else if (SURROUNDING_PUNCTUATION.contains(token.value())) {
+                    if (!inQuote) {
+                        inQuote = true;
+                        // space before opening quote/other surrounding punctuation
+                        result.append(" ");
+                    } else {
+                        inQuote = false;
+                    }
+                }
+            }
+
+            result.append(token.value());
+            previousToken = token;
+        }
+
+        return result.toString().trim();
+    }
+
     private List<String> getLeadingPunctuations(String input) {
         var matcher = LEADING_PUNCTUATION_PATTERN.matcher(input);
         if (matcher.find()) {

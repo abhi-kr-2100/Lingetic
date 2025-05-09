@@ -7,6 +7,9 @@ import com.munetmo.lingetic.LanguageService.Entities.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class FrenchLanguageModelTest {
@@ -256,73 +259,73 @@ class FrenchLanguageModelTest {
     @Test
     void tokenizeShouldHandleFrenchGuillemets() {
         var tokens = frenchLanguageModel.tokenize("« Bonjour le monde ! »");
-        
+
         assertEquals(6, tokens.size());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(0).type());
         assertEquals("«", tokens.get(0).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(1).type());
         assertEquals("Bonjour", tokens.get(1).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(2).type());
         assertEquals("le", tokens.get(2).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(3).type());
         assertEquals("monde", tokens.get(3).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(4).type());
         assertEquals("!", tokens.get(4).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(5).type());
         assertEquals("»", tokens.get(5).value());
     }
-    
+
     @Test
     void tokenizeShouldHandleNestedQuotations() {
         var tokens = frenchLanguageModel.tokenize("Elle a dit : « Il m'a répondu \"Je ne sais pas\" hier. »");
-        
+
         assertEquals(17, tokens.size());
-        
+
         assertEquals(TokenType.Word, tokens.get(0).type());
         assertEquals("Elle", tokens.get(0).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(1).type());
         assertEquals("a", tokens.get(1).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(2).type());
         assertEquals("dit", tokens.get(2).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(3).type());
         assertEquals(":", tokens.get(3).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(4).type());
         assertEquals("«", tokens.get(4).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(5).type());
         assertEquals("Il", tokens.get(5).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(6).type());
         assertEquals("m'a", tokens.get(6).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(7).type());
         assertEquals("répondu", tokens.get(7).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(8).type());
         assertEquals("\"", tokens.get(8).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(9).type());
         assertEquals("Je", tokens.get(9).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(10).type());
         assertEquals("ne", tokens.get(10).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(11).type());
         assertEquals("sais", tokens.get(11).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(12).type());
         assertEquals("pas", tokens.get(12).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(13).type());
         assertEquals("\"", tokens.get(13).value());
 
@@ -374,17 +377,17 @@ class FrenchLanguageModelTest {
     @Test
     void tokenizeShouldAssignCorrectSequenceNumbers() {
         var tokens = frenchLanguageModel.tokenize("Bonjour, monde!");
-        
+
         assertEquals(4, tokens.size());
-        
+
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(i + 1, tokens.get(i).sequenceNumber(), 
+            assertEquals(i + 1, tokens.get(i).sequenceNumber(),
                 "Token at position " + i + " should have sequence number " + (i + 1));
         }
-        
+
         // Test with a more complex sentence
         tokens = frenchLanguageModel.tokenize("J'ai besoin d'aide!");
-        
+
         assertEquals(4, tokens.size());
         assertEquals(1, tokens.get(0).sequenceNumber()); // J'ai
         assertEquals(2, tokens.get(1).sequenceNumber()); // besoin
@@ -395,12 +398,86 @@ class FrenchLanguageModelTest {
     @Test
     void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
         var tokens = frenchLanguageModel.tokenize("Salut! Ça va?");
-        
+
         assertEquals(5, tokens.size());
         assertEquals(1, tokens.get(0).sequenceNumber()); // Salut
         assertEquals(2, tokens.get(1).sequenceNumber()); // !
         assertEquals(3, tokens.get(2).sequenceNumber()); // Ça
         assertEquals(4, tokens.get(3).sequenceNumber()); // va
         assertEquals(5, tokens.get(4).sequenceNumber()); // ?
+    }
+
+    @Test
+    void combineTokensShouldHandleEmptyList() {
+        assertEquals("", frenchLanguageModel.combineTokens(List.of()));
+    }
+
+    @Test
+    void combineTokensShouldHandleSimpleSentence() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Bonjour", 1),
+            new Token(TokenType.Punctuation, ",", 2),
+            new Token(TokenType.Word, "monde", 3),
+            new Token(TokenType.Punctuation, "!", 4)
+        );
+        assertEquals("Bonjour, monde!", frenchLanguageModel.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleContractionsAndQuotations() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "J'aime", 1),
+            new Token(TokenType.Word, "l'école", 2),
+            new Token(TokenType.Punctuation, "«", 3),
+            new Token(TokenType.Word, "C'est", 4),
+            new Token(TokenType.Word, "parfait", 5),
+            new Token(TokenType.Punctuation, "»", 6)
+        );
+        assertEquals("J'aime l'école «C'est parfait»", frenchLanguageModel.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNumbersAndAccents() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Il", 1),
+            new Token(TokenType.Word, "y", 2),
+            new Token(TokenType.Word, "a", 3),
+            new Token(TokenType.Number, "42", 4),
+            new Token(TokenType.Word, "élèves", 5),
+            new Token(TokenType.Punctuation, ".", 6)
+        );
+        assertEquals("Il y a 42 élèves.", frenchLanguageModel.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMultipleSentences() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Bonjour", 1),
+            new Token(TokenType.Punctuation, ".", 2),
+            new Token(TokenType.Word, "Comment", 3),
+            new Token(TokenType.Word, "allez-vous", 4),
+            new Token(TokenType.Punctuation, "?", 5),
+            new Token(TokenType.Word, "Je", 6),
+            new Token(TokenType.Word, "vais", 7),
+            new Token(TokenType.Word, "bien", 8),
+            new Token(TokenType.Punctuation, "!", 9)
+        );
+        assertEquals("Bonjour. Comment allez-vous? Je vais bien!", frenchLanguageModel.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNestedPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Il", 1),
+            new Token(TokenType.Word, "dit", 2),
+            new Token(TokenType.Punctuation, ",", 3),
+            new Token(TokenType.Punctuation, "«", 4),
+            new Token(TokenType.Word, "Bonjour", 5),
+            new Token(TokenType.Punctuation, ",", 6),
+            new Token(TokenType.Word, "monde", 7),
+            new Token(TokenType.Punctuation, "!", 8),
+            new Token(TokenType.Punctuation, "»", 9)
+        );
+        assertEquals("Il dit, «Bonjour, monde!»", frenchLanguageModel.combineTokens(tokens));
     }
 }

@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 class TurkishLanguageModelTest {
     private TurkishLanguageModel model;
 
@@ -198,24 +201,24 @@ class TurkishLanguageModelTest {
     @Test
     void tokenizeShouldHandleTurkishQuotations() {
         var tokens = model.tokenize("O \"Merhaba\" dedi.");
-        
+
         assertEquals(6, tokens.size());
-        
+
         assertEquals(TokenType.Word, tokens.get(0).type());
         assertEquals("O", tokens.get(0).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(1).type());
         assertEquals("\"", tokens.get(1).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(2).type());
         assertEquals("Merhaba", tokens.get(2).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(3).type());
         assertEquals("\"", tokens.get(3).value());
-        
+
         assertEquals(TokenType.Word, tokens.get(4).type());
         assertEquals("dedi", tokens.get(4).value());
-        
+
         assertEquals(TokenType.Punctuation, tokens.get(5).type());
         assertEquals(".", tokens.get(5).value());
     }
@@ -258,17 +261,17 @@ class TurkishLanguageModelTest {
     @Test
     void tokenizeShouldAssignCorrectSequenceNumbers() {
         var tokens = model.tokenize("Merhaba, dünya!");
-        
+
         assertEquals(4, tokens.size());
-        
+
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(i + 1, tokens.get(i).sequenceNumber(), 
+            assertEquals(i + 1, tokens.get(i).sequenceNumber(),
                 "Token at position " + i + " should have sequence number " + (i + 1));
         }
-        
+
         // Test with a more complex sentence
         tokens = model.tokenize("Ben'im kitabım ve Ali'nin kalemi.");
-        
+
         assertEquals(6, tokens.size());
         assertEquals(1, tokens.get(0).sequenceNumber()); // Ben'im
         assertEquals(2, tokens.get(1).sequenceNumber()); // kitabım
@@ -281,11 +284,83 @@ class TurkishLanguageModelTest {
     @Test
     void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
         var tokens = model.tokenize("Merhaba! Nasılsın?");
-        
+
         assertEquals(4, tokens.size());
         assertEquals(1, tokens.get(0).sequenceNumber()); // Merhaba
         assertEquals(2, tokens.get(1).sequenceNumber()); // !
         assertEquals(3, tokens.get(2).sequenceNumber()); // Nasılsın
         assertEquals(4, tokens.get(3).sequenceNumber()); // ?
+    }
+
+    @Test
+    void combineTokensShouldHandleEmptyList() {
+        assertEquals("", model.combineTokens(List.of()));
+    }
+
+    @Test
+    void combineTokensShouldHandleSimpleSentence() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Merhaba", 1),
+            new Token(TokenType.Punctuation, ",", 2),
+            new Token(TokenType.Word, "dünya", 3),
+            new Token(TokenType.Punctuation, "!", 4)
+        );
+        assertEquals("Merhaba, dünya!", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleApostrophes() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Ben'im", 1),
+            new Token(TokenType.Word, "kitabım", 2),
+            new Token(TokenType.Word, "ve", 3),
+            new Token(TokenType.Word, "Ali'nin", 4),
+            new Token(TokenType.Word, "kalemi", 5),
+            new Token(TokenType.Punctuation, ".", 6)
+        );
+        assertEquals("Ben'im kitabım ve Ali'nin kalemi.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNumbersAndTurkishCharacters() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Ben", 1),
+            new Token(TokenType.Number, "10", 2),
+            new Token(TokenType.Word, "yaşındayım", 3),
+            new Token(TokenType.Punctuation, ".", 4)
+        );
+        assertEquals("Ben 10 yaşındayım.", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleMultipleSentences() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "Merhaba", 1),
+            new Token(TokenType.Punctuation, ".", 2),
+            new Token(TokenType.Word, "Nasıl", 3),
+            new Token(TokenType.Word, "hisset", 4),
+            new Token(TokenType.Word, "iyorson", 5),
+            new Token(TokenType.Punctuation, "?", 6),
+            new Token(TokenType.Word, "Ben", 7),
+            new Token(TokenType.Word, "iyiyim", 8),
+            new Token(TokenType.Punctuation, "!", 9)
+        );
+        assertEquals("Merhaba. Nasıl hisset iyorson? Ben iyiyim!", model.combineTokens(tokens));
+    }
+
+    @Test
+    void combineTokensShouldHandleNestedPunctuation() {
+        var tokens = Arrays.asList(
+            new Token(TokenType.Word, "O", 1),
+            new Token(TokenType.Word, "dedi", 2),
+            new Token(TokenType.Punctuation, ",", 3),
+            new Token(TokenType.Punctuation, "\"", 4),
+            new Token(TokenType.Word, "Merhaba", 5),
+            new Token(TokenType.Punctuation, ",", 6),
+            new Token(TokenType.Word, "dünya", 7),
+            new Token(TokenType.Punctuation, "!", 8),
+            new Token(TokenType.Punctuation, "\"", 9)
+        );
+        assertEquals("O dedi, \"Merhaba, dünya!\"", model.combineTokens(tokens));
     }
 }
