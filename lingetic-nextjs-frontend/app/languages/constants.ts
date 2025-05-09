@@ -58,7 +58,7 @@ export const languages: LanguageProperty[] = [
     id: "Japanese",
     name: "Japanese 2",
     image: "/img/languages/japanese-flag.png",
-    isSupported: true,
+    isSupported: false,
   },
   {
     id: "Korean",
