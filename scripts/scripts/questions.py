@@ -336,7 +336,6 @@ def process_sentences(
         tokens = sentence.get("tokens", [])
         theme = sentence.get("theme", "")
         instructions = sentence.get("instructions", "")
-        text = sentence.get("text", "")
         translations = sentence.get("translations", [])
         translation = translations[0].get("text", "") if translations else ""
 
@@ -381,9 +380,25 @@ def process_sentences(
                     continue
 
                 seen_words.add(selected_token["value"])
-                question_text = text.replace(
-                    selected_token["value"], "_____", 1
+                modified_tokens = []
+                for token in tokens:
+                    if token.get("sequenceNumber") == seq_num:
+                        modified_token = dict(token)
+                        modified_token["value"] = "_____"
+                        modified_tokens.append(modified_token)
+                    else:
+                        modified_tokens.append(dict(token))
+                modified_tokens.sort(key=lambda x: x["sequenceNumber"])
+
+                response = requests.post(
+                    "http://localhost:8000/language-service/combine-tokens",
+                    params={"language": language},
+                    json=modified_tokens,
+                    timeout=5,
                 )
+                response.raise_for_status()
+                question_text = response.text
+
                 questions.append(
                     {
                         "question_type": "FillInTheBlanks",
