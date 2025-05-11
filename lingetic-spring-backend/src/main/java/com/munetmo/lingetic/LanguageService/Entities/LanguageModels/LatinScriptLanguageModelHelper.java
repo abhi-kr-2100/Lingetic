@@ -34,7 +34,7 @@ public final class LatinScriptLanguageModelHelper {
         var currentPart = new StringBuilder();
 
         while (currentPos < length) {
-            char c = input.charAt(currentPos);
+            var c = input.charAt(currentPos);
 
             // Tokens are separated by whitespace but punctuations need to be handled differently
             // He said, "Hello, world!" separated just by whitespace would be:
@@ -42,24 +42,20 @@ public final class LatinScriptLanguageModelHelper {
 
             if (Character.isWhitespace(c)) {
                 if (!currentPart.isEmpty()) {
-                    processCurrentPart(tokens, currentPart.toString(), currentPos - currentPart.length());
+                    var token = getAppropriateToken(currentPart.toString(), currentPos - currentPart.length());
+                    tokens.add(token);
                     currentPart.setLength(0);
                 }
                 currentPos++;
                 continue;
             }
 
-            var currentStr = currentPart.toString();
+            var previousChar = currentPos - 1 >= 0 ? input.charAt(currentPos - 1) : null;
             var nextChar = currentPos + 1 < length ? input.charAt(currentPos + 1) : null;
-            if (isPunctuationLike(c) &&
-                    // "I'm" should not be split into "I"; "'"; "m"
-                    // However, "I'm." should be split into "I'm" and "."
-                    // "1,50" should not be split into "1"; ","; "50"
-                    // "I'm 10." should be split into "I'm"; "10"; "."
-                    !((containsLetter(currentStr) || containsDigit(currentStr)) && nextChar != null && !isPunctuationLike(nextChar))
-            ) {
+            if (isStandalonePunctuation(c, previousChar, nextChar)) {
                 if (!currentPart.isEmpty()) {
-                    processCurrentPart(tokens, currentPart.toString(), currentPos - currentPart.length());
+                    var token = getAppropriateToken(currentPart.toString(), currentPos - currentPart.length());
+                    tokens.add(token);
                     currentPart.setLength(0);
                 }
 
@@ -73,20 +69,46 @@ public final class LatinScriptLanguageModelHelper {
         }
 
         if (!currentPart.isEmpty()) {
-            processCurrentPart(tokens, currentPart.toString(), currentPos - currentPart.length());
+            var token = getAppropriateToken(currentPart.toString(), currentPos - currentPart.length());
+            tokens.add(token);
         }
 
         return tokens;
     }
 
-    private void processCurrentPart(List<Token> tokens, String part, int startIndex) {
-        if (containsLetter(part)) {
-            tokens.add(new Token(TokenType.Word, part, startIndex));
-        } else if (containsDigit(part)) {
-            tokens.add(new Token(TokenType.Number, part, startIndex));
+    private Token getAppropriateToken(String value, int startIndex) {
+        if (containsLetter(value)) {
+            return new Token(TokenType.Word, value, startIndex);
+        } else if (containsDigit(value)) {
+            return new Token(TokenType.Number, value, startIndex);
         } else {
-            tokens.add(new Token(TokenType.Punctuation, part, startIndex));
+            return new Token(TokenType.Punctuation, value, startIndex);
         }
+    }
+
+    private boolean isStandalonePunctuation(char currentChar, @Nullable Character previousChar, @Nullable Character nextChar) {
+        if (Character.isLetter(currentChar) || Character.isDigit(currentChar)) {
+            return false; // not a punctuation
+        }
+
+        if (previousChar == null || nextChar == null) {
+            return true; // trailing punctuation
+        }
+
+        if (Character.isWhitespace(previousChar) || Character.isWhitespace(nextChar)) {
+            return true; // trailing punctuation
+        }
+
+        if (isPunctuation(previousChar) || isPunctuation(nextChar)) {
+            // adjacent to a punctuations is a punctuation: "...", "?!", '"world!"' etc.
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isPunctuation(char c) {
+        return !Character.isLetterOrDigit(c) && !Character.isWhitespace(c);
     }
 
     /**
@@ -162,18 +184,6 @@ public final class LatinScriptLanguageModelHelper {
                 })
                 .filter(w -> !w.isBlank());
         return String.join(" ", cleaned.toList());
-    }
-
-    private boolean isLetterLike(@Nullable Character c) {
-        return c != null && (Character.isLetter(c) || Character.isDigit(c));
-    }
-
-    private boolean isDigitLike(@Nullable Character c) {
-        return c != null && Character.isDigit(c);
-    }
-
-    private boolean isPunctuationLike(@Nullable Character c) {
-        return c != null && !isLetterLike(c) && !isDigitLike(c);
     }
 
     private boolean containsLetter(String s) {
