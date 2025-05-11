@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLanguageModel, TurkishLanguageModel,
-        SwedishLanguageModel, JapaneseLanguageModel, JapaneseModifiedHepburnLanguageModel {
+        SwedishLanguageModel, JapaneseModifiedHepburnLanguageModel {
     Language getLanguage();
 
     boolean areEquivalent(String s1, String s2);
@@ -21,7 +21,6 @@ public sealed interface LanguageModel permits EnglishLanguageModel, FrenchLangua
             Language.French, new FrenchLanguageModel(),
             Language.Turkish, new TurkishLanguageModel(),
             Language.Swedish, new SwedishLanguageModel(),
-            Language.Japanese, new JapaneseLanguageModel(),
             Language.JapaneseModifiedHepburn, new JapaneseModifiedHepburnLanguageModel()
     );
 

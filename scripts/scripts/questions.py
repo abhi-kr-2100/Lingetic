@@ -63,26 +63,6 @@ Output:
 Reason: Both words `bok` and `biblioteket` are relevant to the theme and instructions. The word `Studenten` is not relevant to the theme and instructions, as it is a proper noun and does not fit the context of basic everyday objects.
         """,
     },
-    "Japanese": {
-        "sentence": "学生は図書館で勉強します",
-        "word": "で",
-        "words": ["学生", "図書館"],
-        "blank1": "学生は図書館____勉強します",
-        "blanks": ["_____は図書館で勉強します", "学生は_____で勉強します"],
-        "example": """
-Example:
-Sentence: "私は駅へ行きます"
-Words: [{{"value":"私","id":1}},{{"value":"は","id":2}},{{"value":"駅","id":3}},{{"value":"へ","id":4}},{{"value":"行きます","id":5}}]
-
-Theme: Basic Locations and Transportation
-Instructions: Teach basic location particles (へ, に, で) and verbs of motion (行く, 来る). Focus on simple sentence structures using basic particles. Average sentence length: 3-5 words.
-
-Output:
-{{ "selectedIds": [3, 4] }}
-
-Reason: Both words `駅` (station) and `へ` (direction particle) are relevant to the theme and instructions, as they deal with locations and particles used for indicating direction.
-        """,
-    },
     "JapaneseModifiedHepburn": {
         "sentence": "gakusei wa toshokan de benkyou shimasu",
         "word": "de",
@@ -490,7 +470,7 @@ def get_parser() -> argparse.ArgumentParser:
         "-l",
         "--language",
         required=True,
-        help="Language (e.g., French, Japanese) (case-sensitive!)",
+        help="Language (e.g., French) (case-sensitive!)",
     )
     return parser
 

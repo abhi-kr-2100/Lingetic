@@ -6,6 +6,5 @@ public enum Language {
     French,
     Turkish,
     Swedish,
-    Japanese,
     JapaneseModifiedHepburn,
 }

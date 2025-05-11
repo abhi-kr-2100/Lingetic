@@ -104,34 +104,6 @@ Output:
 ]
 }
 """,
-    "Japanese": """
-Example:
-
-Theme: Basic verbs, Level: Intermediate, Number: 2
-
-Output:
-
-{
-"data": [
-    {
-        "text": "私は知っています！",
-        "translations": [
-            {
-                "text": "I know!"
-            }
-        ]
-    },
-    {
-        "text": "トムが勝っています。",
-        "translations": [
-            {
-                "text": "Tom is winning."
-            }
-        ]
-    }
-]
-}
-""",
     "JapaneseModifiedHepburn": """
 Example:
 
