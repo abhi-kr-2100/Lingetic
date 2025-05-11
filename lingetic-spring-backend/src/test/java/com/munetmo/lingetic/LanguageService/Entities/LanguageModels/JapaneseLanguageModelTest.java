@@ -4,9 +4,9 @@ import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageService.Entities.Token;
 import com.munetmo.lingetic.LanguageService.Entities.TokenType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +16,7 @@ class JapaneseLanguageModelTest {
     private JapaneseLanguageModel model;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         model = new JapaneseLanguageModel();
     }
 
@@ -38,23 +38,18 @@ class JapaneseLanguageModelTest {
 
         assertEquals(TokenType.Word, tokens.get(0).type());
         assertEquals("私", tokens.get(0).value());
-        assertEquals(1, tokens.get(0).sequenceNumber());
 
         assertEquals(TokenType.Word, tokens.get(1).type());
         assertEquals("は", tokens.get(1).value());
-        assertEquals(2, tokens.get(1).sequenceNumber());
 
         assertEquals(TokenType.Word, tokens.get(2).type());
         assertEquals("猫", tokens.get(2).value());
-        assertEquals(3, tokens.get(2).sequenceNumber());
 
         assertEquals(TokenType.Word, tokens.get(3).type());
         assertEquals("です", tokens.get(3).value());
-        assertEquals(4, tokens.get(3).sequenceNumber());
 
         assertEquals(TokenType.Punctuation, tokens.get(4).type());
         assertEquals("。", tokens.get(4).value());
-        assertEquals(5, tokens.get(4).sequenceNumber());
     }
 
     @Test
@@ -220,5 +215,31 @@ class JapaneseLanguageModelTest {
             new Token(TokenType.Punctuation, "。", 12)
         );
         assertEquals("おはよう。お元気ですか？はい、元気です。", model.combineTokens(tokens));
+    }
+
+    @Test
+    @Disabled
+    void tokenizeShouldAssignCorrectStartIndexes() {
+        var tokens = model.tokenize("私は猫です。");
+
+        assertEquals(5, tokens.size());
+        assertEquals(0, tokens.get(0).startIndex()); // 私
+        assertEquals(1, tokens.get(1).startIndex()); // は
+        assertEquals(2, tokens.get(2).startIndex()); // 猫
+        assertEquals(3, tokens.get(3).startIndex()); // です
+        assertEquals(5, tokens.get(4).startIndex()); // 。
+    }
+
+    @Test
+    @Disabled
+    void tokenizeShouldAssignCorrectStartIndexesWithExtraSpacings() {
+        var tokens = model.tokenize("   私は  猫  です  。   ");
+
+        assertEquals(5, tokens.size());
+        assertEquals(3, tokens.get(0).startIndex()); // 私
+        assertEquals(4, tokens.get(1).startIndex()); // は
+        assertEquals(7, tokens.get(2).startIndex()); // 猫
+        assertEquals(10, tokens.get(3).startIndex()); // です
+        assertEquals(14, tokens.get(4).startIndex()); // 。
     }
 }

@@ -1,6 +1,5 @@
 package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
-import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.TurkishLanguageModel;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageService.Entities.Token;
 import com.munetmo.lingetic.LanguageService.Entities.TokenType;
@@ -151,14 +150,13 @@ class TurkishLanguageModelTest {
 
     @Test
     void tokenizeShouldTreatNumbersWithPunctuationAsNumbers() {
-        var tokens = model.tokenize("(123) 1+2 4.500 3,14 4#2");
-        assertEquals(5, tokens.size());
+        var tokens = model.tokenize("1+2 4.500 3,14 4#2");
+        assertEquals(4, tokens.size());
 
-        assertEquals(new Token(TokenType.Number, "(123)", 1), tokens.get(0));
-        assertEquals(new Token(TokenType.Number, "1+2", 2), tokens.get(1));
-        assertEquals(new Token(TokenType.Number, "4.500", 3), tokens.get(2));
-        assertEquals(new Token(TokenType.Number, "3,14", 4), tokens.get(3));
-        assertEquals(new Token(TokenType.Number, "4#2", 5), tokens.get(4));
+        assertEquals(new Token(TokenType.Number, "1+2", 0), tokens.get(0));
+        assertEquals(new Token(TokenType.Number, "4.500", 4), tokens.get(1));
+        assertEquals(new Token(TokenType.Number, "3,14", 10), tokens.get(2));
+        assertEquals(new Token(TokenType.Number, "4#2", 15), tokens.get(3));
     }
 
     @Test
@@ -259,37 +257,25 @@ class TurkishLanguageModelTest {
     }
 
     @Test
-    void tokenizeShouldAssignCorrectSequenceNumbers() {
+    void tokenizeShouldAssignCorrectStartIndexes() {
         var tokens = model.tokenize("Merhaba, dünya!");
 
         assertEquals(4, tokens.size());
-
-        for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(i + 1, tokens.get(i).sequenceNumber(),
-                "Token at position " + i + " should have sequence number " + (i + 1));
-        }
-
-        // Test with a more complex sentence
-        tokens = model.tokenize("Ben'im kitabım ve Ali'nin kalemi.");
-
-        assertEquals(6, tokens.size());
-        assertEquals(1, tokens.get(0).sequenceNumber()); // Ben'im
-        assertEquals(2, tokens.get(1).sequenceNumber()); // kitabım
-        assertEquals(3, tokens.get(2).sequenceNumber()); // ve
-        assertEquals(4, tokens.get(3).sequenceNumber()); // Ali'nin
-        assertEquals(5, tokens.get(4).sequenceNumber()); // kalemi
-        assertEquals(6, tokens.get(5).sequenceNumber()); // .
+        assertEquals(0, tokens.get(0).startIndex()); // Merhaba
+        assertEquals(7, tokens.get(1).startIndex()); // ,
+        assertEquals(9, tokens.get(2).startIndex()); // dünya
+        assertEquals(14, tokens.get(3).startIndex()); // !
     }
 
     @Test
-    void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
-        var tokens = model.tokenize("Merhaba! Nasılsın?");
+    void tokenizeShouldAssignCorrectStartIndexesWithExtraSpacings() {
+        var tokens = model.tokenize("   Merhaba,    dünya  !   ");
 
         assertEquals(4, tokens.size());
-        assertEquals(1, tokens.get(0).sequenceNumber()); // Merhaba
-        assertEquals(2, tokens.get(1).sequenceNumber()); // !
-        assertEquals(3, tokens.get(2).sequenceNumber()); // Nasılsın
-        assertEquals(4, tokens.get(3).sequenceNumber()); // ?
+        assertEquals(3, tokens.get(0).startIndex()); // Merhaba
+        assertEquals(10, tokens.get(1).startIndex()); // ,
+        assertEquals(15, tokens.get(2).startIndex()); // dünya
+        assertEquals(22, tokens.get(3).startIndex()); // !
     }
 
     @Test

@@ -40,7 +40,7 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
             tokenizer = dictionary.create();
         }
 
-        public SafeTokenizer() throws IOException {
+        public SafeTokenizer() {
             reinit();
         }
 
@@ -115,29 +115,24 @@ public final class JapaneseLanguageModel implements LanguageModel, AutoCloseable
         }
 
         if (tokenizer == null) {
-            try {
-                tokenizer = new SafeTokenizer();
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to initialize tokenizer: " + e.getMessage(), e);
-            }
+            tokenizer = new SafeTokenizer();
         }
 
         List<Token> tokens = new ArrayList<>();
         var morphemes = tokenizer.tokenize(input);
-        int sequenceNumber = 1;
 
         for (var morpheme : morphemes) {
             var surface = morpheme.surface();
             if (surface.matches(".*[^\\p{N}\\p{P}\\p{S}].*")) {
                 // Contains any non-digit and non-symbol character -> Word
-                tokens.add(new Token(TokenType.Word, surface, sequenceNumber++));
+                tokens.add(new Token(TokenType.Word, surface));
             } else if (surface.matches(".*\\p{N}.*")) {
                 // Otherwise, Contains any digit character -> Number
-                tokens.add(new Token(TokenType.Number, surface, sequenceNumber++));
+                tokens.add(new Token(TokenType.Number, surface));
             } else {
                 // Must be only punctuation/symbols
                 for (int i = 0; i < surface.length(); i++) {
-                    tokens.add(new Token(TokenType.Punctuation, String.valueOf(surface.charAt(i)), sequenceNumber++));
+                    tokens.add(new Token(TokenType.Punctuation, String.valueOf(surface.charAt(i))));
                 }
             }
         }

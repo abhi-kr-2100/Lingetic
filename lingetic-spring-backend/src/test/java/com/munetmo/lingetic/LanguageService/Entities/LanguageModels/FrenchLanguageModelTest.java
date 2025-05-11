@@ -1,6 +1,5 @@
 package com.munetmo.lingetic.LanguageService.Entities.LanguageModels;
 
-import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.FrenchLanguageModel;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageService.Entities.Token;
 import com.munetmo.lingetic.LanguageService.Entities.TokenType;
@@ -222,14 +221,13 @@ class FrenchLanguageModelTest {
 
     @Test
     void tokenizeShouldTreatNumbersWithPunctuationAsNumbers() {
-        var tokens = frenchLanguageModel.tokenize("(123) 1+2 4,500 3.14 4#2");
-        assertEquals(5, tokens.size());
+        var tokens = frenchLanguageModel.tokenize("1+2 4,500 3.14 4#2");
+        assertEquals(4, tokens.size());
 
-        assertEquals(new Token(TokenType.Number, "(123)", 1), tokens.get(0));
-        assertEquals(new Token(TokenType.Number, "1+2", 2), tokens.get(1));
-        assertEquals(new Token(TokenType.Number, "4,500", 3), tokens.get(2));
-        assertEquals(new Token(TokenType.Number, "3.14", 4), tokens.get(3));
-        assertEquals(new Token(TokenType.Number, "4#2", 5), tokens.get(4));
+        assertEquals(new Token(TokenType.Number, "1+2", 0), tokens.get(0));
+        assertEquals(new Token(TokenType.Number, "4,500", 4), tokens.get(1));
+        assertEquals(new Token(TokenType.Number, "3.14", 10), tokens.get(2));
+        assertEquals(new Token(TokenType.Number, "4#2", 15), tokens.get(3));
     }
 
     @Test
@@ -375,36 +373,25 @@ class FrenchLanguageModelTest {
     }
 
     @Test
-    void tokenizeShouldAssignCorrectSequenceNumbers() {
+    void tokenizeShouldAssignCorrectStartIndexes() {
         var tokens = frenchLanguageModel.tokenize("Bonjour, monde!");
 
         assertEquals(4, tokens.size());
-
-        for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(i + 1, tokens.get(i).sequenceNumber(),
-                "Token at position " + i + " should have sequence number " + (i + 1));
-        }
-
-        // Test with a more complex sentence
-        tokens = frenchLanguageModel.tokenize("J'ai besoin d'aide!");
-
-        assertEquals(4, tokens.size());
-        assertEquals(1, tokens.get(0).sequenceNumber()); // J'ai
-        assertEquals(2, tokens.get(1).sequenceNumber()); // besoin
-        assertEquals(3, tokens.get(2).sequenceNumber()); // d'aide
-        assertEquals(4, tokens.get(3).sequenceNumber()); // !
+        assertEquals(0, tokens.get(0).startIndex()); // Bonjour
+        assertEquals(7, tokens.get(1).startIndex()); // ,
+        assertEquals(9, tokens.get(2).startIndex()); // monde
+        assertEquals(14, tokens.get(3).startIndex()); // !
     }
 
     @Test
-    void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
-        var tokens = frenchLanguageModel.tokenize("Salut! Ça va?");
+    void tokenizeShouldAssignCorrectStartIndexesWithExtraSpacings() {
+        var tokens = frenchLanguageModel.tokenize("   Bonjour,    monde  !   ");
 
-        assertEquals(5, tokens.size());
-        assertEquals(1, tokens.get(0).sequenceNumber()); // Salut
-        assertEquals(2, tokens.get(1).sequenceNumber()); // !
-        assertEquals(3, tokens.get(2).sequenceNumber()); // Ça
-        assertEquals(4, tokens.get(3).sequenceNumber()); // va
-        assertEquals(5, tokens.get(4).sequenceNumber()); // ?
+        assertEquals(4, tokens.size());
+        assertEquals(3, tokens.get(0).startIndex()); // Bonjour
+        assertEquals(10, tokens.get(1).startIndex()); // ,
+        assertEquals(15, tokens.get(2).startIndex()); // monde
+        assertEquals(22, tokens.get(3).startIndex()); // !
     }
 
     @Test

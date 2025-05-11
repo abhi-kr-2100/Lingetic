@@ -8,17 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 public final class LatinScriptLanguageModelHelper {
-    private static final String TERMINAL_PUNCTUATION = ".?!;,:-";
     private static final String SPECIFIC_CHARACTERS = "àâäæçéèêëîïôœùûüÿçğıöşüåäöāīūēō";
     private static final String SURROUNDING_PUNCTUATION = "'\"«»";
-
-    private static final Pattern LEADING_PUNCTUATION_PATTERN = Pattern.compile(
-            "^([%s%s]+)".formatted(SURROUNDING_PUNCTUATION, TERMINAL_PUNCTUATION));
-    private static final Pattern TRAILING_PUNCTUATION_PATTERN = Pattern.compile(
-            "([%s%s]+)$".formatted(SURROUNDING_PUNCTUATION, TERMINAL_PUNCTUATION));
 
     private final Locale locale;
 
@@ -36,39 +29,64 @@ public final class LatinScriptLanguageModelHelper {
         List<Token> tokens = new ArrayList<>();
         if (input.isBlank()) return tokens;
 
-        int sequenceNumber = 1;
-        for (var part : input.split("\\s+")) {
-            if (part.isBlank()) continue;
+        int currentPos = 0;
+        int length = input.length();
+        var currentPart = new StringBuilder();
 
-            var leadingPunct = getLeadingPunctuations(part);
-            for (var punct : leadingPunct) {
-                tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
-            }
-            part = part.substring(leadingPunct.size());
-            if (part.isBlank()) continue;
+        while (currentPos < length) {
+            char c = input.charAt(currentPos);
 
-            var trailingPunct = getTrailingPunctuations(part);
-            part = part.substring(0, part.length() - trailingPunct.size());
-            if (part.isBlank()) {
-                for (var punct : trailingPunct) {
-                    tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
+            // Tokens are separated by whitespace but punctuations need to be handled differently
+            // He said, "Hello, world!" separated just by whitespace would be:
+            // [He; said,; "Hello,; world!"]
+
+            if (Character.isWhitespace(c)) {
+                if (!currentPart.isEmpty()) {
+                    processCurrentPart(tokens, currentPart.toString(), currentPos - currentPart.length());
+                    currentPart.setLength(0);
                 }
+                currentPos++;
                 continue;
             }
 
-            if (containsLetter(part)) {
-                tokens.add(new Token(TokenType.Word, part, sequenceNumber++));
-            } else if (containsDigit(part)) {
-                tokens.add(new Token(TokenType.Number, part, sequenceNumber++));
-            } else {
-                tokens.add(new Token(TokenType.Punctuation, part, sequenceNumber++));
+            var currentStr = currentPart.toString();
+            var nextChar = currentPos + 1 < length ? input.charAt(currentPos + 1) : null;
+            if (isPunctuationLike(c) &&
+                    // "I'm" should not be split into "I"; "'"; "m"
+                    // However, "I'm." should be split into "I'm" and "."
+                    // "1,50" should not be split into "1"; ","; "50"
+                    // "I'm 10." should be split into "I'm"; "10"; "."
+                    !((containsLetter(currentStr) || containsDigit(currentStr)) && nextChar != null && !isPunctuationLike(nextChar))
+            ) {
+                if (!currentPart.isEmpty()) {
+                    processCurrentPart(tokens, currentPart.toString(), currentPos - currentPart.length());
+                    currentPart.setLength(0);
+                }
+
+                tokens.add(new Token(TokenType.Punctuation, String.valueOf(c), currentPos));
+                currentPos++;
+                continue;
             }
 
-            for (var punct : trailingPunct) {
-                tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
-            }
+            currentPart.append(c);
+            currentPos++;
         }
+
+        if (!currentPart.isEmpty()) {
+            processCurrentPart(tokens, currentPart.toString(), currentPos - currentPart.length());
+        }
+
         return tokens;
+    }
+
+    private void processCurrentPart(List<Token> tokens, String part, int startIndex) {
+        if (containsLetter(part)) {
+            tokens.add(new Token(TokenType.Word, part, startIndex));
+        } else if (containsDigit(part)) {
+            tokens.add(new Token(TokenType.Number, part, startIndex));
+        } else {
+            tokens.add(new Token(TokenType.Punctuation, part, startIndex));
+        }
     }
 
     /**
@@ -133,22 +151,6 @@ public final class LatinScriptLanguageModelHelper {
         return result.toString().trim();
     }
 
-    private List<String> getLeadingPunctuations(String input) {
-        var matcher = LEADING_PUNCTUATION_PATTERN.matcher(input);
-        if (matcher.find()) {
-            return List.of(matcher.group(1).split(""));
-        }
-        return List.of();
-    }
-
-    private List<String> getTrailingPunctuations(String input) {
-        var matcher = TRAILING_PUNCTUATION_PATTERN.matcher(input);
-        if (matcher.find()) {
-            return List.of(matcher.group(1).split(""));
-        }
-        return List.of();
-    }
-
     private String normalize(String input) {
         var words = input.split("\\s+");
         var cleaned = Arrays.stream(words)
@@ -160,6 +162,18 @@ public final class LatinScriptLanguageModelHelper {
                 })
                 .filter(w -> !w.isBlank());
         return String.join(" ", cleaned.toList());
+    }
+
+    private boolean isLetterLike(@Nullable Character c) {
+        return c != null && (Character.isLetter(c) || Character.isDigit(c));
+    }
+
+    private boolean isDigitLike(@Nullable Character c) {
+        return c != null && Character.isDigit(c);
+    }
+
+    private boolean isPunctuationLike(@Nullable Character c) {
+        return c != null && !isLetterLike(c) && !isDigitLike(c);
     }
 
     private boolean containsLetter(String s) {
