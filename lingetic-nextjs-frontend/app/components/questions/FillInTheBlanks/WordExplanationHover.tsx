@@ -8,11 +8,13 @@ import type { WordExplanation } from "@/utilities/api-types";
 interface WordExplanationHoverProps {
   word: string;
   explanation: WordExplanation;
+  className?: string;
 }
 
 export default function WordExplanationHover({
   word,
   explanation,
+  className,
 }: WordExplanationHoverProps) {
   const [open, setOpen] = useState(false);
   const { refs, floatingStyles } = useFloating({
@@ -23,7 +25,7 @@ export default function WordExplanationHover({
 
   return (
     <span
-      className="relative cursor-pointer px-2 py-1 rounded bg-skin-fill-accent hover:bg-skin-fill-accent/70 transition-colors mx-1"
+      className={`cursor-pointer ${className ?? ""}`}
       ref={refs.setReference}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
@@ -31,7 +33,7 @@ export default function WordExplanationHover({
       onFocus={() => setOpen(true)}
       onBlur={() => setOpen(false)}
     >
-      <span className="border-b-[2.5px] border-dotted border-skin-base text-skin-base">
+      <span className="border-b-[0.5px] border-dotted border-skin-base text-skin-base">
         {word}
       </span>
       {open && (
