@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class FillInTheBlanksQuestion implements Question {
-    public record WordExplanation(int sequenceNumber, String word, List<String> properties, String comment) {
+    public record WordExplanation(int startIndex, String word, List<String> properties, String comment) {
         public WordExplanation {
-            if (sequenceNumber <= 0) {
-                throw new IllegalArgumentException("Sequence number must be positive");
+            if (startIndex < 0) {
+                throw new IllegalArgumentException("startIndex must be non-negative");
             }
 
             if (word.isBlank()) {
@@ -151,10 +151,10 @@ public final class FillInTheBlanksQuestion implements Question {
         var explanation = rawExplanation.stream().map(obj -> {
             var rawWordExp = (Map<?, ?>) obj;
 
-            if (!rawWordExp.containsKey("sequenceNumber")) {
-                throw new IllegalArgumentException("Required field 'sequenceNumber' must be present in explanation");
-            } else if (!(rawWordExp.get("sequenceNumber") instanceof Integer)) {
-                throw new IllegalArgumentException("Field 'sequenceNumber' must be an integer.");
+            if (!rawWordExp.containsKey("startIndex")) {
+                throw new IllegalArgumentException("Required field 'startIndex' must be present in explanation");
+            } else if (!(rawWordExp.get("startIndex") instanceof Integer)) {
+                throw new IllegalArgumentException("Field 'startIndex' must be an integer.");
             }
 
             if (!rawWordExp.containsKey("word")) {
@@ -177,12 +177,12 @@ public final class FillInTheBlanksQuestion implements Question {
                 throw new IllegalArgumentException("Field 'comment' must be a string.");
             }
 
-            var sequenceNumber = (int) rawWordExp.get("sequenceNumber");
+            var startIndex = (int) rawWordExp.get("startIndex");
             var word = (String) rawWordExp.get("word");
             var properties = (List<String>) rawWordExp.get("properties");
             var comment = (String) rawWordExp.get("comment");
 
-            return new WordExplanation(sequenceNumber, word, properties, comment);
+            return new WordExplanation(startIndex, word, properties, comment);
         }).toList();
 
         return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, difficulty, questionListId, explanation);
