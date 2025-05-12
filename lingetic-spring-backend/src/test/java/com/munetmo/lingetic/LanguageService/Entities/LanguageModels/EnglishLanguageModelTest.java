@@ -154,15 +154,48 @@ class EnglishLanguageModelTest {
     }
 
     @Test
-    void tokenizeShouldTreatNumbersWithPunctuationAsNumbers() {
-        var tokens = model.tokenize("(123) 1+2 4,500 3.14 4#2");
-        assertEquals(5, tokens.size());
+    void tokenizeShouldCorrectlyTokenizeQuotes() {
+        var tokens = model.tokenize("He said, \"Hello, world!\"");
 
-        assertEquals(new Token(TokenType.Number, "(123)", 1), tokens.get(0));
-        assertEquals(new Token(TokenType.Number, "1+2", 2), tokens.get(1));
-        assertEquals(new Token(TokenType.Number, "4,500", 3), tokens.get(2));
-        assertEquals(new Token(TokenType.Number, "3.14", 4), tokens.get(3));
-        assertEquals(new Token(TokenType.Number, "4#2", 5), tokens.get(4));
+        assertEquals(9, tokens.size());
+
+        assertEquals(TokenType.Word, tokens.get(0).type());
+        assertEquals("He", tokens.get(0).value());
+
+        assertEquals(TokenType.Word, tokens.get(1).type());
+        assertEquals("said", tokens.get(1).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(2).type());
+        assertEquals(",", tokens.get(2).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(3).type());
+        assertEquals("\"", tokens.get(3).value());
+
+        assertEquals(TokenType.Word, tokens.get(4).type());
+        assertEquals("Hello", tokens.get(4).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(5).type());
+        assertEquals(",", tokens.get(5).value());
+
+        assertEquals(TokenType.Word, tokens.get(6).type());
+        assertEquals("world", tokens.get(6).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(7).type());
+        assertEquals("!", tokens.get(7).value());
+
+        assertEquals(TokenType.Punctuation, tokens.get(8).type());
+        assertEquals("\"", tokens.get(8).value());
+    }
+
+    @Test
+    void tokenizeShouldTreatNumbersWithPunctuationAsNumbers() {
+        var tokens = model.tokenize("1+2 4,500 3.14 4#2");
+        assertEquals(4, tokens.size());
+
+        assertEquals(new Token(TokenType.Number, "1+2", 0), tokens.get(0));
+        assertEquals(new Token(TokenType.Number, "4,500", 4), tokens.get(1));
+        assertEquals(new Token(TokenType.Number, "3.14", 10), tokens.get(2));
+        assertEquals(new Token(TokenType.Number, "4#2", 15), tokens.get(3));
     }
 
     @Test
@@ -244,39 +277,37 @@ class EnglishLanguageModelTest {
     }
 
     @Test
-    void tokenizeShouldAssignCorrectSequenceNumbers() {
+    void tokenizeShouldAssignCorrectStartIndexes() {
         var tokens = model.tokenize("Hello, world!");
 
         assertEquals(4, tokens.size());
-
-        for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(i + 1, tokens.get(i).sequenceNumber(),
-                "Token at position " + i + " should have sequence number " + (i + 1));
-        }
-
-        // Test with a more complex sentence
-        tokens = model.tokenize("I'll see you when you've finished!");
-
-        assertEquals(7, tokens.size());
-        assertEquals(1, tokens.get(0).sequenceNumber()); // I'll
-        assertEquals(2, tokens.get(1).sequenceNumber()); // see
-        assertEquals(3, tokens.get(2).sequenceNumber()); // you
-        assertEquals(4, tokens.get(3).sequenceNumber()); // when
-        assertEquals(5, tokens.get(4).sequenceNumber()); // you've
-        assertEquals(6, tokens.get(5).sequenceNumber()); // finished
-        assertEquals(7, tokens.get(6).sequenceNumber()); // !
+        assertEquals(0, tokens.get(0).startIndex()); // Hello
+        assertEquals(5, tokens.get(1).startIndex()); // ,
+        assertEquals(7, tokens.get(2).startIndex()); // world
+        assertEquals(12, tokens.get(3).startIndex()); // !
     }
 
     @Test
-    void tokenizeShouldAssignSequentialNumbersWithPunctuation() {
+    void tokenizeShouldAssignCorrectStartIndexesWithExtraSpacings() {
+        var tokens = model.tokenize("   Hello,    world  !   ");
+
+        assertEquals(4, tokens.size());
+        assertEquals(3, tokens.get(0).startIndex()); // Hello
+        assertEquals(8, tokens.get(1).startIndex()); // ,
+        assertEquals(13, tokens.get(2).startIndex()); // world
+        assertEquals(20, tokens.get(3).startIndex()); // !
+    }
+
+    @Test
+    void tokenizeShouldAssignStartIndexWithPunctuation() {
         var tokens = model.tokenize("Hello! What's up?");
 
         assertEquals(5, tokens.size());
-        assertEquals(1, tokens.get(0).sequenceNumber()); // Hello
-        assertEquals(2, tokens.get(1).sequenceNumber()); // !
-        assertEquals(3, tokens.get(2).sequenceNumber()); // What's
-        assertEquals(4, tokens.get(3).sequenceNumber()); // up
-        assertEquals(5, tokens.get(4).sequenceNumber()); // ?
+        assertEquals(0, tokens.get(0).startIndex()); // Hello
+        assertEquals(5, tokens.get(1).startIndex()); // !
+        assertEquals(7, tokens.get(2).startIndex()); // What's
+        assertEquals(14, tokens.get(3).startIndex()); // up
+        assertEquals(16, tokens.get(4).startIndex()); // ?
     }
 
     @Test

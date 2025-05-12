@@ -336,4 +336,26 @@ class JapaneseModifiedHepburnLanguageModelTest {
         );
         assertEquals("Kare wa iimashita, \"Konnichiwa, sekai!\"", model.combineTokens(tokens));
     }
+
+    @Test
+    void tokenizeShouldAssignCorrectStartIndexes() {
+        var tokens = model.tokenize("Konnichiwa, sekai!");
+
+        assertEquals(4, tokens.size());
+        assertEquals(0, tokens.get(0).startIndex()); // Konnichiwa
+        assertEquals(10, tokens.get(1).startIndex()); // ,
+        assertEquals(12, tokens.get(2).startIndex()); // sekai
+        assertEquals(17, tokens.get(3).startIndex()); // !
+    }
+
+    @Test
+    void tokenizeShouldAssignCorrectStartIndexesWithExtraSpacings() {
+        var tokens = model.tokenize("   Konnichiwa,    sekai  !   ");
+
+        assertEquals(4, tokens.size());
+        assertEquals(3, tokens.get(0).startIndex()); // Konnichiwa
+        assertEquals(13, tokens.get(1).startIndex()); // ,
+        assertEquals(18, tokens.get(2).startIndex()); // sekai
+        assertEquals(25, tokens.get(3).startIndex()); // !
+    }
 }

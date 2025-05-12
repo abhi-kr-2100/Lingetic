@@ -20,97 +20,82 @@ from pathlib import Path
 PROMPT_EXAMPLES = {
     "French": {
         "sentence": "Les étudiants étudient dans la bibliothèque",
-        "word1": "dans",
-        "word2": ["étudiants", "bibliothèque"],
+        "word": "dans",
+        "words": ["étudiants", "bibliothèque"],
         "blank1": "Les étudiants étudient ____ la bibliothèque",
-        "blank2": [
+        "blanks": [
             "Les _____ étudient dans la bibliothèque",
             "Les étudiants étudient dans la _____",
         ],
         "example": """
 Example:
-Words: [{{"type":"Word","value":"Le","sequenceNumber":1}},{{"type":"Word","value":"supermarché","sequenceNumber":2}},{{"type":"Word","value":"est","sequenceNumber":3}},{{"type":"Word","value":"à","sequenceNumber":4}},{{"type":"Word","value":"gauche","sequenceNumber":5}}]
+Sentence: "Le supermarché est à gauche."
+Words: [{{"value":"Le","id":1}}, {{"value":"supermarché","id":2}}, {{"value":"est","id":3}}, {{"value":"à","id":4}}, {{"value":"gauche","id":5}}]
 
 Theme: Asking for Directions and Getting Around
 Instructions: Teach phrases for asking directions (Où est...?, Comment aller à...?) and basic directions (tout droit, à gauche, à droite). Introduce basic imperative forms (Allez...) and prepositions of direction. Average sentence length: 5 words.
 
 Output:
-{{ "selectedWordsSequenceNumbers": [4, 5] }}
+{{ "selectedIds": [4, 5] }}
 
 Reason: Both words `à` and `gauche` are relevant to the theme and instructions.""",
     },
     "Swedish": {
         "sentence": "Studenten läser en bok i biblioteket",
-        "word1": "bok",
-        "word2": ["studenten", "biblioteket"],
+        "word": "bok",
+        "words": ["studenten", "biblioteket"],
         "blank1": "Studenten läser en ____ i biblioteket",
-        "blank2": [
+        "blanks": [
             "_____ läser en bok i biblioteket",
             "Studenten läser en bok i _____",
         ],
         "example": """
 Example:
-Words: [{{"type":"Word","value":"Studenten","sequenceNumber":1}},{{"type":"Word","value":"läser","sequenceNumber":2}},{{"type":"Word","value":"en","sequenceNumber":3}},{{"type":"Word","value":"bok","sequenceNumber":4}},{{"type":"Word","value":"i","sequenceNumber":5}},{{"type":"Word","value":"biblioteket","sequenceNumber":6}}]
+Sentence: "Studenterna läser i biblioteket."
+Words: [{{"value":"Studenten","id":1}},{{"value":"läser","id":2}},{{"value":"en","id":3}},{{"value":"bok","id":4}},{{"value":"i","id":5}},{{"value":"biblioteket","id":6}}]
+
 Theme: Objects and nouns
 Instructions: Teach nouns that are basic everyday objects. Average sentence length: 5 words.
 
 Output:
-{{ "selectedWordsSequenceNumbers": [4, 6] }}
+{{ "selectedIds": [4, 6] }}
 
 Reason: Both words `bok` and `biblioteket` are relevant to the theme and instructions. The word `Studenten` is not relevant to the theme and instructions, as it is a proper noun and does not fit the context of basic everyday objects.
         """,
     },
-    "Japanese": {
-        "sentence": "学生は図書館で勉強します",
-        "word1": "で",
-        "word2": ["学生", "図書館"],
-        "blank1": "学生は図書館____勉強します",
-        "blank2": ["_____は図書館で勉強します", "学生は_____で勉強します"],
-        "example": """
-Example:
-Words: [{{"type":"Word","value":"私","sequenceNumber":1}},{{"type":"Word","value":"は","sequenceNumber":2}},{{"type":"Word","value":"駅","sequenceNumber":3}},{{"type":"Word","value":"へ","sequenceNumber":4}},{{"type":"Word","value":"行きます","sequenceNumber":5}}]
-
-Theme: Basic Locations and Transportation
-Instructions: Teach basic location particles (へ, に, で) and verbs of motion (行く, 来る). Focus on simple sentence structures using basic particles. Average sentence length: 3-5 words.
-
-Output:
-{{ "selectedWordsSequenceNumbers": [3, 4] }}
-
-Reason: Both words `駅` (station) and `へ` (direction particle) are relevant to the theme and instructions, as they deal with locations and particles used for indicating direction.
-        """,
-    },
     "JapaneseModifiedHepburn": {
         "sentence": "gakusei wa toshokan de benkyou shimasu",
-        "word1": "de",
-        "word2": ["gakusei", "toshokan"],
+        "word": "de",
+        "words": ["gakusei", "toshokan"],
         "blank1": "gakusei wa toshokan ____ benkyou shimasu",
-        "blank2": [
+        "blanks": [
             "_____ wa toshokan de benkyou shimasu",
             "gakusei wa _____ de benkyou shimasu",
         ],
         "example": """
 Example:
-Words: [{{"type":"Word","value":"watashi","sequenceNumber":1}},{{"type":"Word","value":"wa","sequenceNumber":2}},{{"type":"Word","value":"eki","sequenceNumber":3}},{{"type":"Word","value":"e","sequenceNumber":4}},{{"type":"Word","value":"ikimasu","sequenceNumber":5}}]
+Sentence: "Watashi wa eki e ikimasu."
+Words: [{{"value":"watashi","id":1}},{{"value":"wa","id":2}},{{"value":"eki","id":3}},{{"value":"e","id":4}},{{"value":"ikimasu","id":5}}]
 
 Theme: Basic Locations and Transportation
 Instructions: Teach basic location particles (e, ni, de) and verbs of motion (iku, kuru). Focus on simple sentence structures using basic particles. Average sentence length: 3-5 words.
 
 Output:
-{{ "selectedWordsSequenceNumbers": [3, 4] }}
+{{ "selectedIds": [3, 4] }}
 
 Reason: Both words `eki` (station) and `e` (direction particle) are relevant to the theme and instructions, as they deal with locations and particles used for indicating direction.
         """,
     },
 }
 
-PROMPT_TEMPLATE = """Your job is to create fill-in-the-blank questions. To create a fill-in-the-blank question, start with a set of words: "{sentence}" Then choose a word to hide, say, "{word1}". The fill-in-the-blank question becomes: "{blank1}"
+PROMPT_TEMPLATE = """Your job is to create fill-in-the-blank questions. To create a fill-in-the-blank question, start with a set of words: "{sentence}" Then choose a word to hide, say, "{word}". The fill-in-the-blank question becomes: "{blank1}"
 
-You can also select multiple words: "{word2[0]}", "{word2[1]}". In this case, two fill-in-the-blanks can be created:
+You can also select multiple words: "{words[0]}", "{words[1]}". In this case, two fill-in-the-blanks can be created:
 
-* {blank2[0]}
-* {blank2[1]}
+* {blanks[0]}
+* {blanks[1]}
 
-You'll be given a list of words, and you have to select a word to make a fill-in-the-blank question. You should decide which word to select based on the given theme and instructions to help a language learner in his practice.
+You'll be given a sentence, and you have to select a word to make a fill-in-the-blank question. You should decide which word to select based on the given theme and instructions to help a language learner in his practice.
 
 {example}
 
@@ -119,7 +104,7 @@ You must select at least one word!
 
 
 class SelectedWordsResponse(BaseModel):
-    selectedWordsSequenceNumbers: List[int]
+    selectedIds: List[int]
 
 
 def load_sentences(filepath: str) -> List[Dict[str, Any]]:
@@ -170,7 +155,14 @@ def tokenize_sentences(
             params = {"language": language, "sentence": text}
             response = session.get(url, params=params, timeout=5)
             response.raise_for_status()
+
             tokens = response.json()
+            id = 1
+            for token in tokens:
+                if token["type"] == "Word":
+                    token["id"] = id
+                    id += 1
+
             sentence_with_tokens = dict(sentence)
             sentence_with_tokens["tokens"] = tokens
             sentences_with_tokens.append(sentence_with_tokens)
@@ -225,7 +217,7 @@ def make_gemini_api_call(prompt: str) -> List[int]:
             if hasattr(response, "parsed") and response.parsed is not None:
                 parsed = response.parsed.model_dump()
                 print(f"Gemini response: {parsed}", file=sys.stderr)
-                return parsed["selectedWordsSequenceNumbers"]
+                return parsed["selectedIds"]
             else:
                 raw_text = getattr(response, "text", "")
                 raise ValueError(
@@ -251,11 +243,12 @@ def make_gemini_api_call(prompt: str) -> List[int]:
 
 
 def generate_prompt(
+    sentence: str,
     tokens: List[Dict[str, Any]],
     theme: str,
     instructions: str,
     language: str,
-    valid_ints: List[int],
+    valid_ids: List[int],
 ) -> str:
     """Generate a prompt for the Gemini API based on the tokens and context."""
     # Get language-specific examples
@@ -265,10 +258,12 @@ def generate_prompt(
     prompt = PROMPT_TEMPLATE.format(**examples)
 
     # Add the actual query
-    prompt += f"\nNow select words from this sentence:\nWords: {json.dumps(tokens)}\n\n"
+    prompt += f"\nSentence: {sentence}\nWords: {json.dumps(tokens)}\n\n"
     prompt += f"Theme: {theme}\n"
     prompt += f"Instructions: {instructions}\n\n"
-    prompt += f"You must select one or more integers from the following: {valid_ints}\n\n"
+    prompt += (
+        f"You must select one or more IDs from the following: {valid_ids}\n\n"
+    )
     prompt += "Output:\n"
 
     return prompt
@@ -333,6 +328,7 @@ def process_sentences(
     def process_with_gemini(
         idx: int, sentence: Dict[str, Any]
     ) -> Dict[str, Any]:
+        text = sentence.get("text", "")
         tokens = sentence.get("tokens", [])
         theme = sentence.get("theme", "")
         instructions = sentence.get("instructions", "")
@@ -341,54 +337,65 @@ def process_sentences(
 
         # Filter word tokens
         word_tokens = [token for token in tokens if token.get("type") == "Word"]
-        valid_sequence_numbers = [
-            token["sequenceNumber"] for token in word_tokens
-        ]
+        word_tokens_with_ids = []
+        for i, token in enumerate(word_tokens, start=1):
+            token_copy = dict(token)
+            token_copy["id"] = i
+            word_tokens_with_ids.append(token_copy)
+
+        valid_ids = [token["id"] for token in word_tokens_with_ids]
 
         if not word_tokens:
             questions = []
         else:
             # Generate prompt and get selected tokens from Gemini
             prompt = generate_prompt(
-                word_tokens,
+                text,
+                word_tokens_with_ids,
                 theme,
                 instructions,
                 language,
-                valid_sequence_numbers,
+                valid_ids,
             )
             try:
-                selected_sequence_numbers = make_gemini_api_call(prompt)
+                selected_ids = make_gemini_api_call(prompt)
             except Exception as e:
                 print(f"Error from Gemini API: {e}", file=sys.stderr)
-                selected_sequence_numbers = [
-                    random.choice(word_tokens)["sequenceNumber"]
-                ]
+                selected_ids = [random.choice(valid_ids)]
 
             # Create questions
             questions = []
             seen_words = set()
 
-            for seq_num in selected_sequence_numbers:
+            for selected_id in selected_ids:
                 selected_token = next(
-                    (t for t in tokens if t.get("sequenceNumber") == seq_num),
+                    (
+                        t
+                        for t in word_tokens_with_ids
+                        if t.get("id") == selected_id
+                    ),
                     None,
                 )
                 if (
                     selected_token is None
                     or selected_token["value"] in seen_words
                 ):
+                    print(
+                        "Error: Invalid selected token or already seen",
+                        file=sys.stderr,
+                    )
                     continue
 
                 seen_words.add(selected_token["value"])
                 modified_tokens = []
                 for token in tokens:
-                    if token.get("sequenceNumber") == seq_num:
+                    if token.get("startIndex") == selected_token["startIndex"]:
                         modified_token = dict(token)
                         modified_token["value"] = "_____"
                         modified_tokens.append(modified_token)
                     else:
                         modified_tokens.append(dict(token))
-                modified_tokens.sort(key=lambda x: x["sequenceNumber"])
+                modified_tokens.sort(key=lambda x: x["startIndex"])
 
                 response = requests.post(
                     "http://localhost:8000/language-service/combine-tokens",
@@ -463,7 +470,7 @@ def get_parser() -> argparse.ArgumentParser:
         "-l",
         "--language",
         required=True,
-        help="Language (e.g., French, Japanese) (case-sensitive!)",
+        help="Language (e.g., French) (case-sensitive!)",
     )
     return parser
 

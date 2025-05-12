@@ -16,33 +16,33 @@ class TokenTest {
 
         assertEquals(TokenType.Word, word.type());
         assertEquals("hello", word.value());
-        assertEquals(1, word.sequenceNumber());
+        assertNull(word.startIndex());
 
         assertEquals(TokenType.Punctuation, punctuation.type());
         assertEquals("!", punctuation.value());
-        assertEquals(1, punctuation.sequenceNumber());
+        assertNull(punctuation.startIndex());
 
         assertEquals(TokenType.Number, intNumber.type());
         assertEquals("42", intNumber.value());
-        assertEquals(1, intNumber.sequenceNumber());
+        assertNull(intNumber.startIndex());
 
         assertEquals(TokenType.Number, decimalNumber.type());
         assertEquals("3.14", decimalNumber.value());
-        assertEquals(1, decimalNumber.sequenceNumber());
+        assertNull(decimalNumber.startIndex());
     }
 
     @Test
-    void constructorWithSequenceNumberShouldCreateValidInstance() {
+    void constructorWithStartIndexShouldCreateValidInstance() {
         var word = new Token(TokenType.Word, "hello", 5);
         var punctuation = new Token(TokenType.Punctuation, "!", 10);
         
         assertEquals(TokenType.Word, word.type());
         assertEquals("hello", word.value());
-        assertEquals(5, word.sequenceNumber());
+        assertEquals(5, word.startIndex());
         
         assertEquals(TokenType.Punctuation, punctuation.type());
         assertEquals("!", punctuation.value());
-        assertEquals(10, punctuation.sequenceNumber());
+        assertEquals(10, punctuation.startIndex());
     }
 
     @ParameterizedTest
@@ -53,16 +53,19 @@ class TokenTest {
     }
     
     @Test
-    void constructorShouldThrowExceptionWhenSequenceNumberIsZero() {
-        assertThrows(IllegalArgumentException.class,
-            () -> new Token(TokenType.Word, "hello", 0));
-    }
-    
-    @Test
-    void constructorShouldThrowExceptionWhenSequenceNumberIsNegative() {
+    void constructorShouldThrowExceptionWhenStartIndexIsNegative() {
         assertThrows(IllegalArgumentException.class,
             () -> new Token(TokenType.Word, "hello", -1));
         assertThrows(IllegalArgumentException.class,
             () -> new Token(TokenType.Word, "hello", -42));
+    }
+
+    @Test
+    void constructorShouldHandleNullStartIndex() {
+        var word = new Token(TokenType.Word, "hello", null);
+        var punctuation = new Token(TokenType.Punctuation, "!", null);
+
+        assertNull(word.startIndex());
+        assertNull(punctuation.startIndex());
     }
 }

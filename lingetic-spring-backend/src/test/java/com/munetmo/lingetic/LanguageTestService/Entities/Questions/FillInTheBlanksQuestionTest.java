@@ -41,7 +41,7 @@ class FillInTheBlanksQuestionTest {
 
         assertEquals(1, question.explanation.size());
         var first = explanation.getFirst();
-        assertEquals(1, first.sequenceNumber());
+        assertEquals(1, first.startIndex());
         assertEquals("blank", first.word());
         assertEquals(List.of("article", "plural", "definite"), first.properties());
         assertEquals("test comment", first.comment());
@@ -224,7 +224,7 @@ class FillInTheBlanksQuestionTest {
     }
 
     @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenSequenceNumberIsMissing() {
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenStartIndexIsMissing() {
         var explanationData = Map.of(
                 "word", "example",
                 "properties", List.of("prop1"),
@@ -243,9 +243,9 @@ class FillInTheBlanksQuestionTest {
     }
 
     @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenSequenceNumberIsNotAnInt() {
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenStartIndexIsNotAnInt() {
         var explanationData = Map.of(
-                "sequenceNumber", "not an int",
+                "startIndex", "not an int",
                 "word", "example",
                 "properties", List.of("prop1"),
                 "comment", "This is a comment"
@@ -265,7 +265,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenWordIsMissing() {
         var explanationData = Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "properties", List.of("prop1"),
                 "comment", "This is a comment"
         );
@@ -284,7 +284,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenWordIsNotAString() {
         var explanationData = Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "word", 1,
                 "properties", List.of("prop1"),
                 "comment", "This is a comment"
@@ -304,7 +304,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenCommentIsMissing() {
         var explanationData = Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "word", "example",
                 "properties", List.of("prop1")
         );
@@ -323,7 +323,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenCommentIsNotAString() {
         var explanationData = Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "word", "example",
                 "properties", List.of("prop1"),
                 "comment", 1
@@ -343,7 +343,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenPropertiesIsMissing() {
         var explanationData = Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "word", "example",
                 "comment", "This is a comment"
         );
@@ -362,7 +362,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenPropertiesIsNotAList() {
         var explanationData = Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "word", "example",
                 "properties", "not a list",
                 "comment", "This is a comment"
@@ -382,7 +382,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenPropertiesIsNotAListOfStrings() {
         var explanationData = Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "word", "example",
                 "properties", List.of(1),
                 "comment", "This is a comment"
@@ -403,7 +403,7 @@ class FillInTheBlanksQuestionTest {
     void createFromQuestionTypeSpecificDataShouldHandleExplanationField() {
         var explanationList = List.of(
             Map.of(
-                "sequenceNumber", 1,
+                "startIndex", 1,
                 "word", "Les",
                 "properties", List.of("article", "plural", "definite"),
                 "comment", "Used because 'étudiants' is plural noun."
@@ -425,7 +425,7 @@ class FillInTheBlanksQuestionTest {
         );
         assertFalse(question.explanation.isEmpty());
         var first = question.explanation.get(0);
-        assertEquals(1, first.sequenceNumber());
+        assertEquals(1, first.startIndex());
         assertEquals("Les", first.word());
         assertEquals(java.util.List.of("article", "plural", "definite"), first.properties());
         assertEquals("Used because 'étudiants' is plural noun.", first.comment());
@@ -489,7 +489,7 @@ class FillInTheBlanksQuestionTest {
     @Nested
     class WordExplanationTest {
         @Test
-        void constructorShouldThrowExceptionForNegativeSequenceNumber() {
+        void constructorShouldThrowExceptionForNegativeStartIndex() {
             assertThrows(IllegalArgumentException.class, () -> {
                 new FillInTheBlanksQuestion.WordExplanation(-1, "word", Arrays.asList("prop1"), "comment");
             });
@@ -520,7 +520,7 @@ class FillInTheBlanksQuestionTest {
         void constructorShouldCreateValidObject() {
             FillInTheBlanksQuestion.WordExplanation wordExplanation = new FillInTheBlanksQuestion.WordExplanation(1, "word", Arrays.asList("prop1"), "comment");
             assertNotNull(wordExplanation);
-            assertEquals(1, wordExplanation.sequenceNumber());
+            assertEquals(1, wordExplanation.startIndex());
             assertEquals("word", wordExplanation.word());
             assertEquals(Arrays.asList("prop1"), wordExplanation.properties());
             assertEquals("comment", wordExplanation.comment());

@@ -23,10 +23,10 @@ export default function ResultBox({
     <div className="flex flex-wrap gap-1">
       {attemptResponse.explanation
         .slice()
-        .sort((a, b) => a.sequenceNumber - b.sequenceNumber)
+        .sort((a, b) => a.startIndex - b.startIndex)
         .map((exp) => (
           <WordExplanationHover
-            key={exp.sequenceNumber}
+            key={exp.startIndex}
             word={exp.word}
             explanation={exp}
           />

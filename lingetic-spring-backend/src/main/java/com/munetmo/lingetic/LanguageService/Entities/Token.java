@@ -1,16 +1,19 @@
 package com.munetmo.lingetic.LanguageService.Entities;
 
-public record Token(TokenType type, String value, int sequenceNumber) {
+import org.jspecify.annotations.Nullable;
+
+public record Token(TokenType type, String value, @Nullable Integer startIndex) {
     public Token {
         if (value.isBlank()) {
             throw new IllegalArgumentException("value cannot be blank");
         }
-        if (sequenceNumber <= 0) {
-            throw new IllegalArgumentException("sequenceNumber must be positive");
+
+        if (startIndex != null && startIndex < 0) {
+            throw new IllegalArgumentException("startIndex must be non-negative");
         }
     }
     
     public Token(TokenType type, String value) {
-        this(type, value, 1);
+        this(type, value, null);
     }
 }

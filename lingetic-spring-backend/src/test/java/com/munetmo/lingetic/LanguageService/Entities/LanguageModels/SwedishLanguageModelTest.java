@@ -267,4 +267,26 @@ class SwedishLanguageModelTest {
         );
         assertEquals("Han sa, \"Hej, världen!\"", model.combineTokens(tokens));
     }
+
+    @Test
+    void tokenizeShouldAssignCorrectStartIndexes() {
+        var tokens = model.tokenize("Hej, världen!");
+
+        assertEquals(4, tokens.size());
+        assertEquals(0, tokens.get(0).startIndex()); // Hej
+        assertEquals(3, tokens.get(1).startIndex()); // ,
+        assertEquals(5, tokens.get(2).startIndex()); // världen
+        assertEquals(12, tokens.get(3).startIndex()); // !
+    }
+
+    @Test
+    void tokenizeShouldAssignCorrectStartIndexesWithExtraSpacings() {
+        var tokens = model.tokenize("   Hej,    världen  !   ");
+
+        assertEquals(4, tokens.size());
+        assertEquals(3, tokens.get(0).startIndex()); // Hej
+        assertEquals(6, tokens.get(1).startIndex()); // ,
+        assertEquals(11, tokens.get(2).startIndex()); // världen
+        assertEquals(20, tokens.get(3).startIndex()); // !
+    }
 }

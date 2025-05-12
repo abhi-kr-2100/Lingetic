@@ -8,17 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 public final class LatinScriptLanguageModelHelper {
-    private static final String TERMINAL_PUNCTUATION = ".?!;,:-";
     private static final String SPECIFIC_CHARACTERS = "àâäæçéèêëîïôœùûüÿçğıöşüåäöāīūēō";
     private static final String SURROUNDING_PUNCTUATION = "'\"«»";
-
-    private static final Pattern LEADING_PUNCTUATION_PATTERN = Pattern.compile(
-            "^([%s%s]+)".formatted(SURROUNDING_PUNCTUATION, TERMINAL_PUNCTUATION));
-    private static final Pattern TRAILING_PUNCTUATION_PATTERN = Pattern.compile(
-            "([%s%s]+)$".formatted(SURROUNDING_PUNCTUATION, TERMINAL_PUNCTUATION));
 
     private final Locale locale;
 
@@ -36,39 +29,86 @@ public final class LatinScriptLanguageModelHelper {
         List<Token> tokens = new ArrayList<>();
         if (input.isBlank()) return tokens;
 
-        int sequenceNumber = 1;
-        for (var part : input.split("\\s+")) {
-            if (part.isBlank()) continue;
+        int currentPos = 0;
+        int length = input.length();
+        var currentPart = new StringBuilder();
 
-            var leadingPunct = getLeadingPunctuations(part);
-            for (var punct : leadingPunct) {
-                tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
-            }
-            part = part.substring(leadingPunct.size());
-            if (part.isBlank()) continue;
+        while (currentPos < length) {
+            var c = input.charAt(currentPos);
 
-            var trailingPunct = getTrailingPunctuations(part);
-            part = part.substring(0, part.length() - trailingPunct.size());
-            if (part.isBlank()) {
-                for (var punct : trailingPunct) {
-                    tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
+            // Tokens are separated by whitespace but punctuations need to be handled differently
+            // He said, "Hello, world!" separated just by whitespace would be:
+            // [He; said,; "Hello,; world!"]
+
+            if (Character.isWhitespace(c)) {
+                if (!currentPart.isEmpty()) {
+                    var token = getAppropriateToken(currentPart.toString(), currentPos - currentPart.length());
+                    tokens.add(token);
+                    currentPart.setLength(0);
                 }
+                currentPos++;
                 continue;
             }
 
-            if (containsLetter(part)) {
-                tokens.add(new Token(TokenType.Word, part, sequenceNumber++));
-            } else if (containsDigit(part)) {
-                tokens.add(new Token(TokenType.Number, part, sequenceNumber++));
-            } else {
-                tokens.add(new Token(TokenType.Punctuation, part, sequenceNumber++));
+            var previousChar = currentPos - 1 >= 0 ? input.charAt(currentPos - 1) : null;
+            var nextChar = currentPos + 1 < length ? input.charAt(currentPos + 1) : null;
+            if (isStandalonePunctuation(c, previousChar, nextChar)) {
+                if (!currentPart.isEmpty()) {
+                    var token = getAppropriateToken(currentPart.toString(), currentPos - currentPart.length());
+                    tokens.add(token);
+                    currentPart.setLength(0);
+                }
+
+                tokens.add(new Token(TokenType.Punctuation, String.valueOf(c), currentPos));
+                currentPos++;
+                continue;
             }
 
-            for (var punct : trailingPunct) {
-                tokens.add(new Token(TokenType.Punctuation, punct, sequenceNumber++));
-            }
+            currentPart.append(c);
+            currentPos++;
         }
+
+        if (!currentPart.isEmpty()) {
+            var token = getAppropriateToken(currentPart.toString(), currentPos - currentPart.length());
+            tokens.add(token);
+        }
+
         return tokens;
+    }
+
+    private Token getAppropriateToken(String value, int startIndex) {
+        if (containsLetter(value)) {
+            return new Token(TokenType.Word, value, startIndex);
+        } else if (containsDigit(value)) {
+            return new Token(TokenType.Number, value, startIndex);
+        } else {
+            return new Token(TokenType.Punctuation, value, startIndex);
+        }
+    }
+
+    private boolean isStandalonePunctuation(char currentChar, @Nullable Character previousChar, @Nullable Character nextChar) {
+        if (Character.isLetter(currentChar) || Character.isDigit(currentChar)) {
+            return false; // not a punctuation
+        }
+
+        if (previousChar == null || nextChar == null) {
+            return true; // trailing punctuation
+        }
+
+        if (Character.isWhitespace(previousChar) || Character.isWhitespace(nextChar)) {
+            return true; // trailing punctuation
+        }
+
+        if (isPunctuation(previousChar) || isPunctuation(nextChar)) {
+            // adjacent to a punctuations is a punctuation: "...", "?!", '"world!"' etc.
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isPunctuation(char c) {
+        return !Character.isLetterOrDigit(c) && !Character.isWhitespace(c);
     }
 
     /**
@@ -131,22 +171,6 @@ public final class LatinScriptLanguageModelHelper {
         }
 
         return result.toString().trim();
-    }
-
-    private List<String> getLeadingPunctuations(String input) {
-        var matcher = LEADING_PUNCTUATION_PATTERN.matcher(input);
-        if (matcher.find()) {
-            return List.of(matcher.group(1).split(""));
-        }
-        return List.of();
-    }
-
-    private List<String> getTrailingPunctuations(String input) {
-        var matcher = TRAILING_PUNCTUATION_PATTERN.matcher(input);
-        if (matcher.find()) {
-            return List.of(matcher.group(1).split(""));
-        }
-        return List.of();
     }
 
     private String normalize(String input) {

@@ -33,7 +33,7 @@ export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
 }
 
 export interface WordExplanation {
-  sequenceNumber: number;
+  startIndex: number;
   word: string;
   properties: string[];
   comment: string;
