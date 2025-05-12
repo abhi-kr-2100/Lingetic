@@ -17,6 +17,9 @@
 - Testcontainers for testing with real PostgreSQL and RabbitMQ
 - No ORM
 - No mocking
+- NullAway ensures that @Nullable attributes are checked for null before being used.
+- Attributes that are not explicitly marked @Nullable don't need to be checked for null
+- Use the @Nullable annotation from `org.jspecify.annotations.Nullable`
 
 ### Frontend
 
