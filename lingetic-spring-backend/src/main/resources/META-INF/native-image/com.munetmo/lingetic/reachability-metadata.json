@@ -413,6 +413,10 @@
           "parameterTypes": []
         },
         {
+          "name": "startIndex",
+          "parameterTypes": []
+        },
+        {
           "name": "word",
           "parameterTypes": []
         }
