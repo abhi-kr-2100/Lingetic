@@ -1,6 +1,8 @@
 import { FillInTheBlanksQuestion } from "@/utilities/api-types";
 import log from "@/utilities/logger";
 import { useRef, useCallback, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchQuestionAsset } from "@/utilities/api";
 
 interface UseQuestionAudioPlaybackParams {
   question: FillInTheBlanksQuestion;
@@ -13,6 +15,18 @@ export default function useQuestionAudioPlayback({
 }: UseQuestionAudioPlaybackParams) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const {
+    isLoading,
+    isError,
+    data: audioBlob,
+  } = useQuery({
+    queryKey: ["questionAssets", question.id, "audio"],
+    queryFn: () => fetchQuestionAsset(question.id, "audio"),
+    refetchOnMount: false,
+    // Disable automatic refetching since static data can never change
+    enabled: false,
+  });
+
   const cleanUpAudio = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -23,28 +37,50 @@ export default function useQuestionAudioPlayback({
   }, []);
 
   const playAudio = useCallback(() => {
+    if (!audioBlob) {
+      log(`No audio blob available for question ID ${question.id}`, "error");
+      return;
+    }
+
     cleanUpAudio();
 
-    const audio = new Audio(
-      `${process.env.NEXT_PUBLIC_SPEECH_RECORDINGS_URL_PREFIX}/${question.id}.mp3`
-    );
+    const audio = new Audio();
     audioRef.current = audio;
-    audio.play().catch((e) => {
-      if (e.name === "AbortError") {
-        return;
-      }
 
-      log(`Error playing audio for question ID ${question.id}: ${e}`, "error");
-    });
-  }, [question.id, cleanUpAudio]);
+    const objectUrl = URL.createObjectURL(audioBlob);
+    audio.src = objectUrl;
+
+    audio
+      .play()
+      .catch((e) => {
+        if (e.name === "AbortError") {
+          return;
+        }
+        log(
+          `Error playing audio for question ID ${question.id}: ${e}`,
+          "error"
+        );
+      })
+      .finally(() => {
+        URL.revokeObjectURL(objectUrl);
+      });
+  }, [audioBlob, question.id, cleanUpAudio]);
 
   useEffect(() => {
-    if (autoplay) {
+    if (autoplay && audioBlob) {
       playAudio();
     }
 
     return cleanUpAudio;
-  }, [playAudio, autoplay, cleanUpAudio]);
+  }, [playAudio, autoplay, audioBlob, cleanUpAudio]);
 
-  return { playAudio };
+  if (isLoading) {
+    return {
+      isLoading: true,
+      isError: false,
+      playAudio: () => {},
+    };
+  }
+
+  return { playAudio, isLoading, isError };
 }

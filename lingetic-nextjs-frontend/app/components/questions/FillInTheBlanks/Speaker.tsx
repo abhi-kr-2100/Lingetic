@@ -11,7 +11,14 @@ interface SpeakerProps {
 }
 
 export default function Speaker({ question, autoplay = false }: SpeakerProps) {
-  const { playAudio } = useQuestionAudioPlayback({ question, autoplay });
+  const { playAudio, isLoading, isError } = useQuestionAudioPlayback({
+    question,
+    autoplay,
+  });
+
+  if (isLoading || isError) {
+    return null;
+  }
 
   return (
     <button
