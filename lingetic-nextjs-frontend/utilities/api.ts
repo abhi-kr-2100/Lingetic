@@ -1,4 +1,10 @@
-import type { AttemptResponse, Question, AttemptRequest } from "./api-types";
+import type {
+  AttemptResponse,
+  Question,
+  AttemptRequest,
+  QuestionType,
+  AssetType,
+} from "./api-types";
 import assert from "./assert";
 
 async function fetchOrThrow<T>(url: string, options?: RequestInit): Promise<T> {
@@ -54,6 +60,33 @@ export async function fetchQuestions(
       Authorization: `Bearer ${token}`,
     },
   });
+}
+
+export async function fetchQuestionAsset(
+  questionID: string,
+  assetType: AssetType
+): Promise<Blob> {
+  switch (assetType) {
+    case "audio": {
+      const audioURL = `${process.env.NEXT_PUBLIC_SPEECH_RECORDINGS_URL_PREFIX}/${questionID}.mp3`;
+      const response = await fetch(audioURL);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch audio for question ${questionID}`);
+      }
+      return response.blob();
+    }
+    default:
+      throw new Error(`Unknown asset type: ${assetType}`);
+  }
+}
+
+export function getQuestionAssetTypes(questionType: QuestionType): AssetType[] {
+  switch (questionType) {
+    case "FillInTheBlanks":
+      return ["audio"];
+    default:
+      return [];
+  }
 }
 
 function validateAttemptRequestOrDie(

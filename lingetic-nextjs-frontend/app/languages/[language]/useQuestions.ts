@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchQuestions } from "@/utilities/api";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchQuestionAsset,
+  fetchQuestions,
+  getQuestionAssetTypes,
+} from "@/utilities/api";
 import assert from "@/utilities/assert";
 import type { Question } from "@/utilities/api-types";
 import { useAuth } from "@clerk/nextjs";
@@ -56,6 +60,7 @@ export default function useQuestions({
     data: questions = [],
     isError,
     isFetching,
+    isSuccess,
   } = useQuery({
     queryKey: ["questions", language],
     queryFn: async () => {
@@ -78,6 +83,27 @@ export default function useQuestions({
     // working with.
     refetchOnWindowFocus: false,
   });
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!isSuccess) {
+      return;
+    }
+
+    // prefetch question assets
+    questions.forEach((question) => {
+      const assetTypes = getQuestionAssetTypes(question.questionType);
+      assetTypes.forEach((assetType) => {
+        queryClient.prefetchQuery({
+          queryKey: ["questionAssets", question.id, assetType],
+          queryFn: () => fetchQuestionAsset(question.id, assetType),
+          // 1 hour; assumed time users would spend with a single question
+          staleTime: 1 * 60 * 60 * 1000,
+        });
+      });
+    });
+  }, [isSuccess, questions, queryClient]);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 

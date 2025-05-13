@@ -1,4 +1,5 @@
-type QuestionType = "FillInTheBlanks";
+export type QuestionType = "FillInTheBlanks";
+export type AssetType = "audio";
 export type AttemptStatus = "Success" | "Failure";
 
 export interface Question {
