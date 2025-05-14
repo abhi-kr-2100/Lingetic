@@ -4,6 +4,7 @@ import type {
 } from "@/utilities/api-types";
 import WordExplanationHover from "./WordExplanationHover";
 import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import log from "@/utilities/logger";
 
 interface ResultBoxProps {
   question: FillInTheBlanksQuestion;
@@ -20,6 +21,14 @@ export default function ResultBox({
   );
 
   const parts = getSentenceParts(fullSentence, attemptResponse.explanation);
+
+  const actualSentence = parts.map((p) => p.text).join("");
+  if (actualSentence !== fullSentence) {
+    log(
+      `questionId: ${question.id}: actualSentence: ${actualSentence} !== fullSentence: ${fullSentence}`,
+      "error"
+    );
+  }
 
   return (
     <div className="flex flex-wrap items-center whitespace-pre-wrap">
