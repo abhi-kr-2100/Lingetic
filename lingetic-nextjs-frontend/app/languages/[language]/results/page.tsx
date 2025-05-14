@@ -2,10 +2,12 @@
 
 import { useSearchParams, useParams } from "next/navigation";
 import Link from "next/link";
-import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
+import { RedirectToSignIn, SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 import { Trophy } from "lucide-react";
 import { useRef, useEffect } from "react";
 import assert from "@/utilities/assert";
+import { useQueryClient } from "@tanstack/react-query";
+import { fetchQuestions } from "@/utilities/api";
 
 export default function ResultsPage() {
   return (
@@ -27,12 +29,22 @@ interface ResultsPageParams {
 
 function ResultsPageComponent() {
   const playAgainRef = useRef<HTMLAnchorElement>(null);
+  const queryClient = useQueryClient();
+  const { getToken } = useAuth();
+  const { language } = useParams<ResultsPageParams>();
+  const searchParams = useSearchParams();
+
   useEffect(() => {
     playAgainRef.current?.focus();
-  }, []);
 
-  const searchParams = useSearchParams();
-  const { language } = useParams<ResultsPageParams>();
+    // Prefetch questions for the next round
+    queryClient.invalidateQueries({ queryKey: ["questions", language] });
+    queryClient.prefetchQuery({
+      queryKey: ["questions", language],
+      queryFn: () => fetchQuestions(language, getToken),
+      staleTime: Infinity,
+    });
+  }, [language, getToken, queryClient]);
 
   const totalStr = searchParams.get("total") ?? "NaN";
   const correctStr = searchParams.get("correct") ?? "NaN";

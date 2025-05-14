@@ -63,20 +63,11 @@ export default function useQuestions({
     isSuccess,
   } = useQuery({
     queryKey: ["questions", language],
-    queryFn: async () => {
-      const questions = await fetchQuestions(language, getToken);
-      // Shuffle the questions using Fisher-Yates algorithm
-      for (let i = questions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [questions[i], questions[j]] = [questions[j], questions[i]];
-      }
-      return questions;
-    },
+    queryFn: () => fetchQuestions(language, getToken),
 
-    // The same questions should not be displayed on different renders
-    // of the component. This is because the questions that Lingetic thinks
-    // the user should attempt may change any time.
-    refetchOnMount: "always",
+    // Don't refetch as questions have been prefetched on the results page
+    refetchOnMount: false,
+    refetchOnReconnect: false,
 
     // If user navigates away from the page in between a run of a playlist,
     // the playlist shouldn't refresh and change the questions the user was

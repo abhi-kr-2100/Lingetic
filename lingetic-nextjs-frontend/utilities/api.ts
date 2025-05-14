@@ -6,6 +6,7 @@ import type {
   AssetType,
 } from "./api-types";
 import assert from "./assert";
+import { shuffleInPlace } from "./helpers";
 
 async function fetchOrThrow<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options);
@@ -55,11 +56,15 @@ export async function fetchQuestions(
   const encodedLanguage = encodeURIComponent(language);
   const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/language-test-service/questions?language=${encodedLanguage}`;
 
-  return await fetchOrThrow(url, {
+  const questions = await fetchOrThrow<Question[]>(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  shuffleInPlace(questions);
+
+  return questions;
 }
 
 export async function fetchQuestionAsset(
