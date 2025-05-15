@@ -16,6 +16,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 from pathlib import Path
 
+# Supported question types
+SUPPORTED_QUESTION_TYPES = {"FillInTheBlanks"}
+
 # Language-specific prompt examples
 PROMPT_EXAMPLES = {
     "French": {
@@ -270,7 +273,10 @@ def generate_prompt(
 
 
 def process_sentences(
-    sentences: List[Dict[str, Any]], language: str, output: str
+    sentences: List[Dict[str, Any]],
+    language: str,
+    output: str,
+    question_types: List[str],
 ) -> List[Dict[str, Any]]:
     """
     Process sentences in two steps:
@@ -345,9 +351,8 @@ def process_sentences(
 
         valid_ids = [token["id"] for token in word_tokens_with_ids]
 
-        if not word_tokens:
-            questions = []
-        else:
+        questions = []
+        if "FillInTheBlanks" in question_types and word_tokens:
             # Generate prompt and get selected tokens from Gemini
             prompt = generate_prompt(
                 text,
@@ -364,7 +369,6 @@ def process_sentences(
                 selected_ids = [random.choice(valid_ids)]
 
             # Create questions
-            questions = []
             seen_words = set()
 
             for selected_id in selected_ids:
@@ -472,12 +476,24 @@ def get_parser() -> argparse.ArgumentParser:
         required=True,
         help="Language (e.g., French) (case-sensitive!)",
     )
+    parser.add_argument(
+        "--question-types",
+        "-t",
+        nargs="+",
+        default=list(SUPPORTED_QUESTION_TYPES),
+        choices=list(SUPPORTED_QUESTION_TYPES),
+        help="Types of questions to generate (default: all supported types)",
+    )
     return parser
 
 
-def main(filepath: str, output: str, language: str) -> None:
+def main(
+    filepath: str, output: str, language: str, question_types: List[str]
+) -> None:
     sentences = load_sentences(filepath)
-    objects_with_questions = process_sentences(sentences, language, output)
+    objects_with_questions = process_sentences(
+        sentences, language, output, question_types
+    )
     output_file = get_output_file(output)
     needs_closing = output != "-"
     try:
@@ -496,4 +512,4 @@ def main(filepath: str, output: str, language: str) -> None:
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
-    main(args.filepath, args.output, args.language)
+    main(args.filepath, args.output, args.language, args.question_types)
