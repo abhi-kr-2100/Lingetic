@@ -299,6 +299,24 @@
       ]
     },
     {
+      "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.SourceToTargetTranslationAttemptResponse",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "getAttemptStatus",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCorrectAnswer",
+          "parameterTypes": []
+        },
+        {
+          "name": "getQuestionType",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Question.FillInTheBlanksQuestionDTO",
       "allDeclaredFields": true,
       "methods": [
@@ -330,6 +348,28 @@
     },
     {
       "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO"
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Question.SourceToTargetTranslationDTO",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "getID",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLanguage",
+          "parameterTypes": []
+        },
+        {
+          "name": "getQuestionType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTranslation",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.GenericTaskPayloadWrapper",
@@ -8416,6 +8456,9 @@
     },
     {
       "glob": "db/migration/V7__Add_Japanese_Modified_Hepburn_Language.sql"
+    },
+    {
+      "glob": "db/migration/V8__Add_SourceToTargetTranslation_Question_Type.sql"
     },
     {
       "glob": "dictionaries/system_full.dic"
