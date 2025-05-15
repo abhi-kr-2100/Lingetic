@@ -89,6 +89,10 @@
 - Update QuestionPostgresRepository: `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/infra/Repositories/Postgres/QuestionPostgresRepository.java`
 - Update tests for QuestionPostgresRepository in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/infra/Repositories/Postgres/QuestionPostgresRepositoryTest.java`
 - Update `scripts/scripts/questions.py` to support the new question type.
+- Update `lingetic-nextjs-frontend/utilities/api-types.ts` to include the new question type. The types should match whatever is defined in the backend.
+- Implement the UI for the question type inside `lingetic-nextjs-frontend/app/components/questions/` directory.
+- Support the new question type in `lingetic-nextjs-frontend/app/languages/[language]/LearnPageComponent.tsx`
+- Update `getQuestionAssetTypes` in `lingetic-nextjs-frontend/utilities/api.ts` if required.
 
 ## Other Recommendations
 

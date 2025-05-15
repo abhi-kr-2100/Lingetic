@@ -1,32 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import assert from "@/utilities/assert";
 import type QuestionProps from "../QuestionProps";
 import type {
-  FillInTheBlanksQuestion,
-  FillInTheBlanksAttemptResponse,
+  SourceToTargetTranslationQuestion,
+  SourceToTargetTranslationAttemptResponse,
 } from "@/utilities/api-types";
-
 import ActionButton from "./ActionButton";
-import AnswerCheckStatus from "./AnswerCheckStatus";
-import MainComponent from "./MainComponent";
 import useTextUserAnswer from "../hooks/useTextUserAnswer";
+import MainComponent from "./MainComponent";
+import AnswerCheckStatus from "./AnswerCheckStatus";
 
-interface FillInTheBlanksProps extends QuestionProps {
-  question: FillInTheBlanksQuestion;
+interface SourceToTargetTranslationProps extends QuestionProps {
+  question: SourceToTargetTranslationQuestion;
 }
 
-export default function FillInTheBlanks({
+export default function SourceToTargetTranslation({
   question,
   afterAnswerCheck,
   NextButton,
-}: FillInTheBlanksProps) {
+}: SourceToTargetTranslationProps) {
   validateQuestionOrDie(question);
 
   const [attemptResponse, setAttemptResponse] = useState<
-    FillInTheBlanksAttemptResponse | undefined
+    SourceToTargetTranslationAttemptResponse | undefined
   >(undefined);
 
   useEffect(() => {
@@ -34,7 +32,7 @@ export default function FillInTheBlanks({
   }, [question.id]);
 
   const { answer, setAnswer, checkAnswer, isChecking, isChecked, isError } =
-    useTextUserAnswer<FillInTheBlanksAttemptResponse>(question);
+    useTextUserAnswer<SourceToTargetTranslationAttemptResponse>(question);
 
   async function handleCheckAnswer() {
     const response = await checkAnswer();
@@ -53,7 +51,7 @@ export default function FillInTheBlanks({
   }
 
   return (
-    <div className="w-full p-6 flex flex-col gap-2  border border-gray-200 rounded-lg shadow-md">
+    <div className="w-full p-6 flex flex-col gap-2 border border-gray-200 rounded-lg shadow-md">
       <MainComponent
         isChecked={isChecked}
         attemptResponse={attemptResponse}
@@ -74,27 +72,24 @@ export default function FillInTheBlanks({
         isChecking={isChecking}
         onCheck={handleCheckAnswer}
         NextButton={NextButton}
-        question={question}
         value={answer}
       />
     </div>
   );
 }
 
-function validateQuestionOrDie(question: FillInTheBlanksQuestion) {
+function validateQuestionOrDie(question: SourceToTargetTranslationQuestion) {
   assert(question != null, "question is null or undefined");
-  assert(question.id?.trim()?.length > 0, "question.id is empty");
   assert(
-    question.questionType === "FillInTheBlanks",
-    "question.questionType is not FillInTheBlanks"
-  );
-  assert(question.text?.trim()?.length > 0, "question.text is empty");
-  assert(
-    question.text.includes("_"),
-    "question.text does not contain any blank"
+    question.translation?.trim()?.length > 0,
+    "question.translation is empty"
   );
   assert(
-    question.text?.match(/_+/g)?.length === 1,
-    "question.text contains more than one blank"
+    question.questionType === "SourceToTargetTranslation",
+    "question.questionType is not SourceToTargetTranslation"
+  );
+  assert(
+    question.translation?.trim()?.length > 0,
+    "question.translation is empty"
   );
 }
