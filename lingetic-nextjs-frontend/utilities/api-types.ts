@@ -1,4 +1,4 @@
-export type QuestionType = "FillInTheBlanks";
+export type QuestionType = "FillInTheBlanks" | "SourceToTargetTranslation";
 export type AssetType = "audio";
 export type AttemptStatus = "Success" | "Failure";
 
@@ -14,12 +14,23 @@ export interface FillInTheBlanksQuestion extends Question {
   hint: string;
 }
 
+export interface SourceToTargetTranslationQuestion extends Question {
+  questionType: "SourceToTargetTranslation";
+  language: string;
+  translation: string;
+}
+
 export interface AttemptRequest {
   questionType: QuestionType;
   questionID: string;
 }
 
 export interface FillInTheBlanksAttemptRequest extends AttemptRequest {
+  userResponse: string;
+}
+
+export interface SourceToTargetTranslationAttemptRequest
+  extends AttemptRequest {
   userResponse: string;
 }
 
@@ -31,6 +42,11 @@ export interface AttemptResponse {
 export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
   correctAnswer: string;
   explanation: WordExplanation[];
+}
+
+export interface SourceToTargetTranslationAttemptResponse
+  extends AttemptResponse {
+  correctAnswer: string;
 }
 
 export interface WordExplanation {

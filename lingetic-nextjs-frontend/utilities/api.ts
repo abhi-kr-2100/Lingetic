@@ -89,6 +89,7 @@ export function getQuestionAssetTypes(questionType: QuestionType): AssetType[] {
   switch (questionType) {
     case "FillInTheBlanks":
       return ["audio"];
+    case "SourceToTargetTranslation":
     default:
       return [];
   }
