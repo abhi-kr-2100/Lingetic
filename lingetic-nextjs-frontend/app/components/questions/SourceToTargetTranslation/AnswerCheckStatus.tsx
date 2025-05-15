@@ -1,5 +1,5 @@
 import React from "react";
-import type { FillInTheBlanksAttemptResponse } from "@/utilities/api-types";
+import type { SourceToTargetTranslationAttemptResponse } from "@/utilities/api-types";
 import assert from "@/utilities/assert";
 import AnswerFeedbackBox from "../components/AnswerFeedbackBox";
 import DiffHighlight from "../components/DiffHighlight";
@@ -8,7 +8,7 @@ import { CheckCircle2, XCircle } from "lucide-react";
 interface AnswerCheckStatusProps {
   isError: boolean;
   isChecked: boolean;
-  attemptResponse?: FillInTheBlanksAttemptResponse;
+  attemptResponse?: SourceToTargetTranslationAttemptResponse;
   userAnswer: string;
 }
 

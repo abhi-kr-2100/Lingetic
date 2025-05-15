@@ -1,30 +1,29 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { attemptQuestion } from "@/utilities/api";
-import type {
-  FillInTheBlanksAttemptRequest,
-  FillInTheBlanksAttemptResponse,
-} from "@/utilities/api-types";
+import type { AttemptResponse, Question } from "@/utilities/api-types";
 import assert from "@/utilities/assert";
 import { useAuth } from "@clerk/nextjs";
 
-export default function useUserAnswer(questionID: string) {
-  assert(questionID.trim().length > 0, "questionId is required");
+interface TextResponse extends AttemptResponse {
+  correctAnswer: string;
+}
+
+export default function useTextUserAnswer<Response extends TextResponse>(
+  question: Question
+) {
+  assert(question.id.trim().length > 0, "questionId is required");
 
   const [answer, setAnswer] = useState("");
   const { getToken } = useAuth();
 
-  const attemptChallengeMutation = useMutation<
-    FillInTheBlanksAttemptResponse,
-    Error,
-    string
-  >({
+  const attemptChallengeMutation = useMutation<Response, Error, string>({
     mutationFn: (userResponse: string) => {
       const attemptRequest = {
-        questionID,
-        questionType: "FillInTheBlanks",
+        questionID: question.id,
+        questionType: question.questionType,
         userResponse,
-      } as FillInTheBlanksAttemptRequest;
+      };
 
       return attemptQuestion(attemptRequest, getToken);
     },
@@ -34,7 +33,7 @@ export default function useUserAnswer(questionID: string) {
   useEffect(() => {
     setAnswer("");
     attemptChallengeMutation.reset();
-  }, [questionID, attemptChallengeMutation.reset]);
+  }, [question, attemptChallengeMutation.reset]);
 
   const checkAnswer = async () => {
     // Prevents race conditions where the user might click the button multiple
