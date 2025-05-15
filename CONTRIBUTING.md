@@ -88,6 +88,7 @@
 - Update tests for AttemptQuestionUseCase in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/UseCases/AttemptQuestionUseCaseTest.java`
 - Update QuestionPostgresRepository: `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/infra/Repositories/Postgres/QuestionPostgresRepository.java`
 - Update tests for QuestionPostgresRepository in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/infra/Repositories/Postgres/QuestionPostgresRepositoryTest.java`
+- Update `scripts/scripts/questions.py` to support the new question type.
 
 ## Other Recommendations
 
