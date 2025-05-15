@@ -6,7 +6,7 @@ import com.munetmo.lingetic.LanguageService.Entities.Language;
 
 import java.util.Map;
 
-public sealed interface Question permits FillInTheBlanksQuestion {
+public sealed interface Question permits FillInTheBlanksQuestion, SourceToTargetTranslation {
     String getID();
     QuestionType getQuestionType();
     Language getLanguage();
@@ -17,7 +17,7 @@ public sealed interface Question permits FillInTheBlanksQuestion {
     static Question createFromQuestionTypeSpecificData(String id, Language language, int difficulty, String questionListId, QuestionType questionType, Map<String, Object> data) {
         return switch (questionType) {
             case FillInTheBlanks -> FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(id, language, difficulty, questionListId, data);
-            default -> throw new IllegalArgumentException("Unsupported question type");
+            case SourceToTargetTranslation -> SourceToTargetTranslation.createFromQuestionTypeSpecificData(id, language, difficulty, questionListId, data);
         };
     }
 
