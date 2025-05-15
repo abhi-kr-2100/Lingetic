@@ -6,7 +6,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptRequestDeserializer;
 
 @JsonDeserialize(using = AttemptRequestDeserializer.class)
-public sealed interface AttemptRequest permits FillInTheBlanksAttemptRequest {
+public sealed interface AttemptRequest permits FillInTheBlanksAttemptRequest, SourceToTargetTranslationAttemptRequest {
     QuestionType getQuestionType();
     String getQuestionID();
 
@@ -20,6 +20,7 @@ public sealed interface AttemptRequest permits FillInTheBlanksAttemptRequest {
 
         return switch (type) {
             case FillInTheBlanks -> FillInTheBlanksAttemptRequest.fromJsonNode(node);
+            case SourceToTargetTranslation -> SourceToTargetTranslationAttemptRequest.fromJsonNode(node);
         };
     }
 }
