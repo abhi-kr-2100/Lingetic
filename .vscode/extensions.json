@@ -5,6 +5,7 @@
     "Codium.codium",
     "google.geminicodeassist",
     "sourcegraph.cody-ai",
+    "coderabbit.coderabbit-vscode",
 
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
