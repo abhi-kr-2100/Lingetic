@@ -113,7 +113,14 @@ def insert_questions(
                     uuid.uuid4(),  # question_id
                     question.get("question_type"),
                     language,
-                    (index + 1) * 10,  # difficulty
+                    (question.get("index", index) + 1)
+                    * 10
+                    * (
+                        5
+                        if question.get("question_type")
+                        == "SourceToTargetTranslation"
+                        else 1
+                    ),  # difficulty
                     question_list_id,
                     json.dumps(question.get("question_type_specific_data", {})),
                 )
