@@ -37,6 +37,9 @@ def process_entries(
     selected_questions: List[Dict[str, Any]] = []
     for entry in entries:
         questions = entry.get("questions", [])
+        index = entry.get("index")
+        if index is not None:
+            questions = [dict(question, index=index) for question in questions]
         if not questions:
             continue
         # Add all questions from this entry

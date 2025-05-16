@@ -17,7 +17,7 @@ import threading
 from pathlib import Path
 
 # Supported question types
-SUPPORTED_QUESTION_TYPES = {"FillInTheBlanks"}
+SUPPORTED_QUESTION_TYPES = {"FillInTheBlanks", "SourceToTargetTranslation"}
 
 # Language-specific prompt examples
 PROMPT_EXAMPLES = {
@@ -282,6 +282,7 @@ def process_sentences(
     Process sentences in two steps:
     1. Synchronously tokenize all sentences using a connection pool
     2. Asynchronously process tokens with Gemini API while maintaining order
+    3. Directly handle SourceToTargetTranslation questions without Gemini API
     """
     # Set log file path for caching
     log_path = (
@@ -421,7 +422,22 @@ def process_sentences(
                     }
                 )
 
+        # Add SourceToTargetTranslation without using Gemini
+        if "SourceToTargetTranslation" in question_types:
+            # only if there are less than or equal to 5 word tokens
+            if len(word_tokens) <= 5:
+                questions.append(
+                    {
+                        "question_type": "SourceToTargetTranslation",
+                        "question_type_specific_data": {
+                            "targetText": text,
+                            "translation": translations[0]["text"],
+                        },
+                    }
+                )
+
         result = dict(sentence)
+        result["index"] = idx
         result["questions"] = questions
         # Write to log immediately
         with log_lock:
@@ -477,8 +493,8 @@ def get_parser() -> argparse.ArgumentParser:
         help="Language (e.g., French) (case-sensitive!)",
     )
     parser.add_argument(
-        "--question-types",
         "-t",
+        "--question-types",
         nargs="+",
         default=list(SUPPORTED_QUESTION_TYPES),
         choices=list(SUPPORTED_QUESTION_TYPES),
