@@ -28,17 +28,8 @@ func getQualityFromStatus(status types.AttemptStatus) (int, error) {
 	return 0, fmt.Errorf("invalid status: %v", status)
 }
 
-func updateReviewFieldsFromQuality(review *db.QuestionReview, quality int) (*db.QuestionReview, error) {
-	next := db.QuestionReview{
-		ID:                review.ID,
-		QuestionID:        review.QuestionID,
-		UserID:            review.UserID,
-		Language:          review.Language,
-		Repetitions:       review.Repetitions,
-		EaseFactor:        review.EaseFactor,
-		Interval:          review.Interval,
-		NextReviewInstant: review.NextReviewInstant,
-	}
+func updateReviewFieldsFromQuality(review *db.QuestionReview, quality int) *db.QuestionReview {
+	next := *review
 
 	if quality < 3 {
 		next.Repetitions = 0
@@ -61,7 +52,7 @@ func updateReviewFieldsFromQuality(review *db.QuestionReview, quality int) (*db.
 		next.EaseFactor = minimumEaseFactor
 	}
 	next.NextReviewInstant = time.Now().AddDate(0, 0, next.Interval)
-	return &next, nil
+	return &next
 }
 
 func ReviewQuestion(
@@ -81,10 +72,7 @@ func ReviewQuestion(
 		return fmt.Errorf("invalid attempt status: %w", err)
 	}
 
-	updated, err := updateReviewFieldsFromQuality(review, quality)
-	if err != nil {
-		return fmt.Errorf("failed to update review object: %w", err)
-	}
+	updated := updateReviewFieldsFromQuality(review, quality)
 
 	// Push the update into the DB
 	err = rrepo.Update(
