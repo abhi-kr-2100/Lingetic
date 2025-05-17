@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -48,6 +49,8 @@ func (server *Server) ServeHTTP(writer http.ResponseWriter, request *http.Reques
 	ctx, cancel := context.WithTimeout(request.Context(), 10*time.Second)
 	defer cancel()
 	if err := usecase.ReviewQuestion(ctx, server.QuestionRepo, server.ReviewRepo, wrapper.Payload); err != nil {
+		log.Printf("ERROR: Failed to process review for question %s, user %s: %v",
+			wrapper.Payload.QuestionID, wrapper.Payload.UserID, err)
 		http.Error(writer, "Review failed: "+err.Error(), http.StatusBadRequest)
 		return
 	}
