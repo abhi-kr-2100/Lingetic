@@ -2,7 +2,7 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { ReactNode, useRef, useState } from "react";
-import { BookOpen, XCircle, Loader2 } from "lucide-react";
+import { BookOpen, XCircle } from "lucide-react";
 import useQuestions, { SuccessState } from "./useQuestions";
 import assert from "@/utilities/assert";
 import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
@@ -15,6 +15,7 @@ import type {
 } from "@/utilities/api-types";
 import type QuestionProps from "@/app/components/questions/QuestionProps";
 import NextButton from "./NextButton";
+import { LoadingComponent } from "@/app/loading";
 
 export default function LearnPageComponent() {
   const params = useParams() as LearnPageParams;
@@ -43,14 +44,11 @@ export default function LearnPageComponent() {
 
   if (result.isLoading) {
     return (
-      <div className="h-full bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
-          <Loader2 className="h-12 w-12 text-[#2563eb] animate-spin mx-auto mb-4" />
-          <p className="text-[#374151] text-lg">
-            Loading your language exercises...
-          </p>
-        </div>
-      </div>
+      <LoadingComponent>
+        <p className="text-[#374151] text-lg">
+          Loading your language exercises...
+        </p>
+      </LoadingComponent>
     );
   }
 
