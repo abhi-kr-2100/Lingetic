@@ -5,7 +5,6 @@ import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.GetQuestionListsForLanguageUseCase;
-import com.munetmo.lingetic.LanguageTestService.UseCases.ReviewQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
@@ -52,12 +51,6 @@ public class Beans {
     public GetQuestionListsForLanguageUseCase getQuestionListsForLanguageUseCase(
             QuestionListRepository questionListRepository) {
         return new GetQuestionListsForLanguageUseCase(questionListRepository);
-    }
-
-    @Bean
-    public ReviewQuestionUseCase reviewQuestionUseCase(QuestionRepository questionRepository,
-            QuestionReviewRepository questionReviewRepository) {
-        return new ReviewQuestionUseCase(questionRepository, questionReviewRepository);
     }
 
     @Bean(destroyMethod = "shutdown")
