@@ -15,8 +15,7 @@ import (
 func main() {
 	secret := os.Getenv("CLOUDAMQP_WEBHOOK_SECRET_KEY")
 	if secret == "" {
-		log.Println("WARNING: CLOUDAMQP_WEBHOOK_SECRET_KEY env var not set, defaulting to 'testsecret'")
-		secret = "testsecret"
+		log.Fatalf("CLOUDAMQP_WEBHOOK_SECRET_KEY env var not set")
 	}
 
 	dbConn, err := sql.Open("postgres", db.BuildDBConnURL())
