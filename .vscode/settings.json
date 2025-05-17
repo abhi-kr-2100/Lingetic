@@ -28,5 +28,14 @@
         }
       }
     }
-  }
+  },
+  "go.coverMode": "set",
+  "go.coverOnSave": true,
+  "go.coverOnSingleTest": true,
+  "go.coverOnSingleTestFile": true,
+  "go.coverShowCounts": true,
+  "go.diagnostic.vulncheck": "Imports",
+  "go.lintOnSave": "workspace",
+  "go.testTimeout": "300s",
+  "go.toolsManagement.autoUpdate": true
 }

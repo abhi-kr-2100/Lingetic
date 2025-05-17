@@ -5,6 +5,7 @@
     awscli2
     docker
     ffmpeg
+    go
     google-cloud-sdk
     graalvm-ce
     gradle
