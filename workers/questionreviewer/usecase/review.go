@@ -77,11 +77,7 @@ func ReviewQuestion(
 	// Push the update into the DB
 	err = rrepo.Update(
 		ctx,
-		updated.ID,
-		updated.Repetitions,
-		updated.EaseFactor,
-		updated.Interval,
-		updated.NextReviewInstant,
+		updated,
 	)
 	if err != nil {
 		return fmt.Errorf("update review error: %w", err)

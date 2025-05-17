@@ -196,8 +196,17 @@ func TestReviewRepository_Update(t *testing.T) {
 			t.Fatalf("fetch review failed: %v", err)
 		}
 
-		nextReview := time.Now().Add(72 * time.Hour)
-		err = rrepo.Update(context.Background(), rev.ID, 5, 3.5, 25, nextReview)
+		modifiedReview := QuestionReview{
+			ID:                rev.ID,
+			QuestionID:        rev.QuestionID,
+			UserID:            rev.UserID,
+			Language:          rev.Language,
+			Repetitions:       5,
+			EaseFactor:        3.5,
+			Interval:          25,
+			NextReviewInstant: time.Now().Add(72 * time.Hour),
+		}
+		err = rrepo.Update(context.Background(), &modifiedReview)
 		if err != nil {
 			t.Fatalf("update failed: %v", err)
 		}

@@ -108,9 +108,7 @@ func (r *ReviewRepository) GetReviewForQuestionOrCreateNew(
 	return &review, nil
 }
 
-func (r *ReviewRepository) Update(
-	ctx context.Context, reviewID string, repetitions int, easeFactor float32, interval int, nextReviewInstant time.Time,
-) error {
+func (r *ReviewRepository) Update(ctx context.Context, review *QuestionReview) error {
 	_, err := r.DB.ExecContext(ctx,
 		`UPDATE question_reviews SET
 			repetitions = $1,
@@ -118,7 +116,7 @@ func (r *ReviewRepository) Update(
 			interval = $3,
 			next_review_instant = $4
 		WHERE id = $5`,
-		repetitions, easeFactor, interval, nextReviewInstant, reviewID)
+		review.Repetitions, review.EaseFactor, review.Interval, review.NextReviewInstant, review.ID)
 	return err
 }
 
