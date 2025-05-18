@@ -28,8 +28,4 @@
     docker.exec = "dockerd-rootless --host=unix:///tmp/docker.sock";
     ollama.exec = "ollama serve";
   };
-
-  enterShell = ''
-    sed -i -E 's#("sonarlint\.pathToNodeExecutable":\s*")[^"]*"#\1'"$(which node)"'"#' ~/.config/Code/User/settings.json
-  '';
 }

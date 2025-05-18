@@ -19,6 +19,5 @@
 
     "semanticdiff.semanticdiff",
     "codacy-app.codacy",
-    "SonarSource.sonarlint-vscode"
   ]
 }
