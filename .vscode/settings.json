@@ -29,6 +29,7 @@
       }
     }
   },
+
   "go.coverMode": "set",
   "go.coverOnSave": true,
   "go.coverOnSingleTest": true,
@@ -37,5 +38,9 @@
   "go.diagnostic.vulncheck": "Imports",
   "go.lintOnSave": "workspace",
   "go.testTimeout": "300s",
-  "go.toolsManagement.autoUpdate": true
+  "go.toolsManagement.autoUpdate": true,
+  "sonarlint.connectedMode.project": {
+    "connectionId": "abhi-kr-2100",
+    "projectKey": "abhi-kr-2100_Lingetic"
+  },
 }

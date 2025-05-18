@@ -18,6 +18,7 @@
     "docker.docker",
 
     "semanticdiff.semanticdiff",
-    "codacy-app.codacy"
+    "codacy-app.codacy",
+    "SonarSource.sonarlint-vscode"
   ]
 }
