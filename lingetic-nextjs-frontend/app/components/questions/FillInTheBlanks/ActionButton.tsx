@@ -22,7 +22,7 @@ export default function ActionButton({
 }: ActionButtonProps) {
   return (
     <div className="flex justify-end items-center gap-3">
-      <Speaker question={question} autoplay />
+      <Speaker question={question} autoplay={isChecked} />
       {isChecked ? (
         NextButton
       ) : (
