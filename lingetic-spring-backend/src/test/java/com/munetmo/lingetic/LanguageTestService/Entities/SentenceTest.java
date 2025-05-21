@@ -1,8 +1,10 @@
+
 package com.munetmo.lingetic.LanguageTestService.Entities;
 
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,9 +18,13 @@ class SentenceTest {
         String sourceText = "Hello, how are you?";
         Language translationLanguage = Language.French;
         String translationText = "Bonjour, comment ça va ?";
+        List<WordExplanation> wordExplanations = List.of(
+            new WordExplanation(0, "Hello", List.of("greeting"), "A common greeting"),
+            new WordExplanation(7, "how", List.of("question"), "Asking about manner")
+        );
 
         // When
-        Sentence sentence = new Sentence(id, sourceLanguage, sourceText, translationLanguage, translationText);
+        Sentence sentence = new Sentence(id, sourceLanguage, sourceText, translationLanguage, translationText, wordExplanations);
 
         // Then
         assertNotNull(sentence);
@@ -27,10 +33,35 @@ class SentenceTest {
         assertEquals(sourceText, sentence.sourceText());
         assertEquals(translationLanguage, sentence.translationLanguage());
         assertEquals(translationText, sentence.translationText());
+        assertEquals(wordExplanations, sentence.sourceWordExplanation());
     }
 
     @Test
     void shouldCreateSentenceUsingFactoryMethod() {
+        // Given
+        Language sourceLanguage = Language.English;
+        String sourceText = "Hello, how are you?";
+        Language translationLanguage = Language.French;
+        String translationText = "Bonjour, comment ça va ?";
+        List<WordExplanation> wordExplanations = List.of(
+            new WordExplanation(0, "Hello", List.of("greeting"), "A common greeting")
+        );
+
+        // When
+        Sentence sentence = Sentence.create(sourceLanguage, sourceText, translationLanguage, translationText, wordExplanations);
+
+        // Then
+        assertNotNull(sentence);
+        assertNotNull(sentence.id());
+        assertEquals(sourceLanguage, sentence.sourceLanguage());
+        assertEquals(sourceText, sentence.sourceText());
+        assertEquals(translationLanguage, sentence.translationLanguage());
+        assertEquals(translationText, sentence.translationText());
+        assertEquals(wordExplanations, sentence.sourceWordExplanation());
+    }
+    
+    @Test
+    void shouldCreateSentenceUsingFactoryMethodWithoutWordExplanations() {
         // Given
         Language sourceLanguage = Language.English;
         String sourceText = "Hello, how are you?";
@@ -47,6 +78,7 @@ class SentenceTest {
         assertEquals(sourceText, sentence.sourceText());
         assertEquals(translationLanguage, sentence.translationLanguage());
         assertEquals(translationText, sentence.translationText());
+        assertTrue(sentence.sourceWordExplanation().isEmpty());
     }
 
     @Test
@@ -62,7 +94,8 @@ class SentenceTest {
                 Language.English,
                 " ",
                 Language.French,
-                "Test"
+                "Test",
+                List.of()
             )
         );
         assertEquals(expectedMessage, exception.getMessage());
@@ -81,7 +114,8 @@ class SentenceTest {
                 Language.English,
                 "Test",
                 Language.French,
-                " "
+                " ",
+                List.of()
             )
         );
         assertEquals(expectedMessage, exception.getMessage());

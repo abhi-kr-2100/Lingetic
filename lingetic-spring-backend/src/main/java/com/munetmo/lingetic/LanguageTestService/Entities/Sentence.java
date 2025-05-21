@@ -2,7 +2,7 @@ package com.munetmo.lingetic.LanguageTestService.Entities;
 
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
 public record Sentence(
@@ -10,7 +10,8 @@ public record Sentence(
     Language sourceLanguage,
     String sourceText,
     Language translationLanguage,
-    String translationText
+    String translationText,
+    List<WordExplanation> sourceWordExplanation
 ) {
     public Sentence {
         if (sourceText.isBlank()) {
@@ -26,14 +27,25 @@ public record Sentence(
         Language sourceLanguage,
         String sourceText,
         Language translationLanguage,
-        String translationText
+        String translationText,
+        List<WordExplanation> sourceWordExplanations
     ) {
         return new Sentence(
             UUID.randomUUID(),
             sourceLanguage,
             sourceText,
             translationLanguage,
-            translationText
+            translationText,
+            sourceWordExplanations
         );
+    }
+
+    public static Sentence create(
+        Language sourceLanguage,
+        String sourceText,
+        Language translationLanguage,
+        String translationText
+    ) {
+        return create(sourceLanguage, sourceText, translationLanguage, translationText, List.of());
     }
 }
