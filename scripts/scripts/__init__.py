@@ -7,6 +7,7 @@ from . import tts
 from . import upload_to_r2
 from . import explanations
 from . import update_question_data
+from . import insert_sentences_into_db
 
 __all__ = [
     "sentences",
@@ -18,4 +19,5 @@ __all__ = [
     "upload_to_r2",
     "db_dump",
     "update_question_data",
+    "insert_sentences_into_db",
 ]
