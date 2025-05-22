@@ -2,7 +2,6 @@
 
 import json
 import sys
-import uuid
 import argparse
 from typing import Dict, List, Any
 import psycopg2
@@ -57,7 +56,7 @@ def insert_sentences(conn, sentences: List[Dict[str, Any]]):
         with conn.cursor() as cur:
             values = [
                 (
-                    uuid.uuid4(),
+                    sentence["id"],
                     sentence["sourceLanguage"],
                     sentence["sourceText"],
                     sentence["translationLanguage"],

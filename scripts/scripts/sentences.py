@@ -1,6 +1,7 @@
 import sys
 import argparse
 import json
+import uuid
 from typing import List, Dict, Any
 from pathlib import Path
 from pydantic import BaseModel
@@ -138,6 +139,7 @@ def merge_json_data(
         data_part = d["data"]
         for sentence in data_part:
             sentence_data = {
+                "id": str(uuid.uuid4()),
                 "sourceText": sentence["sourceText"],
                 "translationText": sentence["translationText"],
                 "sourceLanguage": language,
