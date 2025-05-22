@@ -2,7 +2,6 @@
 
 from typing import Dict, List, Any
 import json
-import re
 import sys
 import argparse
 import os
@@ -35,60 +34,49 @@ def compress_mp3(
     audio.export(file_path, format="mp3", bitrate=target_bitrate)
 
 
-def generate_filename(question_id: str) -> str:
+def generate_filename(sentence_id: str) -> str:
     """
-    Generate a filename based on question id.
+    Generate a filename based on sentence id.
 
     Args:
-        question_id: The unique id of the question.
+        sentence_id: The unique id of the sentence.
 
     Returns:
         The MP3 filename (id.mp3).
     """
-    return f"{question_id}.mp3"
+    return f"{sentence_id}.mp3"
 
 
-def load_questions(filepath: str) -> List[Dict[str, Any]]:
+def load_sentences(filepath: str) -> List[Dict[str, Any]]:
     """
-    Load questions from a JSON file or stdin.
+    Load sentences from a JSON file or stdin.
 
     Args:
-        filepath: Path to the JSON file containing questions, or '-' to read from stdin.
+        filepath: Path to the JSON file containing sentences, or '-' to read from stdin.
 
     Returns:
-        A list of dictionaries with question_type and question_type_specific_data.
+        A list of dictionaries with id, sourceText, translationText, sourceLanguage, and translationLanguage.
     """
-    try:
-        if filepath == "-":
-            return json.load(sys.stdin)
-        else:
-            with open(filepath, "r", encoding="utf-8") as file:
-                data = json.load(file)
-                return data if isinstance(data, list) else data.get("data", [])
-    except FileNotFoundError:
-        print(f"Error: File '{filepath}' not found", file=sys.stderr)
-        sys.exit(1)
-    except json.JSONDecodeError:
-        source = "stdin" if filepath == "-" else f"file '{filepath}'"
-        print(f"Error: Invalid JSON format in {source}", file=sys.stderr)
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error loading questions: {e}", file=sys.stderr)
-        sys.exit(1)
+    if filepath == "-":
+        data = json.load(sys.stdin)
+    else:
+        with open(filepath, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    return data["sentences"]
 
 
 def text_to_speech(
-    questions: List[Dict[str, Any]],
+    sentences: List[Dict[str, Any]],
     language: str,
     output_dir: str,
     mode: str = "slow",
 ):
     """
-    Convert text to speech for each question and save the audio to the specified directory.
+    Convert text to speech for each sentence and save the audio to the specified directory.
 
     Args:
-        questions: List of questions to be converted.
-        language: Language of the questions.
+        sentences: List of sentences to be converted.
+        language: Language of the sentences.
         output_dir: Directory where the audio files will be saved.
         mode: "slow" or "normal" (default is "slow")
     """
@@ -97,55 +85,39 @@ def text_to_speech(
 
     slow = True if mode == "slow" else False
 
-    for question in questions:
-        qid = question.get("id")
-        qdata = question.get("question_type_specific_data", {})
-        text = qdata.get("questionText", "")
-        answer = qdata.get("answer", "")
-        if text and answer:
-            filename = generate_filename(qid)
-            file_path = os.path.join(output_dir, filename)
+    for sentence in sentences:
+        sentence_id = sentence.get("id")
+        text = sentence.get("sourceText")
 
-            if os.path.exists(file_path):
-                print(f"File {file_path} already exists. Skipping.")
-                continue
+        filename = generate_filename(sentence_id)
+        file_path = os.path.join(output_dir, filename)
 
-            full_text = re.sub(r"_+", answer, text)
+        if os.path.exists(file_path):
+            continue
 
-            tts = gTTS(
-                text=full_text, lang=LANGUAGE_TO_CODE[language], slow=slow
-            )
-            tts.save(file_path)
-            compress_mp3(file_path)
-
-            print(f"Saved: {file_path}")
+        tts = gTTS(text=text, lang=LANGUAGE_TO_CODE[language], slow=slow)
+        tts.save(file_path)
+        compress_mp3(file_path)
 
 
 def main(filepath: str, language: str, output_dir: str, mode: str):
     """
-    Main function to process questions and save them as audio files.
+    Main function to process sentences and save them as audio files.
 
     Args:
-        filepath: Path to the JSON file containing questions, or '-' to read from stdin.
-        language: Language of the questions.
+        filepath: Path to the JSON file containing sentences, or '-' to read from stdin.
+        language: Language of the sentences.
         output_dir: Directory where the audio files will be saved.
         mode: "slow" or "normal"
     """
     if language not in LANGUAGE_TO_CODE:
-        print(
-            f"Error: Language '{language}' not supported.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+        raise ValueError(f"Language '{language}' not supported.")
 
     if mode not in ("slow", "normal"):
-        print(
-            "Error: --mode must be either 'slow' or 'normal'", file=sys.stderr
-        )
-        sys.exit(1)
+        raise ValueError("--mode must be either 'slow' or 'normal'")
 
-    questions = load_questions(filepath)
-    text_to_speech(questions, language, output_dir, mode)
+    sentences = load_sentences(filepath)
+    text_to_speech(sentences, language, output_dir, mode)
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -156,19 +128,19 @@ def get_parser() -> argparse.ArgumentParser:
         An ArgumentParser object configured with the script's arguments.
     """
     parser = argparse.ArgumentParser(
-        description="Convert questions from a JSON file into speech and save them as MP3 files."
+        description="Convert sentences from a JSON file into speech and save them as MP3 files."
     )
     parser.add_argument(
         "filepath",
         nargs="?",
         default="-",
-        help="Path to the JSON file containing questions (default: '-' to read from stdin).",
+        help="Path to the JSON file containing sentences (default: '-' to read from stdin).",
     )
     parser.add_argument(
         "-l",
         "--language",
         required=True,
-        help="Language of the questions.",
+        help="Language of the sentences.",
     )
     parser.add_argument(
         "-o",
