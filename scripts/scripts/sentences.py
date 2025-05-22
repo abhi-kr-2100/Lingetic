@@ -123,9 +123,7 @@ def generate_prompt(
     system_text = SYSTEM_PROMPT.format(
         language=language, translation_language=translation_language
     )
-    user_part = f"Theme: {entry['theme']}, Level: {entry['level']}, Number: {entry['number']}"
-    if entry.get("instructions"):
-        user_part += f"\nInstructions: {entry['instructions']}"
+    user_part = f"Theme: {entry['theme']}, Level: {entry['level']}, Number: {entry['number']}, Instructions: {entry['instructions']}"
     prompt = f"{system_text.strip()}\n{example.strip()}\n\n{user_part}\n\nGenerate the sentences now according to the theme, level, and number requested."
     return prompt
 
@@ -144,6 +142,9 @@ def merge_json_data(
                 "translationText": sentence["translationText"],
                 "sourceLanguage": language,
                 "translationLanguage": translation_language,
+                "theme": d["entry"]["theme"],
+                "level": d["entry"]["level"],
+                "instructions": d["entry"]["instructions"],
             }
             result.append(sentence_data)
     return {"sentences": result}
@@ -208,6 +209,7 @@ def main(language: str, schema: str, output: str, translation_language: str):
 
         prompt = generate_prompt(language, translation_language, entry, example)
         result = make_gemini_api_call(prompt)
+        result["entry"] = entry
         results.append(result)
 
     merged = merge_json_data(results, language, translation_language)
