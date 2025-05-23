@@ -24,7 +24,7 @@ class SentenceTest {
         );
 
         // When
-        Sentence sentence = new Sentence(id, sourceLanguage, sourceText, translationLanguage, translationText, wordExplanations);
+        Sentence sentence = new Sentence(id, sourceLanguage, sourceText, translationLanguage, translationText, 10, wordExplanations);
 
         // Then
         assertNotNull(sentence);
@@ -34,51 +34,6 @@ class SentenceTest {
         assertEquals(translationLanguage, sentence.translationLanguage());
         assertEquals(translationText, sentence.translationText());
         assertEquals(wordExplanations, sentence.sourceWordExplanation());
-    }
-
-    @Test
-    void shouldCreateSentenceUsingFactoryMethod() {
-        // Given
-        Language sourceLanguage = Language.English;
-        String sourceText = "Hello, how are you?";
-        Language translationLanguage = Language.French;
-        String translationText = "Bonjour, comment ça va ?";
-        List<WordExplanation> wordExplanations = List.of(
-            new WordExplanation(0, "Hello", List.of("greeting"), "A common greeting")
-        );
-
-        // When
-        Sentence sentence = Sentence.create(sourceLanguage, sourceText, translationLanguage, translationText, wordExplanations);
-
-        // Then
-        assertNotNull(sentence);
-        assertNotNull(sentence.id());
-        assertEquals(sourceLanguage, sentence.sourceLanguage());
-        assertEquals(sourceText, sentence.sourceText());
-        assertEquals(translationLanguage, sentence.translationLanguage());
-        assertEquals(translationText, sentence.translationText());
-        assertEquals(wordExplanations, sentence.sourceWordExplanation());
-    }
-    
-    @Test
-    void shouldCreateSentenceUsingFactoryMethodWithoutWordExplanations() {
-        // Given
-        Language sourceLanguage = Language.English;
-        String sourceText = "Hello, how are you?";
-        Language translationLanguage = Language.French;
-        String translationText = "Bonjour, comment ça va ?";
-
-        // When
-        Sentence sentence = Sentence.create(sourceLanguage, sourceText, translationLanguage, translationText);
-
-        // Then
-        assertNotNull(sentence);
-        assertNotNull(sentence.id());
-        assertEquals(sourceLanguage, sentence.sourceLanguage());
-        assertEquals(sourceText, sentence.sourceText());
-        assertEquals(translationLanguage, sentence.translationLanguage());
-        assertEquals(translationText, sentence.translationText());
-        assertTrue(sentence.sourceWordExplanation().isEmpty());
     }
 
     @Test
@@ -95,6 +50,7 @@ class SentenceTest {
                 " ",
                 Language.French,
                 "Test",
+                10,
                 List.of()
             )
         );
@@ -115,6 +71,7 @@ class SentenceTest {
                 "Test",
                 Language.French,
                 " ",
+                10,
                 List.of()
             )
         );

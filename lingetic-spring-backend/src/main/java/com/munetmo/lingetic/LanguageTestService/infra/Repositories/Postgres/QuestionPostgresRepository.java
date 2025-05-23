@@ -39,8 +39,6 @@ public class QuestionPostgresRepository implements QuestionRepository {
         return Question.createFromQuestionTypeSpecificData(
                 rs.getString("id"),
                 Language.valueOf(rs.getString("language")),
-                rs.getInt("difficulty"),
-                rs.getString("question_list_id"),
                 rs.getString("sentence_id"),
                 QuestionType.valueOf(rs.getString("question_type")),
                 questionTypeSpecificData
@@ -62,7 +60,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
 
     @Override
     public List<Question> getAllQuestions() {
-        var sql = "SELECT * FROM questions ORDER BY difficulty";
+        var sql = "SELECT * FROM questions";
         return jdbcTemplate.query(sql, questionMapper);
     }
 
@@ -74,7 +72,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
 
     @Override
     public List<Question> getQuestionsByLanguage(Language language) {
-        var sql = "SELECT * FROM questions WHERE language = ? ORDER BY difficulty";
+        var sql = "SELECT * FROM questions WHERE language = ?";
         return jdbcTemplate.query(sql, questionMapper, language.name());
     }
 
@@ -82,8 +80,8 @@ public class QuestionPostgresRepository implements QuestionRepository {
     public void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException {
         try {
             var sql = """
-                INSERT INTO questions (id, question_type, language, difficulty, question_list_id, question_type_specific_data, sentence_id)
-                VALUES (?::uuid, ?, ?, ?, ?::uuid, ?::jsonb, ?::uuid)
+                INSERT INTO questions (id, question_type, language, question_type_specific_data, sentence_id)
+                VALUES (?::uuid, ?, ?, ?::jsonb, ?::uuid)
                 """;
 
             jdbcTemplate.update(
@@ -91,8 +89,6 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 question.getID(),
                 question.getQuestionType().name(),
                 question.getLanguage().name(),
-                question.getDifficulty(),
-                question.getQuestionListID(),
                 objectMapper.writeValueAsString(question.getQuestionTypeSpecificData()),
                 question.getSentenceID()
             );
@@ -104,19 +100,11 @@ public class QuestionPostgresRepository implements QuestionRepository {
     }
 
     @Override
-    public List<Question> getUnreviewedQuestions(String userID, Language language, int limit) {
+    public List<Question> getQuestionsBySentenceID(String sentenceID) {
         var sql = """
-            SELECT q.* FROM questions q
-            WHERE q.language = ?
-            AND NOT EXISTS (
-                SELECT 1 FROM question_reviews qr
-                WHERE qr.question_id = q.id
-                AND qr.user_id = ?
-            )
-            ORDER BY q.difficulty
-            LIMIT ?
+            SELECT * FROM questions WHERE sentence_id = ?::uuid
             """;
-
-        return jdbcTemplate.query(sql, questionMapper, language.name(), userID, limit);
+        
+        return jdbcTemplate.query(sql, questionMapper, sentenceID);
     }
 }

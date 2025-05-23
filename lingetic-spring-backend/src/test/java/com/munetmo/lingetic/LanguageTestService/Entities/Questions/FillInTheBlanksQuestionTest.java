@@ -13,7 +13,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FillInTheBlanksQuestionTest {
-    private final String defaultQuestionListId = "list-id";
     private final String defaultSentenceId = "sentence-id";
 
     @Test
@@ -24,7 +23,7 @@ class FillInTheBlanksQuestionTest {
         var hint = "test hint";
         var answer = "blank";
 
-        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, 5, defaultQuestionListId, defaultSentenceId);
+        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, defaultSentenceId);
 
         assertEquals(id, question.getID());
         assertEquals(language, question.getLanguage());
@@ -32,8 +31,6 @@ class FillInTheBlanksQuestionTest {
         assertEquals(questionText, question.questionText);
         assertEquals(hint, question.hint);
         assertEquals(answer, question.answer);
-        assertEquals(5, question.difficulty);
-        assertEquals(defaultQuestionListId, question.getQuestionListID());
         assertEquals(defaultSentenceId, question.getSentenceID());
     }
 
@@ -43,15 +40,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenIdIsInvalid(String id) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion(id, Language.English, "Fill in the ___", "hint", "answer", 5, defaultQuestionListId, defaultSentenceId)
-        );
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {" ", "   ", "\t", "\n"})
-    void constructorShouldThrowExceptionWhenQuestionListIdIsInvalid(String questionListId) {
-        assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", "answer", 5, questionListId, defaultSentenceId)
+            new FillInTheBlanksQuestion(id, Language.English, "Fill in the ___", "hint", "answer", defaultSentenceId)
         );
     }
 
@@ -59,7 +48,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n", "No blank here", "Multiple___ ___blanks", "Wrong blank --"})
     void constructorShouldThrowExceptionWhenQuestionTextIsInvalid(String questionText) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, questionText, "hint", "answer", 5, defaultQuestionListId, defaultSentenceId)
+            new FillInTheBlanksQuestion("id", Language.English, questionText, "hint", "answer", defaultSentenceId)
         );
     }
 
@@ -67,14 +56,14 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenAnswerIsInvalid(String answer) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", answer, 5, defaultQuestionListId, defaultSentenceId)
+            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", answer, defaultSentenceId)
         );
     }
 
     @Test
     void assessAttemptShouldReturnSuccessForCorrectAnswer() {
         FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "blank", 5, defaultQuestionListId, defaultSentenceId
+            "id", Language.English, "Fill in the ___", "hint", "blank", defaultSentenceId
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), question.answer);
 
@@ -87,7 +76,7 @@ class FillInTheBlanksQuestionTest {
     @Test
     void assessAttemptShouldReturnFailureForIncorrectAnswer() {
         FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "blank", 5, defaultQuestionListId, defaultSentenceId
+            "id", Language.English, "Fill in the ___", "hint", "blank", defaultSentenceId
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong");
 
@@ -105,8 +94,6 @@ class FillInTheBlanksQuestionTest {
             "Fill in the ___",
             "test hint",
             "blank",
-            5,
-            defaultQuestionListId,
             defaultSentenceId
         );
 
@@ -125,8 +112,6 @@ class FillInTheBlanksQuestionTest {
             "Fill in the ___",
             "test hint",
             "blank",
-            5,
-            defaultQuestionListId,
             defaultSentenceId
         );
 
@@ -135,16 +120,12 @@ class FillInTheBlanksQuestionTest {
         var newQuestion = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
             originalQuestion.getID(),
             originalQuestion.getLanguage(),
-            originalQuestion.getDifficulty(),
-            originalQuestion.getQuestionListID(),
             originalQuestion.getSentenceID(),
             data
         );
         
         assertEquals(originalQuestion.getID(), newQuestion.getID());
         assertEquals(originalQuestion.getLanguage(), newQuestion.getLanguage());
-        assertEquals(originalQuestion.getDifficulty(), newQuestion.getDifficulty());
-        assertEquals(originalQuestion.getQuestionListID(), newQuestion.getQuestionListID());
         assertEquals(originalQuestion.questionText, ((FillInTheBlanksQuestion)newQuestion).questionText);
         assertEquals(originalQuestion.hint, ((FillInTheBlanksQuestion)newQuestion).hint);
         assertEquals(originalQuestion.answer, ((FillInTheBlanksQuestion)newQuestion).answer);
@@ -161,8 +142,6 @@ class FillInTheBlanksQuestionTest {
         var newQuestion = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
             "test-id",
             Language.English,
-            5,
-            defaultQuestionListId,
             defaultSentenceId,
             data
         );
@@ -178,8 +157,6 @@ class FillInTheBlanksQuestionTest {
                 FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
-                        5,
-                        defaultQuestionListId,
                         defaultSentenceId,
                         incompleteData
                 )
@@ -196,8 +173,6 @@ class FillInTheBlanksQuestionTest {
                 FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
-                        5,
-                        defaultQuestionListId,
                         defaultSentenceId,
                         incompleteData
                 )
@@ -208,7 +183,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenSentenceIdIsInvalid(String sentenceId) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", "answer", 5, defaultQuestionListId, sentenceId)
+            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", "answer", sentenceId)
         );
     }
 

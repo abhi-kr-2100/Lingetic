@@ -19,8 +19,6 @@ class QuestionDTOTest {
             "Fill in: ___",
             "This is a hint",
             "test answer",
-            5,
-            TEST_QUESTION_LIST_ID,
             TEST_SENTENCE_ID
         );
 

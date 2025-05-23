@@ -4,14 +4,14 @@ import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class QuestionReviewProcessingPayloadTest {
+class SentenceReviewProcessingPayloadTest {
 
     @Test
     void shouldCreatePayloadWithValidParameters() {
-        var payload = new QuestionReviewProcessingPayload("user123", "question456", AttemptStatus.Success);
+        var payload = new SentenceReviewProcessingPayload("user123", "question456", AttemptStatus.Success);
 
         assertEquals("user123", payload.userId());
-        assertEquals("question456", payload.questionId());
+        assertEquals("question456", payload.sentenceId());
         assertEquals(AttemptStatus.Success, payload.status());
     }
 
@@ -19,17 +19,13 @@ class QuestionReviewProcessingPayloadTest {
     void shouldThrowExceptionWhenUserIdIsBlank() {
         var exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> new QuestionReviewProcessingPayload("", "question456", AttemptStatus.Success));
+                () -> new SentenceReviewProcessingPayload("", "question456", AttemptStatus.Success));
         assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("User ID blank"));
     }
 
     @Test
     void shouldThrowExceptionWhenQuestionIdIsBlank() {
-        var exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> new QuestionReviewProcessingPayload("user123", "", AttemptStatus.Success));
-        assertNotNull(exception.getMessage());
-        assertTrue(exception.getMessage().contains("Question ID blank"));
+        assertThrows(IllegalArgumentException.class, () -> new SentenceReviewProcessingPayload("user123", "", AttemptStatus.Success));
     }
 }

@@ -53,6 +53,7 @@ public class SentencePostgresRepositoryTest {
             "This is a test sentence.",
             Language.Turkish,
             "Bu bir test cümlesidir.",
+            10,
             List.of()
         );
 
@@ -78,6 +79,7 @@ public class SentencePostgresRepositoryTest {
             "First test sentence.",
             Language.Turkish,
             "İlk test cümlesi.",
+            10,
             List.of()
         );
         
@@ -87,6 +89,7 @@ public class SentencePostgresRepositoryTest {
             "Second test sentence.",
             Language.Turkish,
             "İkinci test cümlesi.",
+            10,
             List.of()
         );
         

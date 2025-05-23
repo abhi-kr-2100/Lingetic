@@ -13,5 +13,5 @@ public interface QuestionRepository {
     void deleteAllQuestions();
     List<Question> getQuestionsByLanguage(Language language);
     void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException;
-    List<Question> getUnreviewedQuestions(String userID, Language language, int limit);
+    List<Question> getQuestionsBySentenceID(String sentenceID);
 }

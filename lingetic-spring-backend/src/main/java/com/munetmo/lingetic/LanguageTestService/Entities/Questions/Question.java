@@ -10,14 +10,12 @@ public sealed interface Question permits FillInTheBlanksQuestion {
     String getID();
     QuestionType getQuestionType();
     Language getLanguage();
-    int getDifficulty();
-    String getQuestionListID();
-    String getSentenceID(); // New method for sentence ID
+    String getSentenceID();
 
     Map<String, Object> getQuestionTypeSpecificData();
-    static Question createFromQuestionTypeSpecificData(String id, Language language, int difficulty, String questionListId, String sentenceId, QuestionType questionType, Map<String, Object> data) {
+    static Question createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, QuestionType questionType, Map<String, Object> data) {
         return switch (questionType) {
-            case FillInTheBlanks -> FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(id, language, difficulty, questionListId, sentenceId, data);
+            case FillInTheBlanks -> FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(id, language, sentenceId, data);
         };
     }
 

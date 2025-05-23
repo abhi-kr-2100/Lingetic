@@ -15,7 +15,6 @@ import java.util.Objects;
 public final class FillInTheBlanksQuestion implements Question {
     private final String id;
     private final Language language;
-    private final String questionListId;
     private final String sentenceId;
 
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
@@ -23,9 +22,8 @@ public final class FillInTheBlanksQuestion implements Question {
     public final String questionText;
     public final String hint;
     public final String answer;
-    public final int difficulty;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, String questionListId, String sentenceId) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, String sentenceId) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -42,10 +40,6 @@ public final class FillInTheBlanksQuestion implements Question {
             throw new IllegalArgumentException("Answer cannot be blank");
         }
 
-        if (questionListId.isBlank()) {
-            throw new IllegalArgumentException("Question list ID cannot be blank");
-        }
-
         if (sentenceId.isBlank()) {
             throw new IllegalArgumentException("Sentence ID cannot be blank");
         }
@@ -55,8 +49,6 @@ public final class FillInTheBlanksQuestion implements Question {
         this.questionText = questionText;
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
-        this.difficulty = difficulty;
-        this.questionListId = questionListId;
         this.sentenceId = sentenceId;
     }
 
@@ -73,11 +65,6 @@ public final class FillInTheBlanksQuestion implements Question {
     @Override
     public Language getLanguage() {
         return language;
-    }
-
-    @Override
-    public String getQuestionListID() {
-        return questionListId;
     }
 
     @Override
@@ -103,11 +90,6 @@ public final class FillInTheBlanksQuestion implements Question {
     }
 
     @Override
-    public int getDifficulty() {
-        return difficulty;
-    }
-
-    @Override
     public Map<String, Object> getQuestionTypeSpecificData() {
         return Map.of(
             "questionText", questionText,
@@ -116,7 +98,7 @@ public final class FillInTheBlanksQuestion implements Question {
         );
     }
 
-    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, int difficulty, String questionListId, String sentenceId, Map<String, Object> data) {
+    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, Map<String, Object> data) {
         if (!data.containsKey("questionText") || !data.containsKey("answer")) {
             throw new IllegalArgumentException("Required fields 'questionText' and 'answer' must be present in data");
         }
@@ -125,6 +107,6 @@ public final class FillInTheBlanksQuestion implements Question {
         var answer = (String) data.get("answer");
         var hint = (String) data.getOrDefault("hint", "");
 
-        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, difficulty, questionListId, sentenceId);
+        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, sentenceId);
     }
 }

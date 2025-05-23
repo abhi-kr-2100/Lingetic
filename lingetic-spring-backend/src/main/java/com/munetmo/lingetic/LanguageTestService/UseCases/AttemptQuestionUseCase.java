@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
-import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload;
+import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.SentenceReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Queues.QueueNames;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
@@ -30,12 +30,12 @@ public class AttemptQuestionUseCase {
         var question = questionRepository.getQuestionByID(request.getQuestionID());
         var response = question.assessAttempt(request);
 
-        var payload = new QuestionReviewProcessingPayload(
+        var payload = new SentenceReviewProcessingPayload(
                 userId,
                 question.getID(),
                 response.getAttemptStatus());
 
-        taskSubmitExecutor.submit(() -> {
+        var unused = taskSubmitExecutor.submit(() -> {
             taskQueue.submitTask(
                     generateTaskId(userId, question),
                     payload,

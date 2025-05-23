@@ -3,7 +3,6 @@ package com.munetmo.lingetic.LanguageTestService.infra.HTTP;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
-import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import io.jsonwebtoken.Claims;
 
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
-import com.munetmo.lingetic.LanguageTestService.UseCases.GetQuestionListsForLanguageUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
 
 import java.util.List;
@@ -27,9 +25,6 @@ public class LanguageTestServiceController {
 
     @Autowired
     private AttemptQuestionUseCase attemptQuestionUseCase;
-
-    @Autowired
-    private GetQuestionListsForLanguageUseCase getQuestionListsForLanguageUseCase;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -59,7 +54,7 @@ public class LanguageTestServiceController {
                     .body("Invalid language: " + language);
         }
 
-        var questions = takeRegularTestUseCase.execute(user.getSubject(), languageEnum, questionListId);
+        var questions = takeRegularTestUseCase.execute(user.getSubject(), languageEnum);
         return ResponseEntity.ok(questions);
     }
 
@@ -80,26 +75,5 @@ public class LanguageTestServiceController {
                     .status(HttpStatus.NOT_FOUND)
                     .body("Question not found: " + request.getQuestionID());
         }
-    }
-
-    @GetMapping("/lists")
-    public ResponseEntity<?> getQuestionLists(@RequestParam String language) {
-        if (language == null || language.isBlank()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Language parameter cannot be null or empty");
-        }
-
-        Language languageEnum;
-        try {
-            languageEnum = Language.valueOf(language);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Invalid language: " + language);
-        }
-
-        List<QuestionList> questionLists = getQuestionListsForLanguageUseCase.execute(languageEnum);
-        return ResponseEntity.ok(questionLists);
     }
 }

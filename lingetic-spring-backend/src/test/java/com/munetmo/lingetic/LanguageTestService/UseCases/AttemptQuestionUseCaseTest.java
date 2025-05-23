@@ -5,10 +5,8 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.Fil
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
-import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
-import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.SentencePostgresRepository;
@@ -55,9 +53,6 @@ class AttemptQuestionUseCaseTest {
     private QuestionPostgresRepository questionRepository;
 
     @Autowired
-    private QuestionListPostgresRepository questionListRepository;
-
-    @Autowired
     private SentencePostgresRepository sentenceRepository;
 
     private static final String TEST_USER_ID = UUID.randomUUID().toString();
@@ -67,13 +62,7 @@ class AttemptQuestionUseCaseTest {
     @BeforeEach
     void setUp() {
         questionRepository.deleteAllQuestions();
-        questionListRepository.deleteAllQuestionLists();
         sentenceRepository.deleteAllSentences();
-
-        questionListRepository.addQuestionList(new QuestionList(
-                TEST_QUESTION_LIST_ID,
-                "Test Question List",
-                Language.English));
 
         // Create a test sentence
         sentenceRepository.addSentence(new Sentence(
@@ -82,6 +71,7 @@ class AttemptQuestionUseCaseTest {
                 "The cat stretched lazily on the windowsill.",
                 Language.Turkish,
                 "Kedi pencere eşiğinde tembelce gerildi.",
+                10,
                 List.of()
         ));
     }
@@ -94,8 +84,6 @@ class AttemptQuestionUseCaseTest {
                 "The cat ____ lazily on the windowsill.",
                 "straighten or extend one's body",
                 "stretched",
-                0,
-                TEST_QUESTION_LIST_ID,
                 TEST_SENTENCE_ID
         );
         questionRepository.addQuestion(question);
@@ -115,8 +103,6 @@ class AttemptQuestionUseCaseTest {
                 "The cat ____ lazily on the windowsill.",
                 "straighten or extend one's body",
                 "stretched",
-                0,
-                TEST_QUESTION_LIST_ID,
                 TEST_SENTENCE_ID
         );
         questionRepository.addQuestion(question);

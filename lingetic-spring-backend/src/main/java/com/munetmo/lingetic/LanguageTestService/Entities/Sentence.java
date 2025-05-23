@@ -11,6 +11,7 @@ public record Sentence(
     String sourceText,
     Language translationLanguage,
     String translationText,
+    int difficulty,
     List<WordExplanation> sourceWordExplanation
 ) {
     public Sentence {
@@ -21,31 +22,5 @@ public record Sentence(
         if (translationText.isBlank()) {
             throw new IllegalArgumentException("Translation text cannot be blank");
         }
-    }
-
-    public static Sentence create(
-        Language sourceLanguage,
-        String sourceText,
-        Language translationLanguage,
-        String translationText,
-        List<WordExplanation> sourceWordExplanations
-    ) {
-        return new Sentence(
-            UUID.randomUUID(),
-            sourceLanguage,
-            sourceText,
-            translationLanguage,
-            translationText,
-            sourceWordExplanations
-        );
-    }
-
-    public static Sentence create(
-        Language sourceLanguage,
-        String sourceText,
-        Language translationLanguage,
-        String translationText
-    ) {
-        return create(sourceLanguage, sourceText, translationLanguage, translationText, List.of());
     }
 }

@@ -5,17 +5,17 @@ import com.munetmo.lingetic.LanguageService.Entities.Language;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public class QuestionReview {
+public class SentenceReview {
     // The SM-2 algorithm doesn't define upper limits for these values. However, since computer memory is
     // finite and to prevent unreasonable values, reasonable limits have been chosen.
-    private final static int MAX_REPETITIONS_VALUE = 1000;
-    private final static double MAX_EASE_FACTOR_VALUE = 5.0;
-    private final static int MAX_INTERVAL_VALUE = 365 * 10; // 10 years in days
-    private final static int MAX_REVIEW_INSTANT_DAYS = 365 * 10; // 10 years in days
+    public final static int MAX_REPETITIONS_VALUE = 1000;
+    public final static double MAX_EASE_FACTOR_VALUE = 5.0;
+    public final static int MAX_INTERVAL_VALUE = 365 * 10; // 10 years in days
+    public final static int MAX_REVIEW_INSTANT_DAYS = 365 * 10; // 10 years in days
 
     public final String id;
-    public final String questionID;
-    public final String userID;  // Added field
+    public final String sentenceID;
+    public final String userID;
     public final Language language;
 
     private int repetitions;
@@ -23,19 +23,19 @@ public class QuestionReview {
     private int interval;
     private Instant nextReviewInstant;
 
-    public QuestionReview(String id, String questionID, String userID, Language language) {
+    public SentenceReview(String id, String sentenceID, String userID, Language language) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("id cannot be blank");
         }
-        if (questionID.isBlank()) {
-            throw new IllegalArgumentException("questionID cannot be blank");
+        if (sentenceID.isBlank()) {
+            throw new IllegalArgumentException("sentenceID cannot be blank");
         }
         if (userID.isBlank()) {
             throw new IllegalArgumentException("userID cannot be blank");
         }
 
         this.id = id;
-        this.questionID = questionID;
+        this.sentenceID = sentenceID;
         this.userID = userID;
         this.language = language;
 

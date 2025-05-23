@@ -10,8 +10,6 @@ public class QuestionTest {
     public void createFromQuestionTypeSpecificDataShouldCreateFillInTheBlanksQuestion() {
         var id = "1";
         var language = Language.English;
-        var difficulty = 1;
-        var questionListId = "list1";
         var sentenceId = "sentence1";
         
         Map<String, Object> data = Map.of(
@@ -20,7 +18,7 @@ public class QuestionTest {
             "sentenceId", sentenceId
         );
 
-        var question = Question.createFromQuestionTypeSpecificData(id, language, difficulty, questionListId, sentenceId, QuestionType.FillInTheBlanks, data);
+        var question = Question.createFromQuestionTypeSpecificData(id, language, sentenceId, QuestionType.FillInTheBlanks, data);
 
         assertNotNull(question);
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
