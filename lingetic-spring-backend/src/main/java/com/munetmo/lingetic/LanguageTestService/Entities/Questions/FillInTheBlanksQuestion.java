@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class FillInTheBlanksQuestion implements Question {
-
     private final String id;
     private final Language language;
     private final String questionListId;
+    private final String sentenceId;
 
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
 
@@ -25,7 +25,7 @@ public final class FillInTheBlanksQuestion implements Question {
     public final String answer;
     public final int difficulty;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, String questionListId) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, String questionListId, String sentenceId) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -46,6 +46,10 @@ public final class FillInTheBlanksQuestion implements Question {
             throw new IllegalArgumentException("Question list ID cannot be blank");
         }
 
+        if (sentenceId.isBlank()) {
+            throw new IllegalArgumentException("Sentence ID cannot be blank");
+        }
+
         this.id = id;
         this.language = language;
         this.questionText = questionText;
@@ -53,6 +57,7 @@ public final class FillInTheBlanksQuestion implements Question {
         this.answer = answer;
         this.difficulty = difficulty;
         this.questionListId = questionListId;
+        this.sentenceId = sentenceId;
     }
 
     @Override
@@ -73,6 +78,11 @@ public final class FillInTheBlanksQuestion implements Question {
     @Override
     public String getQuestionListID() {
         return questionListId;
+    }
+
+    @Override
+    public String getSentenceID() {
+        return sentenceId;
     }
 
     @Override
@@ -106,7 +116,7 @@ public final class FillInTheBlanksQuestion implements Question {
         );
     }
 
-    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, int difficulty, String questionListId, Map<String, Object> data) {
+    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, int difficulty, String questionListId, String sentenceId, Map<String, Object> data) {
         if (!data.containsKey("questionText") || !data.containsKey("answer")) {
             throw new IllegalArgumentException("Required fields 'questionText' and 'answer' must be present in data");
         }
@@ -115,6 +125,6 @@ public final class FillInTheBlanksQuestion implements Question {
         var answer = (String) data.get("answer");
         var hint = (String) data.getOrDefault("hint", "");
 
-        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, difficulty, questionListId);
+        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, difficulty, questionListId, sentenceId);
     }
 }

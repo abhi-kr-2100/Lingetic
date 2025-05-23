@@ -41,6 +41,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 Language.valueOf(rs.getString("language")),
                 rs.getInt("difficulty"),
                 rs.getString("question_list_id"),
+                rs.getString("sentence_id"),
                 QuestionType.valueOf(rs.getString("question_type")),
                 questionTypeSpecificData
         );
@@ -81,8 +82,8 @@ public class QuestionPostgresRepository implements QuestionRepository {
     public void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException {
         try {
             var sql = """
-                INSERT INTO questions (id, question_type, language, difficulty, question_list_id, question_type_specific_data)
-                VALUES (?::uuid, ?, ?, ?, ?::uuid, ?::jsonb)
+                INSERT INTO questions (id, question_type, language, difficulty, question_list_id, question_type_specific_data, sentence_id)
+                VALUES (?::uuid, ?, ?, ?, ?::uuid, ?::jsonb, ?::uuid)
                 """;
 
             jdbcTemplate.update(
@@ -92,7 +93,8 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 question.getLanguage().name(),
                 question.getDifficulty(),
                 question.getQuestionListID(),
-                objectMapper.writeValueAsString(question.getQuestionTypeSpecificData())
+                objectMapper.writeValueAsString(question.getQuestionTypeSpecificData()),
+                question.getSentenceID()
             );
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(String.format("Failed to serialize question %s", question.getID()), e);

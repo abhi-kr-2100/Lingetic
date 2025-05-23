@@ -3,12 +3,14 @@ package com.munetmo.lingetic.LanguageTestService.infra;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionListRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
+import com.munetmo.lingetic.LanguageTestService.Repositories.SentenceRepository;
 import com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.GetQuestionListsForLanguageUseCase;
 import com.munetmo.lingetic.LanguageTestService.UseCases.TakeRegularTestUseCase;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.SentencePostgresRepository;
 import com.munetmo.lingetic.lib.tasks.TaskQueue;
 
 import java.util.concurrent.ExecutorService;
@@ -56,5 +58,10 @@ public class Beans {
     @Bean(destroyMethod = "shutdown")
     public ExecutorService taskSubmitExecutor() {
         return Executors.newCachedThreadPool();
+    }
+
+    @Bean
+    public SentenceRepository sentenceRepository(JdbcTemplate jdbcTemplate) {
+        return new SentencePostgresRepository(jdbcTemplate);
     }
 }

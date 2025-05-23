@@ -12,31 +12,18 @@ public class QuestionTest {
         var language = Language.English;
         var difficulty = 1;
         var questionListId = "list1";
+        var sentenceId = "sentence1";
+        
         Map<String, Object> data = Map.of(
             "questionText", "Fill in the ___",
-            "answer", "blank"
+            "answer", "blank",
+            "sentenceId", sentenceId
         );
 
-        var question = Question.createFromQuestionTypeSpecificData(id, language, difficulty, questionListId, QuestionType.FillInTheBlanks, data);
+        var question = Question.createFromQuestionTypeSpecificData(id, language, difficulty, questionListId, sentenceId, QuestionType.FillInTheBlanks, data);
 
         assertNotNull(question);
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-    }
-
-    @Test
-    public void createFromQuestionTypeSpecificDataShouldCreateSourceToTargetTranslation() {
-        var id = "1";
-        var language = Language.English;
-        var difficulty = 1;
-        var questionListId = "list1";
-        Map<String, Object> data = Map.of(
-            "targetText", "Jag heter David.",
-            "translation", "I'm David."
-        );
-
-        var question = Question.createFromQuestionTypeSpecificData(id, language, difficulty, questionListId, QuestionType.SourceToTargetTranslation, data);
-
-        assertNotNull(question);
-        assertEquals(QuestionType.SourceToTargetTranslation, question.getQuestionType());
+        assertEquals(sentenceId, question.getSentenceID());
     }
 }

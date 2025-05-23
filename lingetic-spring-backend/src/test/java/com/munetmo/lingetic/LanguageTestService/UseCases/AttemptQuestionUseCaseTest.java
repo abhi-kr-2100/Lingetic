@@ -10,6 +10,8 @@ import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundExcep
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
+import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.SentencePostgresRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,18 +57,33 @@ class AttemptQuestionUseCaseTest {
     @Autowired
     private QuestionListPostgresRepository questionListRepository;
 
+    @Autowired
+    private SentencePostgresRepository sentenceRepository;
+
     private static final String TEST_USER_ID = UUID.randomUUID().toString();
     private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
+    private static final String TEST_SENTENCE_ID = UUID.randomUUID().toString();
 
     @BeforeEach
     void setUp() {
         questionRepository.deleteAllQuestions();
         questionListRepository.deleteAllQuestionLists();
+        sentenceRepository.deleteAllSentences();
 
         questionListRepository.addQuestionList(new QuestionList(
                 TEST_QUESTION_LIST_ID,
                 "Test Question List",
                 Language.English));
+
+        // Create a test sentence
+        sentenceRepository.addSentence(new Sentence(
+                UUID.fromString(TEST_SENTENCE_ID),
+                Language.English,
+                "The cat stretched lazily on the windowsill.",
+                Language.Turkish,
+                "Kedi pencere eşiğinde tembelce gerildi.",
+                List.of()
+        ));
     }
 
     @Test
@@ -77,7 +95,9 @@ class AttemptQuestionUseCaseTest {
                 "straighten or extend one's body",
                 "stretched",
                 0,
-                TEST_QUESTION_LIST_ID);
+                TEST_QUESTION_LIST_ID,
+                TEST_SENTENCE_ID
+        );
         questionRepository.addQuestion(question);
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
 
@@ -96,7 +116,9 @@ class AttemptQuestionUseCaseTest {
                 "straighten or extend one's body",
                 "stretched",
                 0,
-                TEST_QUESTION_LIST_ID);
+                TEST_QUESTION_LIST_ID,
+                TEST_SENTENCE_ID
+        );
         questionRepository.addQuestion(question);
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");
 

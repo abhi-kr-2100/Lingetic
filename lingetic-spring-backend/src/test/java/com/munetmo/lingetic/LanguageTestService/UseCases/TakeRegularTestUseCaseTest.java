@@ -14,6 +14,8 @@ import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionListPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionPostgresRepository;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository;
+import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
+import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.SentencePostgresRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,19 +53,33 @@ class TakeRegularTestUseCaseTest {
     @Autowired
     private QuestionListPostgresRepository questionListRepository;
 
+    @Autowired
+    private SentencePostgresRepository sentenceRepository;
+
     private static final String TEST_USER_ID = UUID.randomUUID().toString();
     private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
+    private static final String TEST_SENTENCE_ID = UUID.randomUUID().toString();
 
     @BeforeEach
     void setUp() {
         questionReviewRepository.deleteAllReviews();
         questionRepository.deleteAllQuestions();
         questionListRepository.deleteAllQuestionLists();
+        sentenceRepository.deleteAllSentences();
 
         questionListRepository.addQuestionList(new QuestionList(
                 TEST_QUESTION_LIST_ID,
                 "Test Question List",
                 Language.English
+        ));
+
+        sentenceRepository.addSentence(new Sentence(
+                UUID.fromString(TEST_SENTENCE_ID),
+                Language.English,
+                "He walks to school.",
+                Language.Turkish,
+                "O okula yürür.",
+                List.of()
         ));
     }
 
@@ -75,7 +91,8 @@ class TakeRegularTestUseCaseTest {
                 "motion verb",
                 "walks",
                 0,
-                TEST_QUESTION_LIST_ID
+                TEST_QUESTION_LIST_ID,
+                TEST_SENTENCE_ID
         )));
     }
 
@@ -130,10 +147,10 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldOnlyReturnQuestionsInRequestedLanguage() {
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "El ____ a la escuela.", "verbo de movimiento", "camina", 0, TEST_QUESTION_LIST_ID));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ____ fast.", "motion verb", "runs", 0, TEST_QUESTION_LIST_ID));
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "Il ____ à l'école.", "verbe de mouvement", "marche", 0, TEST_QUESTION_LIST_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "El ____ a la escuela.", "verbo de movimiento", "camina", 0, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ____ fast.", "motion verb", "runs", 0, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "Il ____ à l'école.", "verbe de mouvement", "marche", 0, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID));
 
         List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English, TEST_QUESTION_LIST_ID);
 
@@ -153,7 +170,7 @@ class TakeRegularTestUseCaseTest {
     @Test
     void shouldReturnQuestionsScheduledForReview() {
         addTestQuestions(TakeRegularTestUseCase.limit);
-        var reviewedQuestion = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID);
+        var reviewedQuestion = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", 0, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
         questionRepository.addQuestion(reviewedQuestion);
         var questionReview = questionReviewRepository.getReviewForQuestionOrCreateNew(TEST_USER_ID, reviewedQuestion);
         questionReview.review(1);
@@ -211,9 +228,9 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldReturnQuestionsOrderedByDifficulty() {
-        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 3, TEST_QUESTION_LIST_ID);
-        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 1, TEST_QUESTION_LIST_ID);
-        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 2, TEST_QUESTION_LIST_ID);
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 3, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 1, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 2, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
@@ -229,11 +246,11 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldOnlyOrderQuestionsByDifficultyIfTheyAreUnreviewed() {
-        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 10, TEST_QUESTION_LIST_ID);
-        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 5, TEST_QUESTION_LIST_ID);
-        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 8, TEST_QUESTION_LIST_ID);
-        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", 4, TEST_QUESTION_LIST_ID);
-        var question5 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "We ___ home.", "motion verb", "walk", 1, TEST_QUESTION_LIST_ID);
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 10, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 5, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 8, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
+        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", 4, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
+        var question5 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "We ___ home.", "motion verb", "walk", 1, TEST_QUESTION_LIST_ID, TEST_SENTENCE_ID);
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
@@ -265,10 +282,10 @@ class TakeRegularTestUseCaseTest {
         questionListRepository.addQuestionList(new QuestionList(questionListId1, "Test Question List 1", Language.English));
         questionListRepository.addQuestionList(new QuestionList(questionListId2, "Test Question List 2", Language.English));
 
-        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 1, questionListId1);
-        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 2, questionListId1);
-        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 3, questionListId2);
-        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", 4, questionListId2);
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", 1, questionListId1, TEST_SENTENCE_ID);
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", 2, questionListId1, TEST_SENTENCE_ID);
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", 3, questionListId2, TEST_SENTENCE_ID);
+        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", 4, questionListId2, TEST_SENTENCE_ID);
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
@@ -299,10 +316,10 @@ class TakeRegularTestUseCaseTest {
         questionListRepository.addQuestionList(new QuestionList(questionListId2, "List2", Language.English));
 
         // Add questions to both lists
-        var q1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 1", "hint1", "answer1", 1, questionListId1);
-        var q2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 2", "hint2", "answer2", 2, questionListId1);
-        var q3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 3", "hint3", "answer3", 3, questionListId2);
-        var q4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 4", "hint4", "answer4", 4, questionListId2);
+        var q1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 1", "hint1", "answer1", 1, questionListId1, TEST_SENTENCE_ID);
+        var q2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 2", "hint2", "answer2", 2, questionListId1, TEST_SENTENCE_ID);
+        var q3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 3", "hint3", "answer3", 3, questionListId2, TEST_SENTENCE_ID);
+        var q4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "Text ___ 4", "hint4", "answer4", 4, questionListId2, TEST_SENTENCE_ID);
         questionRepository.addQuestion(q1);
         questionRepository.addQuestion(q2);
         questionRepository.addQuestion(q3);

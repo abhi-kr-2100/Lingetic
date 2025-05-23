@@ -4,6 +4,7 @@ import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionReview;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
+import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +37,7 @@ public class QuestionReviewPostgresRepositoryTest {
     }
 
     private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
+    private static final String TEST_SENTENCE_ID = UUID.randomUUID().toString();
     private static final Duration INSTANT_COMPARISON_TOLERANCE = Duration.ofMinutes(1);
 
     @Autowired
@@ -46,16 +49,30 @@ public class QuestionReviewPostgresRepositoryTest {
     @Autowired
     private QuestionListPostgresRepository questionListRepository;
 
+    @Autowired
+    private SentencePostgresRepository sentenceRepository;
+
     @BeforeEach
     void setUp() {
         questionReviewRepository.deleteAllReviews();
         questionRepository.deleteAllQuestions();
         questionListRepository.deleteAllQuestionLists();
+        sentenceRepository.deleteAllSentences();
 
         questionListRepository.addQuestionList(new QuestionList(
             TEST_QUESTION_LIST_ID,
             "Test Question List",
             Language.English
+        ));
+
+        // Create a test sentence
+        sentenceRepository.addSentence(new Sentence(
+            UUID.fromString(TEST_SENTENCE_ID),
+            Language.English,
+            "The cat stretched lazily on the windowsill.",
+            Language.Turkish,
+            "Kedi pencere eşiğinde tembelce gerildi.",
+            List.of()
         ));
     }
 
@@ -67,7 +84,8 @@ public class QuestionReviewPostgresRepositoryTest {
             "hint",
             "sleeps",
             0,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
         questionRepository.addQuestion(question);
         return question;

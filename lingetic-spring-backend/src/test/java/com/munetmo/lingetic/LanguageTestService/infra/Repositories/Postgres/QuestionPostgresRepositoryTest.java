@@ -3,6 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.QuestionList;
+import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionWithIDAlreadyExistsException;
 import org.junit.jupiter.api.*;
@@ -35,6 +36,7 @@ public class QuestionPostgresRepositoryTest {
     }
 
     private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
+    private static final String TEST_SENTENCE_ID = UUID.randomUUID().toString();
 
     @Autowired
     private QuestionPostgresRepository questionRepository;
@@ -42,15 +44,28 @@ public class QuestionPostgresRepositoryTest {
     @Autowired
     private QuestionListPostgresRepository questionListRepository;
 
+    @Autowired
+    private SentencePostgresRepository sentenceRepository;
+
     @BeforeEach
     void setUp() {
         questionRepository.deleteAllQuestions();
         questionListRepository.deleteAllQuestionLists();
+        sentenceRepository.deleteAllSentences();
 
         questionListRepository.addQuestionList(new QuestionList(
             TEST_QUESTION_LIST_ID,
             "Test Question List",
             Language.English
+        ));
+
+        sentenceRepository.addSentence(new Sentence(
+            UUID.fromString(TEST_SENTENCE_ID),
+            Language.English,
+            "The cat stretched lazily on the windowsill.",
+            Language.Turkish,
+            "Kedi pencere eşiğinde tembelce gerildi.",
+            List.of()
         ));
     }
 
@@ -63,7 +78,8 @@ public class QuestionPostgresRepositoryTest {
             "straighten or extend one's body",
             "stretched",
             0,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         questionRepository.addQuestion(question);
@@ -87,6 +103,7 @@ public class QuestionPostgresRepositoryTest {
     @Test
     void shouldThrowExceptionWhenAddingQuestionWithExistingID() {
         var commonId = UUID.randomUUID().toString();
+        var sentenceId = TEST_SENTENCE_ID;
 
         var question1 = new FillInTheBlanksQuestion(
             commonId,
@@ -95,7 +112,8 @@ public class QuestionPostgresRepositoryTest {
             "straighten or extend one's body",
             "stretched",
             0,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            sentenceId
         );
 
         var question2 = new FillInTheBlanksQuestion(
@@ -105,7 +123,8 @@ public class QuestionPostgresRepositoryTest {
             "straighten or extend one's body",
             "stretched",
             0,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            sentenceId
         );
 
         questionRepository.addQuestion(question1);
@@ -121,7 +140,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "one",
             2,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         var question2 = new FillInTheBlanksQuestion(
@@ -131,7 +151,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "two",
             1,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         var question3 = new FillInTheBlanksQuestion(
@@ -141,7 +162,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "three",
             3,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         questionRepository.addQuestion(question1);
@@ -168,7 +190,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "sleeps",
             0,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         var turkishQuestion = new FillInTheBlanksQuestion(
@@ -178,7 +201,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "usulca",
             0,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         questionRepository.addQuestion(englishQuestion);
@@ -208,7 +232,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "answer",
             0,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         questionRepository.addQuestion(question);
@@ -229,7 +254,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "one",
             1,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         var question2 = new FillInTheBlanksQuestion(
@@ -239,7 +265,8 @@ public class QuestionPostgresRepositoryTest {
             "hint",
             "two",
             2,
-            TEST_QUESTION_LIST_ID
+            TEST_QUESTION_LIST_ID,
+            TEST_SENTENCE_ID
         );
 
         questionRepository.addQuestion(question1);
@@ -263,7 +290,8 @@ public class QuestionPostgresRepositoryTest {
                 "hint",
                 "answer" + i,
                 i,
-                TEST_QUESTION_LIST_ID
+                TEST_QUESTION_LIST_ID,
+                TEST_SENTENCE_ID
             );
             questionRepository.addQuestion(question);
         }

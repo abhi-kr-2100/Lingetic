@@ -4,9 +4,9 @@ import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslation;
+// Remove SourceToTargetTranslation import
 
-public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO, SourceToTargetTranslationDTO {
+public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
     String getID();
     QuestionType getQuestionType();
     Language getLanguage();
@@ -20,14 +20,6 @@ public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO, SourceTo
                     typedQuestion.getLanguage(),
                     typedQuestion.questionText,
                     typedQuestion.hint
-                );
-            }
-            case SourceToTargetTranslation -> {
-                var typedQuestion = (SourceToTargetTranslation)question;
-                yield new SourceToTargetTranslationDTO(
-                    typedQuestion.getID(),
-                    typedQuestion.getLanguage(),
-                    typedQuestion.translation
                 );
             }
         };
