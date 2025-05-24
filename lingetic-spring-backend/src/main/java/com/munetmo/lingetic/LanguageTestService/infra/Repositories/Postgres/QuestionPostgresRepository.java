@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
+import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionWithIDAlreadyExistsException;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
@@ -27,13 +28,20 @@ public class QuestionPostgresRepository implements QuestionRepository {
 
     private static final RowMapper<Question> questionMapper = (rs, rowNum) -> {
         Map<String, Object> questionTypeSpecificData;
+        List<WordExplanation> sourceWordExplanations;
+        
         try {
             questionTypeSpecificData = objectMapper.readValue(
                     rs.getString("question_type_specific_data"),
                     new TypeReference<>() {}
             );
+            
+            sourceWordExplanations = objectMapper.readValue(
+                    rs.getString("source_word_explanations"),
+                    new TypeReference<>() {}
+            );
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException(String.format("Failed to deserialize question type specific data for question %s", rs.getString("id")), e);
+            throw new IllegalStateException(String.format("Failed to deserialize data for question %s", rs.getString("id")), e);
         }
 
         return Question.createFromQuestionTypeSpecificData(
@@ -41,6 +49,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 Language.valueOf(rs.getString("language")),
                 rs.getString("sentence_id"),
                 QuestionType.valueOf(rs.getString("question_type")),
+                sourceWordExplanations,
                 questionTypeSpecificData
         );
     };
@@ -80,8 +89,8 @@ public class QuestionPostgresRepository implements QuestionRepository {
     public void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException {
         try {
             var sql = """
-                INSERT INTO questions (id, question_type, language, question_type_specific_data, sentence_id)
-                VALUES (?::uuid, ?, ?, ?::jsonb, ?::uuid)
+                INSERT INTO questions (id, question_type, language, question_type_specific_data, sentence_id, source_word_explanations)
+                VALUES (?::uuid, ?, ?, ?::jsonb, ?::uuid, ?::jsonb)
                 """;
 
             jdbcTemplate.update(
@@ -90,7 +99,8 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 question.getQuestionType().name(),
                 question.getLanguage().name(),
                 objectMapper.writeValueAsString(question.getQuestionTypeSpecificData()),
-                question.getSentenceID()
+                question.getSentenceID(),
+                objectMapper.writeValueAsString(question.getSourceWordExplanation())
             );
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(String.format("Failed to serialize question %s", question.getID()), e);

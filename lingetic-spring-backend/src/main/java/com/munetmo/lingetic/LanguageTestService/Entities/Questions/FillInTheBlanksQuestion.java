@@ -7,8 +7,10 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.Fi
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.LanguageModel;
+import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,6 +18,7 @@ public final class FillInTheBlanksQuestion implements Question {
     private final String id;
     private final Language language;
     private final String sentenceId;
+    private final List<WordExplanation> sourceWordExplanation;
 
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
 
@@ -23,7 +26,7 @@ public final class FillInTheBlanksQuestion implements Question {
     public final String hint;
     public final String answer;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, String sentenceId) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, String sentenceId, List<WordExplanation> sourceWordExplanation) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -50,6 +53,7 @@ public final class FillInTheBlanksQuestion implements Question {
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
         this.sentenceId = sentenceId;
+        this.sourceWordExplanation = sourceWordExplanation;
     }
 
     @Override
@@ -70,6 +74,11 @@ public final class FillInTheBlanksQuestion implements Question {
     @Override
     public String getSentenceID() {
         return sentenceId;
+    }
+
+    @Override
+    public List<WordExplanation> getSourceWordExplanation() {
+        return sourceWordExplanation;
     }
 
     @Override
@@ -98,7 +107,7 @@ public final class FillInTheBlanksQuestion implements Question {
         );
     }
 
-    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, Map<String, Object> data) {
+    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, List<WordExplanation> sourceWordExplanation, Map<String, Object> data) {
         if (!data.containsKey("questionText") || !data.containsKey("answer")) {
             throw new IllegalArgumentException("Required fields 'questionText' and 'answer' must be present in data");
         }
@@ -107,6 +116,6 @@ public final class FillInTheBlanksQuestion implements Question {
         var answer = (String) data.get("answer");
         var hint = (String) data.getOrDefault("hint", "");
 
-        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, sentenceId);
+        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, sentenceId, sourceWordExplanation);
     }
 }

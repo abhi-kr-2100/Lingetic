@@ -3,7 +3,9 @@ package com.munetmo.lingetic.LanguageTestService.Entities.Questions;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
+import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 
+import java.util.List;
 import java.util.Map;
 
 public sealed interface Question permits FillInTheBlanksQuestion {
@@ -11,11 +13,12 @@ public sealed interface Question permits FillInTheBlanksQuestion {
     QuestionType getQuestionType();
     Language getLanguage();
     String getSentenceID();
+    List<WordExplanation> getSourceWordExplanation();
 
     Map<String, Object> getQuestionTypeSpecificData();
-    static Question createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, QuestionType questionType, Map<String, Object> data) {
+    static Question createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, QuestionType questionType, List<WordExplanation> sourceWordExplanation, Map<String, Object> data) {
         return switch (questionType) {
-            case FillInTheBlanks -> FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(id, language, sentenceId, data);
+            case FillInTheBlanks -> FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(id, language, sentenceId, sourceWordExplanation, data);
         };
     }
 

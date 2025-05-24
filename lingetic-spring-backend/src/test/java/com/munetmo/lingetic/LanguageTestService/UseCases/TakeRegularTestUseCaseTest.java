@@ -86,7 +86,8 @@ class TakeRegularTestUseCaseTest {
                     "Question " + i + ": He ____ to school.",
                     "motion verb",
                     "walks",
-                    sentence.id().toString()
+                    sentence.id().toString(),
+                    List.of()
             ));
         });
     }
@@ -158,7 +159,7 @@ class TakeRegularTestUseCaseTest {
                 List.of()
         );
         sentenceRepository.addSentence(sentence1);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", sentence1.id().toString()));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", sentence1.id().toString(), List.of()));
 
         var sentence2 = new Sentence(
                 UUID.randomUUID(),
@@ -170,7 +171,7 @@ class TakeRegularTestUseCaseTest {
                 List.of()
         );
         sentenceRepository.addSentence(sentence2);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "El ____ a la escuela.", "verbo de movimiento", "camina", sentence2.id().toString()));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "El ____ a la escuela.", "verbo de movimiento", "camina", sentence2.id().toString(), List.of()));
 
         var sentence3 = new Sentence(
                 UUID.randomUUID(),
@@ -182,7 +183,7 @@ class TakeRegularTestUseCaseTest {
                 List.of()
         );
         sentenceRepository.addSentence(sentence3);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ____ fast.", "motion verb", "runs", sentence3.id().toString()));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ____ fast.", "motion verb", "runs", sentence3.id().toString(), List.of()));
 
         var sentence4 = new Sentence(
                 UUID.randomUUID(),
@@ -194,7 +195,7 @@ class TakeRegularTestUseCaseTest {
                 List.of()
         );
         sentenceRepository.addSentence(sentence4);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "Il ____ à l'école.", "verbe de mouvement", "marche", sentence4.id().toString()));
+        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "Il ____ à l'école.", "verbe de mouvement", "marche", sentence4.id().toString(), List.of()));
 
         var result = useCase.execute(TEST_USER_ID, Language.English);
 
@@ -215,7 +216,7 @@ class TakeRegularTestUseCaseTest {
     @Test
     void shouldReturnQuestionsScheduledForReview() {
         addTestQuestions(TakeRegularTestUseCase.limit);
-        var reviewedQuestion = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", TEST_SENTENCE_ID);
+        var reviewedQuestion = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", TEST_SENTENCE_ID, List.of());
         questionRepository.addQuestion(reviewedQuestion);
 
         var result = useCase.execute(TEST_USER_ID, Language.English);
@@ -286,7 +287,7 @@ class TakeRegularTestUseCaseTest {
                 List.of()
         );
         sentenceRepository.addSentence(sentence1);
-        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", sentence1.id().toString());
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", sentence1.id().toString(), List.of());
 
         var sentence2 = new Sentence(
                 UUID.randomUUID(),
@@ -298,7 +299,7 @@ class TakeRegularTestUseCaseTest {
                 List.of()
         );
         sentenceRepository.addSentence(sentence2);
-        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", sentence2.id().toString());
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", sentence2.id().toString(), List.of());
 
         var sentence3 = new Sentence(
                 UUID.randomUUID(),
@@ -310,7 +311,7 @@ class TakeRegularTestUseCaseTest {
                 List.of()
         );
         sentenceRepository.addSentence(sentence3);
-        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", sentence3.id().toString());
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", sentence3.id().toString(), List.of());
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
@@ -326,11 +327,11 @@ class TakeRegularTestUseCaseTest {
 
     @Test
     void shouldOnlyOrderQuestionsByDifficultyIfTheyAreUnreviewed() {
-        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", TEST_SENTENCE_ID);
-        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", TEST_SENTENCE_ID);
-        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", TEST_SENTENCE_ID);
-        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", TEST_SENTENCE_ID);
-        var question5 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "We ___ home.", "motion verb", "walk", TEST_SENTENCE_ID);
+        var question1 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ___ to school.", "motion verb", "walks", TEST_SENTENCE_ID, List.of());
+        var question2 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ___ fast.", "motion verb", "runs", TEST_SENTENCE_ID, List.of());
+        var question3 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "They ___ together.", "motion verb", "dance", TEST_SENTENCE_ID, List.of());
+        var question4 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "I ___ to work.", "motion verb", "drive", TEST_SENTENCE_ID, List.of());
+        var question5 = new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "We ___ home.", "motion verb", "walk", TEST_SENTENCE_ID, List.of());
 
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);

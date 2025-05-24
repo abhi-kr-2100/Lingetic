@@ -5,6 +5,8 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlan
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuestionDTOTest {
@@ -19,7 +21,8 @@ class QuestionDTOTest {
             "Fill in: ___",
             "This is a hint",
             "test answer",
-            TEST_SENTENCE_ID
+            TEST_SENTENCE_ID,
+            List.of()
         );
 
         QuestionDTO dto = QuestionDTO.fromQuestion(question);

@@ -84,7 +84,8 @@ class AttemptQuestionUseCaseTest {
                 "The cat ____ lazily on the windowsill.",
                 "straighten or extend one's body",
                 "stretched",
-                TEST_SENTENCE_ID
+                TEST_SENTENCE_ID,
+                List.of()
         );
         questionRepository.addQuestion(question);
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
@@ -103,7 +104,8 @@ class AttemptQuestionUseCaseTest {
                 "The cat ____ lazily on the windowsill.",
                 "straighten or extend one's body",
                 "stretched",
-                TEST_SENTENCE_ID
+                TEST_SENTENCE_ID,
+                List.of()
         );
         questionRepository.addQuestion(question);
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");

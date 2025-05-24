@@ -66,7 +66,8 @@ public class QuestionPostgresRepositoryTest {
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched",
-            TEST_SENTENCE_ID
+            TEST_SENTENCE_ID,
+            List.of()
         );
 
         questionRepository.addQuestion(question);
@@ -96,7 +97,8 @@ public class QuestionPostgresRepositoryTest {
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched",
-            sentenceId
+            sentenceId,
+            List.of()
         );
 
         var question2 = new FillInTheBlanksQuestion(
@@ -105,7 +107,8 @@ public class QuestionPostgresRepositoryTest {
             "The cat ____ lazily on the windowsill.",
             "straighten or extend one's body",
             "stretched",
-            sentenceId
+            sentenceId,
+            List.of()
         );
 
         questionRepository.addQuestion(question1);
@@ -120,7 +123,8 @@ public class QuestionPostgresRepositoryTest {
             "The cat ____ lazily.",
             "hint",
             "sleeps",
-            TEST_SENTENCE_ID
+            TEST_SENTENCE_ID,
+            List.of()
         );
 
         var turkishQuestion = new FillInTheBlanksQuestion(
@@ -129,7 +133,8 @@ public class QuestionPostgresRepositoryTest {
             "Kedi ____ uyuyor.",
             "hint",
             "usulca",
-            TEST_SENTENCE_ID
+            TEST_SENTENCE_ID,
+            List.of()
         );
 
         questionRepository.addQuestion(englishQuestion);
@@ -158,7 +163,8 @@ public class QuestionPostgresRepositoryTest {
             "Question ___",
             "hint",
             "answer",
-            TEST_SENTENCE_ID
+            TEST_SENTENCE_ID,
+            List.of()
         );
 
         questionRepository.addQuestion(question);
@@ -189,7 +195,8 @@ public class QuestionPostgresRepositoryTest {
             "The cat ____ lazily.",
             "hint1",
             "stretched",
-            sentenceId
+            sentenceId,
+            List.of()
         );
         
         var question2 = new FillInTheBlanksQuestion(
@@ -198,7 +205,8 @@ public class QuestionPostgresRepositoryTest {
             "The cat stretched ____.",
             "hint2",
             "lazily",
-            sentenceId
+            sentenceId,
+            List.of()
         );
         
         var question3 = new FillInTheBlanksQuestion(
@@ -207,7 +215,8 @@ public class QuestionPostgresRepositoryTest {
             "Different sentence ___ question",
             "hint3",
             "answer3",
-            sentenceId2
+            sentenceId2,
+            List.of()
         );
         
         questionRepository.addQuestion(question1);
