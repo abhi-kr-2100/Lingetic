@@ -12,7 +12,7 @@ public record Sentence(
     Language translationLanguage,
     String translationText,
     int difficulty,
-    List<WordExplanation> sourceWordExplanation
+    List<WordExplanation> sourceWordExplanations
 ) {
     public Sentence {
         if (sourceText.isBlank()) {

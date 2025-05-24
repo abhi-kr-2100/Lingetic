@@ -27,7 +27,7 @@ public class QuestionTest {
         assertNotNull(question);
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals(sentenceId, question.getSentenceID());
-        assertTrue(question.getSourceWordExplanation().isEmpty());
+        assertTrue(question.getSourceWordExplanations().isEmpty());
     }
     
     @Test
@@ -50,6 +50,6 @@ public class QuestionTest {
         assertNotNull(question);
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals(sentenceId, question.getSentenceID());
-        assertEquals(wordExplanations, question.getSourceWordExplanation());
+        assertEquals(wordExplanations, question.getSourceWordExplanations());
     }
 }

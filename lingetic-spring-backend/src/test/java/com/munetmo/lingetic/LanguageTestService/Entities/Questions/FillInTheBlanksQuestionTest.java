@@ -35,7 +35,7 @@ class FillInTheBlanksQuestionTest {
         assertEquals(hint, question.hint);
         assertEquals(answer, question.answer);
         assertEquals(defaultSentenceId, question.getSentenceID());
-        assertEquals(Collections.emptyList(), question.getSourceWordExplanation());
+        assertEquals(Collections.emptyList(), question.getSourceWordExplanations());
     }
 
     @Test
@@ -59,7 +59,7 @@ class FillInTheBlanksQuestionTest {
         assertEquals(hint, question.hint);
         assertEquals(answer, question.answer);
         assertEquals(defaultSentenceId, question.getSentenceID());
-        assertEquals(wordExplanations, question.getSourceWordExplanation());
+        assertEquals(wordExplanations, question.getSourceWordExplanations());
     }
 
 
@@ -245,6 +245,6 @@ class FillInTheBlanksQuestionTest {
         assertEquals("Fill in the ___", newQuestion.questionText);
         assertEquals("test hint", newQuestion.hint);
         assertEquals("blank", newQuestion.answer);
-        assertEquals(wordExplanations, newQuestion.getSourceWordExplanation());
+        assertEquals(wordExplanations, newQuestion.getSourceWordExplanations());
     }
 }

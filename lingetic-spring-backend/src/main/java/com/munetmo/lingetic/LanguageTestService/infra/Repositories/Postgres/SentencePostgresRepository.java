@@ -35,7 +35,7 @@ public class SentencePostgresRepository implements SentenceRepository {
 
         String sourceWordExplanationsJson;
         try {
-            sourceWordExplanationsJson = objectMapper.writeValueAsString(sentence.sourceWordExplanation());
+            sourceWordExplanationsJson = objectMapper.writeValueAsString(sentence.sourceWordExplanations());
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Failed to serialize word explanations");
         }

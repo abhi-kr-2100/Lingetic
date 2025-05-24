@@ -100,7 +100,7 @@ public class QuestionPostgresRepository implements QuestionRepository {
                 question.getLanguage().name(),
                 objectMapper.writeValueAsString(question.getQuestionTypeSpecificData()),
                 question.getSentenceID(),
-                objectMapper.writeValueAsString(question.getSourceWordExplanation())
+                objectMapper.writeValueAsString(question.getSourceWordExplanations())
             );
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(String.format("Failed to serialize question %s", question.getID()), e);

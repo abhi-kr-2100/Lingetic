@@ -18,7 +18,7 @@ public final class FillInTheBlanksQuestion implements Question {
     private final String id;
     private final Language language;
     private final String sentenceId;
-    private final List<WordExplanation> sourceWordExplanation;
+    private final List<WordExplanation> sourceWordExplanations;
 
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
 
@@ -26,7 +26,7 @@ public final class FillInTheBlanksQuestion implements Question {
     public final String hint;
     public final String answer;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, String sentenceId, List<WordExplanation> sourceWordExplanation) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, String sentenceId, List<WordExplanation> sourceWordExplanations) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -53,7 +53,7 @@ public final class FillInTheBlanksQuestion implements Question {
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
         this.sentenceId = sentenceId;
-        this.sourceWordExplanation = sourceWordExplanation;
+        this.sourceWordExplanations = sourceWordExplanations;
     }
 
     @Override
@@ -77,8 +77,8 @@ public final class FillInTheBlanksQuestion implements Question {
     }
 
     @Override
-    public List<WordExplanation> getSourceWordExplanation() {
-        return sourceWordExplanation;
+    public List<WordExplanation> getSourceWordExplanations() {
+        return sourceWordExplanations;
     }
 
     @Override
@@ -107,7 +107,7 @@ public final class FillInTheBlanksQuestion implements Question {
         );
     }
 
-    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, List<WordExplanation> sourceWordExplanation, Map<String, Object> data) {
+    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, List<WordExplanation> sourceWordExplanations, Map<String, Object> data) {
         if (!data.containsKey("questionText") || !data.containsKey("answer")) {
             throw new IllegalArgumentException("Required fields 'questionText' and 'answer' must be present in data");
         }
@@ -116,6 +116,6 @@ public final class FillInTheBlanksQuestion implements Question {
         var answer = (String) data.get("answer");
         var hint = (String) data.getOrDefault("hint", "");
 
-        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, sentenceId, sourceWordExplanation);
+        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, sentenceId, sourceWordExplanations);
     }
 }

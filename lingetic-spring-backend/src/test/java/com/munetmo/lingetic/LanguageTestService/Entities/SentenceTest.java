@@ -33,7 +33,7 @@ class SentenceTest {
         assertEquals(sourceText, sentence.sourceText());
         assertEquals(translationLanguage, sentence.translationLanguage());
         assertEquals(translationText, sentence.translationText());
-        assertEquals(wordExplanations, sentence.sourceWordExplanation());
+        assertEquals(wordExplanations, sentence.sourceWordExplanations());
     }
 
     @Test
