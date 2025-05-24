@@ -20,7 +20,10 @@ export default function ResultBox({
     attemptResponse.correctAnswer
   );
 
-  const parts = getSentenceParts(fullSentence, attemptResponse.explanation);
+  const parts = getSentenceParts(
+    fullSentence,
+    attemptResponse.sourceWordExplanations
+  );
 
   const actualSentence = parts.map((p) => p.text).join("");
   if (actualSentence !== fullSentence) {

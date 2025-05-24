@@ -37,11 +37,11 @@ export interface SourceToTargetTranslationAttemptRequest
 export interface AttemptResponse {
   questionType: QuestionType;
   attemptStatus: AttemptStatus;
+  sourceWordExplanations: WordExplanation[];
 }
 
 export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
   correctAnswer: string;
-  explanation: WordExplanation[];
 }
 
 export interface SourceToTargetTranslationAttemptResponse
