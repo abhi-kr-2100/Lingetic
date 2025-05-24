@@ -12,7 +12,7 @@ import threading
 from pathlib import Path
 
 from library.gemini_client import get_global_gemini_client
-from scripts.explanations import InvalidWordIDError
+from library.errors import InvalidWordIDError
 
 
 logging.basicConfig(

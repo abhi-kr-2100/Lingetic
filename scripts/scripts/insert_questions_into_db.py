@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 import json
 import sys
 import argparse
-import uuid
 import psycopg2
 from psycopg2.extras import register_uuid, execute_values
 
@@ -41,36 +40,9 @@ def connect_to_database(db_url: str):
     return conn
 
 
-def insert_question_list(conn, name: str, language: str) -> uuid.UUID:
-    """
-    Insert a new question list into the database.
-
-    Args:
-        conn: Database connection object
-        name: Name of the question list
-        language: Language of the questions
-
-    Returns:
-        UUID of the created question list
-    """
-    with conn.cursor() as cur:
-        question_list_id = uuid.uuid4()
-        cur.execute(
-            """
-            INSERT INTO question_lists (id, name, language)
-            VALUES (%s, %s, %s)
-            RETURNING id
-            """,
-            (question_list_id, name, language),
-        )
-        conn.commit()
-        return question_list_id
-
-
 def insert_questions(
     conn,
     questions: List[Dict[str, Any]],
-    question_list_id: uuid.UUID,
 ):
     """
     Insert questions into the database using batch insertion.
@@ -78,7 +50,6 @@ def insert_questions(
     Args:
         conn: Database connection object
         questions: List of dictionaries containing question_type, and question_type_specific_data
-        question_list_id: UUID for the question list
     """
     try:
         with conn.cursor() as cur:
@@ -87,10 +58,9 @@ def insert_questions(
                     question["id"],
                     question["question_type"],
                     question["language"],
-                    question["difficulty"],
-                    question_list_id,
                     json.dumps(question["question_type_specific_data"]),
                     question["sentence_id"],
+                    json.dumps(question["sourceWordExplanations"]),
                 )
                 for question in questions
             ]
@@ -99,12 +69,13 @@ def insert_questions(
                 cur,
                 """
                 INSERT INTO questions (
-                    id, question_type, language, difficulty,
-                    question_list_id, question_type_specific_data, sentence_id
+                    id, question_type, language,
+                    question_type_specific_data, sentence_id,
+                    source_word_explanations
                 ) VALUES %s
                 """,
                 values,
-                template="(%s, %s, %s, %s, %s, %s, %s)",
+                template="(%s, %s, %s, %s, %s, %s)",
             )
 
             conn.commit()
@@ -113,38 +84,19 @@ def insert_questions(
         raise
 
 
-def main(
-    filepath: str,
-    db_url: str,
-    language: str,
-    question_list_id: Optional[str] = None,
-    question_list_name: Optional[str] = None,
-):
+def main(filepath: str, db_url: str):
     """
     Main function to process questions and insert them into the database.
 
     Args:
         filepath: Path to the JSON file containing questions, or '-' to read from stdin
         db_url: Database connection URL
-        language: Language of the questions
-        question_list_id: Optional UUID string for the question list
-        question_list_name: Optional name for creating a new question list
     """
     questions = load_questions(filepath)
     conn = connect_to_database(db_url)
 
     try:
-        uuid_obj = None
-        if question_list_id:
-            uuid_obj = uuid.UUID(question_list_id)
-        elif question_list_name:
-            uuid_obj = insert_question_list(conn, question_list_name, language)
-        else:
-            raise ValueError(
-                "Error: Either --question-list-id or --question-list-name must be provided"
-            )
-
-        insert_questions(conn, questions, uuid_obj)
+        insert_questions(conn, questions)
     finally:
         conn.close()
 
@@ -171,22 +123,6 @@ def get_parser() -> argparse.ArgumentParser:
         default="postgresql://postgres:postgres@localhost/lingetic",
         help="Database connection URL (default: postgresql://postgres:postgres@localhost/lingetic)",
     )
-    parser.add_argument(
-        "-l",
-        "--language",
-        required=True,
-        help="Language of the questions (e.g., 'Turkish', 'Spanish', 'French')",
-    )
-    parser.add_argument(
-        "-q",
-        "--question-list-id",
-        help="UUID for the question list (default: randomly generated)",
-    )
-    parser.add_argument(
-        "-n",
-        "--question-list-name",
-        help="Name for creating a new question list (ignored if --question-list-id is provided)",
-    )
     return parser
 
 
@@ -197,7 +133,4 @@ if __name__ == "__main__":
     main(
         args.filepath,
         args.db_url,
-        args.language,
-        args.question_list_id,
-        args.question_list_name,
     )

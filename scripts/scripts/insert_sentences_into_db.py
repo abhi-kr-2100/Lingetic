@@ -27,7 +27,7 @@ def load_sentences(filepath: str) -> List[Dict[str, Any]]:
         with open(filepath, "r", encoding="utf-8") as file:
             data = json.load(file)
 
-    return data.get("sentences", [])
+    return data["sentences"]
 
 
 def connect_to_database(db_url: str):
@@ -59,9 +59,10 @@ def insert_sentences(conn, sentences: List[Dict[str, Any]]):
                     sentence["id"],
                     sentence["sourceLanguage"],
                     sentence["sourceText"],
+                    sentence["idx"] * 10,
                     sentence["translationLanguage"],
                     sentence["translationText"],
-                    json.dumps(sentence.get("sourceWordExplanation", [])),
+                    json.dumps(sentence.get("sourceWordExplanations", [])),
                 )
                 for sentence in sentences
             ]
@@ -70,12 +71,12 @@ def insert_sentences(conn, sentences: List[Dict[str, Any]]):
                 cur,
                 """
                 INSERT INTO sentences (
-                    id, source_language, source_text,
+                    id, source_language, source_text, difficulty,
                     translation_language, translation_text, source_word_explanations
                 ) VALUES %s
                 """,
                 values,
-                template="(%s, %s, %s, %s, %s, %s)",
+                template="(%s, %s, %s, %s, %s, %s, %s)",
             )
 
             conn.commit()

@@ -11,6 +11,8 @@ import requests
 from library.gemini_client import get_global_gemini_client
 from pydantic import BaseModel
 
+from library.errors import InvalidWordIDError
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -86,15 +88,6 @@ Output:
 }
 """,
 }
-
-
-class InvalidWordIDError(Exception):
-    def __init__(self, word_id: int, valid_word_ids: set[int]):
-        self.word_id = word_id
-        self.valid_word_ids = valid_word_ids
-        super().__init__(
-            f"Invalid word ID: {word_id}. Valid IDs: {valid_word_ids}"
-        )
 
 
 class WordExplanation(BaseModel):
@@ -201,7 +194,7 @@ def get_explanation_for_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
         exp["startIndex"] = id_to_start_index[exp["id"]]
         del exp["id"]
 
-    entry["sourceWordExplanation"] = explanations
+    entry["sourceWordExplanations"] = explanations
     return entry
 
 

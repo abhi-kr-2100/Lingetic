@@ -29,6 +29,7 @@ def process_entries(entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         index = int(entry["idx"])
         sentence_id = entry["id"]
         language = entry["sourceLanguage"]
+        sourceWordExplanations = entry["sourceWordExplanations"]
         questions = [
             dict(
                 question,
@@ -37,6 +38,7 @@ def process_entries(entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 sentence_id=sentence_id,
                 language=language,
                 difficulty=(index + 1) * 10,
+                sourceWordExplanations=sourceWordExplanations,
             )
             for question in questions
         ]
