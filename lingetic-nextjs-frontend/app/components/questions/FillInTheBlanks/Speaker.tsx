@@ -3,10 +3,10 @@
 import { Volume2 } from "lucide-react";
 
 import useQuestionAudioPlayback from "./useQuestionAudioPlayback";
-import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import type { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
 
 interface SpeakerProps {
-  question: FillInTheBlanksQuestion;
+  question: FillInTheBlanksQuestionDTO;
   autoplay?: boolean;
 }
 

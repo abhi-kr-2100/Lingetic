@@ -6,33 +6,33 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FillInTheBlanksQuestionDTOTest {
+    private static final String TEST_SENTENCE_ID = "test-sentence-id";
 
     @Test
     void shouldCreateQuestionDTO() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
-                "q123",
-                Language.English,
                 "Fill in: ___",
-                "This is a hint");
+                "This is a hint",
+                TEST_SENTENCE_ID);
 
-        assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals("Fill in: ___", question.getText());
         assertEquals("This is a hint", question.getHint());
+        assertEquals(TEST_SENTENCE_ID, question.getSentenceID());
     }
 
     @Test
-    void shouldThrowExceptionWhenIdIsBlank() {
+    void shouldThrowExceptionWhenSentenceIdIsBlank() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "", Language.English, "Fill in: ___", "This is a hint"));
+                "Fill in: ___", "This is a hint", ""));
         assertNotNull(exception.getMessage());
-        assertTrue(exception.getMessage().contains("id"));
+        assertTrue(exception.getMessage().contains("sentenceID"));
     }
 
     @Test
     void shouldThrowExceptionWhenGetTextIsBlank() {
         var exception = assertThrows(IllegalArgumentException.class, () -> new FillInTheBlanksQuestionDTO(
-                "q123", Language.English, "", "This is a hint"));
+                "", "This is a hint", TEST_SENTENCE_ID));
         assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("text"));
     }
@@ -40,28 +40,13 @@ public class FillInTheBlanksQuestionDTOTest {
     @Test
     void shouldCreateQuestionDTOWithoutGetHint() {
         FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
-                "q123",
-                Language.English,
                 "Fill in: ___",
-                null);
+                null,
+                TEST_SENTENCE_ID);
 
-        assertEquals("q123", question.getID());
         assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
         assertEquals("Fill in: ___", question.getText());
         assertEquals("", question.getHint());
-    }
-
-    @Test
-    void shouldCreateQuestionDTOWithEmptyGetHint() {
-        FillInTheBlanksQuestionDTO question = new FillInTheBlanksQuestionDTO(
-                "q123",
-                Language.English,
-                "Fill in: ___",
-                "");
-
-        assertEquals("q123", question.getID());
-        assertEquals(QuestionType.FillInTheBlanks, question.getQuestionType());
-        assertEquals("Fill in: ___", question.getText());
-        assertEquals("", question.getHint());
+        assertEquals(TEST_SENTENCE_ID, question.getSentenceID());
     }
 }

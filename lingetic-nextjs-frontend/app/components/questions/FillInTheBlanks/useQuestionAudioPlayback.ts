@@ -1,11 +1,11 @@
-import { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
 import log from "@/utilities/logger";
 import { useRef, useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchQuestionAsset } from "@/utilities/api";
 
 interface UseQuestionAudioPlaybackParams {
-  question: FillInTheBlanksQuestion;
+  question: FillInTheBlanksQuestionDTO;
   autoplay?: boolean;
 }
 
@@ -20,8 +20,8 @@ export default function useQuestionAudioPlayback({
     isError,
     data: audioBlob,
   } = useQuery({
-    queryKey: ["questionAssets", question.id, "audio"],
-    queryFn: () => fetchQuestionAsset(question.id, "audio"),
+    queryKey: ["questionAssets", question.sentenceID, "audio"],
+    queryFn: () => fetchQuestionAsset(question.sentenceID, "audio"),
     refetchOnMount: false,
     // Disable automatic refetching since static data can never change
     enabled: false,
@@ -38,7 +38,10 @@ export default function useQuestionAudioPlayback({
 
   const playAudio = useCallback(() => {
     if (!audioBlob) {
-      log(`No audio blob available for question ID ${question.id}`, "error");
+      log(
+        `No audio blob available for sentence ID ${question.sentenceID}`,
+        "error"
+      );
       return;
     }
 
@@ -57,14 +60,14 @@ export default function useQuestionAudioPlayback({
           return;
         }
         log(
-          `Error playing audio for question ID ${question.id}: ${e}`,
+          `Error playing audio for sentence ID ${question.sentenceID}: ${e}`,
           "error"
         );
       })
       .finally(() => {
         URL.revokeObjectURL(objectUrl);
       });
-  }, [audioBlob, question.id, cleanUpAudio]);
+  }, [audioBlob, question.sentenceID, cleanUpAudio]);
 
   useEffect(() => {
     if (autoplay && audioBlob) {

@@ -1,14 +1,14 @@
 import Speaker from "./Speaker";
 
 import type { ReactNode } from "react";
-import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import type { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
 
 interface ActionButtonProps {
   isChecked: boolean;
   isChecking: boolean;
   onCheck: () => void;
   NextButton: ReactNode;
-  question: FillInTheBlanksQuestion;
+  question: FillInTheBlanksQuestionDTO;
   value: string;
 }
 

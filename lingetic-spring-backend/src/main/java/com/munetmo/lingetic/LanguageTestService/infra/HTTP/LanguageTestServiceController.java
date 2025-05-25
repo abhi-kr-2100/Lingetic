@@ -73,7 +73,7 @@ public class LanguageTestServiceController {
         } catch (QuestionNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("Question not found: " + request.getQuestionID());
+                    .body("Question not found for sentence: " + request.getSentenceID());
         }
     }
 }

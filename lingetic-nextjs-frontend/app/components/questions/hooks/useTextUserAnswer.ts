@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { attemptQuestion } from "@/utilities/api";
-import type { AttemptResponse, Question } from "@/utilities/api-types";
+import type { AttemptResponse, QuestionDTO } from "@/utilities/api-types";
 import assert from "@/utilities/assert";
 import { useAuth } from "@clerk/nextjs";
 
@@ -10,9 +10,9 @@ interface TextResponse extends AttemptResponse {
 }
 
 export default function useTextUserAnswer<Response extends TextResponse>(
-  question: Question
+  question: QuestionDTO
 ) {
-  assert(question.id.trim().length > 0, "questionId is required");
+  assert(question.sentenceID.trim().length > 0, "sentenceID is required");
 
   const [answer, setAnswer] = useState("");
   const { getToken } = useAuth();
@@ -20,7 +20,7 @@ export default function useTextUserAnswer<Response extends TextResponse>(
   const attemptChallengeMutation = useMutation<Response, Error, string>({
     mutationFn: (userResponse: string) => {
       const attemptRequest = {
-        questionID: question.id,
+        sentenceID: question.sentenceID,
         questionType: question.questionType,
         userResponse,
       };

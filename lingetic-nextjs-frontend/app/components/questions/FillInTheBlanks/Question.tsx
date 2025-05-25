@@ -1,11 +1,8 @@
-import { languageNameToCode } from "@/app/languages/constants";
-import assert from "@/utilities/assert";
-
-import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import type { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
 import type { ChangeEvent, KeyboardEvent } from "react";
 
 interface QuestionBoxProps {
-  question: FillInTheBlanksQuestion;
+  question: FillInTheBlanksQuestionDTO;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -19,9 +16,6 @@ export default function QuestionBox({
   onKeyDown,
   disabled,
 }: QuestionBoxProps) {
-  const languageCode = languageNameToCode[question.language];
-  assert(languageCode !== undefined, `Unknown language: ${question.language}`);
-
   const [textBefore, textAfter] = question.text.split(/_+/);
 
   return (
@@ -36,7 +30,6 @@ export default function QuestionBox({
         className={`border-b-2 border-teal-700 focus:outline-none focus:border-teal-800 text-center max-w-[15ch]`}
         placeholder="type here"
         disabled={disabled}
-        lang={languageCode}
         spellCheck
         autoCorrect="off"
         autoCapitalize="off"

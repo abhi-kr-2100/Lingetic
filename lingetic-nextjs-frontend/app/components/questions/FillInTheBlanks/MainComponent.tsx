@@ -4,14 +4,14 @@ import assert from "@/utilities/assert";
 
 import type {
   FillInTheBlanksAttemptResponse,
-  FillInTheBlanksQuestion,
+  FillInTheBlanksQuestionDTO,
 } from "@/utilities/api-types";
 import type { ChangeEvent, KeyboardEvent } from "react";
 
 interface MainComponentProps {
   isChecked: boolean;
   attemptResponse: FillInTheBlanksAttemptResponse | undefined;
-  question: FillInTheBlanksQuestion;
+  question: FillInTheBlanksQuestionDTO;
   answer: string;
   handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleInputKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;

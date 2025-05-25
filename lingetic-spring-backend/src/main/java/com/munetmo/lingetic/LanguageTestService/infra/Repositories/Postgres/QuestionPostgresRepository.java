@@ -80,12 +80,6 @@ public class QuestionPostgresRepository implements QuestionRepository {
     }
 
     @Override
-    public List<Question> getQuestionsByLanguage(Language language) {
-        var sql = "SELECT * FROM questions WHERE language = ?";
-        return jdbcTemplate.query(sql, questionMapper, language.name());
-    }
-
-    @Override
     public void addQuestion(Question question) throws QuestionWithIDAlreadyExistsException {
         try {
             var sql = """
@@ -116,5 +110,21 @@ public class QuestionPostgresRepository implements QuestionRepository {
             """;
         
         return jdbcTemplate.query(sql, questionMapper, sentenceID);
+    }
+
+    @Override
+    public Question getQuestionBySentenceID(String sentenceID) throws QuestionNotFoundException {
+        var sql = """
+            SELECT id, question_type, language, question_type_specific_data, sentence_id, source_word_explanations
+            FROM questions
+            WHERE sentence_id = ?::uuid
+            LIMIT 1
+            """;
+
+        try {
+            return jdbcTemplate.queryForObject(sql, questionMapper, sentenceID);
+        } catch (EmptyResultDataAccessException e) {
+            throw new QuestionNotFoundException("Question not found for sentence: " + sentenceID);
+        }
     }
 }

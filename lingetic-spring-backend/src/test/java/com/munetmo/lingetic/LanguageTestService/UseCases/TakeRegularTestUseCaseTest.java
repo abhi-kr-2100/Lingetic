@@ -146,64 +146,6 @@ class TakeRegularTestUseCaseTest {
     }
 
     @Test
-    void shouldOnlyReturnQuestionsInRequestedLanguage() {
-        sentenceRepository.deleteAllSentences();
-
-        var sentence1 = new Sentence(
-                UUID.randomUUID(),
-                Language.English,
-                "He walks to school.",
-                Language.Turkish,
-                "O okula yürür.",
-                10,
-                List.of()
-        );
-        sentenceRepository.addSentence(sentence1);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "He ____ to school.", "motion verb", "walks", sentence1.id().toString(), List.of()));
-
-        var sentence2 = new Sentence(
-                UUID.randomUUID(),
-                Language.Turkish,
-                "O okula yürür.",
-                Language.English,
-                "He walks to school.",
-                10,
-                List.of()
-        );
-        sentenceRepository.addSentence(sentence2);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "El ____ a la escuela.", "verbo de movimiento", "camina", sentence2.id().toString(), List.of()));
-
-        var sentence3 = new Sentence(
-                UUID.randomUUID(),
-                Language.English,
-                "She runs fast.",
-                Language.Turkish,
-                "O hızlı koşar.",
-                10,
-                List.of()
-        );
-        sentenceRepository.addSentence(sentence3);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.English, "She ____ fast.", "motion verb", "runs", sentence3.id().toString(), List.of()));
-
-        var sentence4 = new Sentence(
-                UUID.randomUUID(),
-                Language.Turkish,
-                "O hızlı koşar.",
-                Language.English,
-                "She runs fast.",
-                10,
-                List.of()
-        );
-        sentenceRepository.addSentence(sentence4);
-        questionRepository.addQuestion(new FillInTheBlanksQuestion(UUID.randomUUID().toString(), Language.Turkish, "Il ____ à l'école.", "verbe de mouvement", "marche", sentence4.id().toString(), List.of()));
-
-        var result = useCase.execute(TEST_USER_ID, Language.English);
-
-        assertEquals(2, result.size());
-        assertTrue(result.stream().allMatch(q -> q.getLanguage().equals(Language.English)));
-    }
-
-    @Test
     void shouldReturnNewQuestionsIfNoQuestionsToReview() {
         sentenceRepository.deleteAllSentences();
         addTestQuestions(TakeRegularTestUseCase.limit);
@@ -221,7 +163,7 @@ class TakeRegularTestUseCaseTest {
 
         var result = useCase.execute(TEST_USER_ID, Language.English);
 
-        assertTrue(result.stream().anyMatch(q -> q.getID().equals(reviewedQuestion.getID())));
+        assertTrue(result.stream().anyMatch(q -> q.getSentenceID().equals(reviewedQuestion.getSentenceID())));
     }
 
     @Test
@@ -232,7 +174,7 @@ class TakeRegularTestUseCaseTest {
 
         var result = useCase.execute(TEST_USER_ID, Language.English);
 
-        assertEquals(TakeRegularTestUseCase.limit, result.stream().map(QuestionDTO::getID).distinct().count());
+        assertEquals(TakeRegularTestUseCase.limit, result.stream().map(QuestionDTO::getSentenceID).distinct().count());
     }
 
     @Test
@@ -247,7 +189,7 @@ class TakeRegularTestUseCaseTest {
 
         var result = useCase.execute(TEST_USER_ID, Language.English);
 
-        assertFalse(result.stream().anyMatch(q -> reviewedSentenceIDs.contains(q.getID())));
+        assertFalse(result.stream().anyMatch(q -> reviewedSentenceIDs.contains(q.getSentenceID())));
     }
 
     @Test
@@ -320,9 +262,9 @@ class TakeRegularTestUseCaseTest {
         List<QuestionDTO> result = useCase.execute(TEST_USER_ID, Language.English);
 
         assertEquals(3, result.size());
-        assertEquals(question3.getID(), result.get(0).getID());
-        assertEquals(question1.getID(), result.get(1).getID());
-        assertEquals(question2.getID(), result.get(2).getID());
+        assertEquals(question3.getSentenceID(), result.get(0).getSentenceID());
+        assertEquals(question1.getSentenceID(), result.get(1).getSentenceID());
+        assertEquals(question2.getSentenceID(), result.get(2).getSentenceID());
     }
 
     @Test
@@ -346,12 +288,12 @@ class TakeRegularTestUseCaseTest {
         var unreviewedQuestions = result.subList(3, result.size());
 
         unreviewedQuestions.forEach(q -> {
-            var id = q.getID();
-            assertFalse(id.equals(question1.getID()) ||
-                       id.equals(question2.getID()) ||
-                       id.equals(question3.getID()) ||
-                       id.equals(question4.getID()) ||
-                       id.equals(question5.getID()));
+            var id = q.getSentenceID();
+            assertFalse(id.equals(question1.getSentenceID()) ||
+                       id.equals(question2.getSentenceID()) ||
+                       id.equals(question3.getSentenceID()) ||
+                       id.equals(question4.getSentenceID()) ||
+                       id.equals(question5.getSentenceID()));
         });
     }
 }

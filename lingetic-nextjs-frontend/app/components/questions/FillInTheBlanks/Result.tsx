@@ -3,11 +3,11 @@ import type {
   WordExplanation,
 } from "@/utilities/api-types";
 import WordExplanationHover from "./WordExplanationHover";
-import type { FillInTheBlanksQuestion } from "@/utilities/api-types";
+import type { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
 import log from "@/utilities/logger";
 
 interface ResultBoxProps {
-  question: FillInTheBlanksQuestion;
+  question: FillInTheBlanksQuestionDTO;
   attemptResponse: FillInTheBlanksAttemptResponse;
 }
 
@@ -28,7 +28,7 @@ export default function ResultBox({
   const actualSentence = parts.map((p) => p.text).join("");
   if (actualSentence !== fullSentence) {
     log(
-      `questionId: ${question.id}: actualSentence: ${actualSentence} !== fullSentence: ${fullSentence}`,
+      `sentenceId: ${question.sentenceID}: actualSentence: ${actualSentence} !== fullSentence: ${fullSentence}`,
       "error"
     );
   }

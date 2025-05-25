@@ -116,40 +116,6 @@ public class QuestionPostgresRepositoryTest {
     }
 
     @Test
-    void shouldGetQuestionsByLanguage() {
-        var englishQuestion = new FillInTheBlanksQuestion(
-            UUID.randomUUID().toString(),
-            Language.English,
-            "The cat ____ lazily.",
-            "hint",
-            "sleeps",
-            TEST_SENTENCE_ID,
-            List.of()
-        );
-
-        var turkishQuestion = new FillInTheBlanksQuestion(
-            UUID.randomUUID().toString(),
-            Language.Turkish,
-            "Kedi ____ uyuyor.",
-            "hint",
-            "usulca",
-            TEST_SENTENCE_ID,
-            List.of()
-        );
-
-        questionRepository.addQuestion(englishQuestion);
-        questionRepository.addQuestion(turkishQuestion);
-
-        var englishQuestions = questionRepository.getQuestionsByLanguage(Language.English);
-        var turkishQuestions = questionRepository.getQuestionsByLanguage(Language.Turkish);
-
-        assertEquals(1, englishQuestions.size());
-        assertEquals(1, turkishQuestions.size());
-        assertEquals(englishQuestion.getID(), englishQuestions.getFirst().getID());
-        assertEquals(turkishQuestion.getID(), turkishQuestions.getFirst().getID());
-    }
-
-    @Test
     void shouldThrowExceptionWhenQuestionNotFound() {
         var nonExistentId = UUID.randomUUID().toString();
         assertThrows(QuestionNotFoundException.class, () -> questionRepository.getQuestionByID(nonExistentId));

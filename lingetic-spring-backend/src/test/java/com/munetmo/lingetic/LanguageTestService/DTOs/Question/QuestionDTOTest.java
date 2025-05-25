@@ -28,8 +28,8 @@ class QuestionDTOTest {
         QuestionDTO dto = QuestionDTO.fromQuestion(question);
 
         assertInstanceOf(FillInTheBlanksQuestionDTO.class, dto);
-        assertEquals("q123", dto.getID());
         assertEquals(QuestionType.FillInTheBlanks, dto.getQuestionType());
+        assertEquals(TEST_SENTENCE_ID, dto.getSentenceID());
         assertEquals("Fill in: ___", ((FillInTheBlanksQuestionDTO) dto).getText());
         assertEquals("This is a hint", ((FillInTheBlanksQuestionDTO) dto).getHint());
     }

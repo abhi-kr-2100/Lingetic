@@ -7,19 +7,17 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 // Remove SourceToTargetTranslation import
 
 public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
-    String getID();
     QuestionType getQuestionType();
-    Language getLanguage();
+    String getSentenceID();
 
     static QuestionDTO fromQuestion(Question question) {
         return switch (question.getQuestionType()) {
             case FillInTheBlanks -> {
                 var typedQuestion = (FillInTheBlanksQuestion)question;
                 yield new FillInTheBlanksQuestionDTO(
-                    typedQuestion.getID(),
-                    typedQuestion.getLanguage(),
                     typedQuestion.questionText,
-                    typedQuestion.hint
+                    typedQuestion.hint,
+                    typedQuestion.getSentenceID()
                 );
             }
         };

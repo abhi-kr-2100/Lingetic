@@ -88,7 +88,7 @@ class AttemptQuestionUseCaseTest {
                 List.of()
         );
         questionRepository.addQuestion(question);
-        var request = new FillInTheBlanksAttemptRequest(question.getID(), "stretched");
+        var request = new FillInTheBlanksAttemptRequest(TEST_SENTENCE_ID, "stretched");
 
         AttemptResponse response = attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
@@ -108,7 +108,7 @@ class AttemptQuestionUseCaseTest {
                 List.of()
         );
         questionRepository.addQuestion(question);
-        var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong answer");
+        var request = new FillInTheBlanksAttemptRequest(TEST_SENTENCE_ID, "wrong answer");
 
         AttemptResponse response = attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
