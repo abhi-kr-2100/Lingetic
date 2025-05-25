@@ -11,7 +11,7 @@ for file in $STAGED_FILES; do
   if echo "$file" | grep -q "^lingetic-spring-backend/"; then
     RUN_BACKEND_TESTS=true
   fi
-  if echo "$file" | grep -q "^workers/questionreviewer"; then
+  if echo "$file" | grep -q "^workers/sentencereviewer"; then
     RUN_GO_TESTS=true
   fi
 done
@@ -27,8 +27,8 @@ if [ "$RUN_BACKEND_TESTS" = true ]; then
 fi
 
 if [ "$RUN_GO_TESTS" = true ]; then
-  echo "Running Go tests in workers/questionreviewer/..."
-  (cd workers/questionreviewer && go test ./...) || exit 1
+  echo "Running Go tests in workers/sentencereviewer/..."
+  (cd workers/sentencereviewer && go test ./...) || exit 1
 fi
 
 echo "All relevant tests passed. Commit allowed."

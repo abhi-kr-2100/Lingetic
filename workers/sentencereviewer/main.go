@@ -8,8 +8,8 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"munetmo.com/lingetic/workers/questionreviewer/db"
-	"munetmo.com/lingetic/workers/questionreviewer/server"
+	"munetmo.com/lingetic/workers/sentencereviewer/db"
+	"munetmo.com/lingetic/workers/sentencereviewer/server"
 )
 
 func main() {
@@ -27,18 +27,17 @@ func main() {
 	if err := dbConn.Ping(); err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}
-	log.Println("Connected to database.")
 
-	qrepo := &db.QuestionRepository{DB: dbConn}
-	rrepo := &db.ReviewRepository{DB: dbConn, QuestionRepo: qrepo}
+	sentenceRepo := &db.SentenceRepository{DB: dbConn}
+	reviewRepo := &db.ReviewRepository{DB: dbConn, SentenceRepo: sentenceRepo}
 
-	srv := &server.Server{
+	server := &server.Server{
 		SecretKey:    secret,
-		QuestionRepo: qrepo,
-		ReviewRepo:   rrepo,
+		SentenceRepo: sentenceRepo,
+		ReviewRepo:   reviewRepo,
 	}
 
 	addr := ":8080"
-	log.Printf("QuestionReviewer worker listening at %s (POST /?key=...)", addr)
-	log.Fatal(http.ListenAndServe(addr, srv))
+	log.Printf("Listening on %s\n", addr)
+	log.Fatal(http.ListenAndServe(addr, server))
 }

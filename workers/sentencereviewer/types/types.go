@@ -12,18 +12,18 @@ const (
 	Failure AttemptStatus = "Failure"
 )
 
-type QuestionReviewProcessingPayload struct {
+type SentenceReviewProcessingPayload struct {
 	UserID     string        `json:"userId"`
-	QuestionID string        `json:"questionId"`
+	SentenceID string        `json:"sentenceId"`
 	Status     AttemptStatus `json:"status"`
 }
 
-func (p *QuestionReviewProcessingPayload) Validate() error {
+func (p *SentenceReviewProcessingPayload) Validate() error {
 	if strings.TrimSpace(p.UserID) == "" {
 		return errors.New("userId is blank")
 	}
-	if strings.TrimSpace(p.QuestionID) == "" {
-		return errors.New("questionId is blank")
+	if strings.TrimSpace(p.SentenceID) == "" {
+		return errors.New("sentenceId is blank")
 	}
 	if p.Status != Success && p.Status != Failure {
 		return errors.New("invalid status value")

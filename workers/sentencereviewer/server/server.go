@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"time"
 
-	"munetmo.com/lingetic/workers/questionreviewer/db"
-	"munetmo.com/lingetic/workers/questionreviewer/types"
-	"munetmo.com/lingetic/workers/questionreviewer/usecase"
+	"munetmo.com/lingetic/workers/sentencereviewer/db"
+	"munetmo.com/lingetic/workers/sentencereviewer/types"
+	"munetmo.com/lingetic/workers/sentencereviewer/usecase"
 )
 
 type Server struct {
 	SecretKey    string
-	QuestionRepo *db.QuestionRepository
+	SentenceRepo *db.SentenceRepository
 	ReviewRepo   *db.ReviewRepository
 }
 
@@ -35,7 +35,7 @@ func (server *Server) ServeHTTP(writer http.ResponseWriter, request *http.Reques
 	}
 
 	defer request.Body.Close()
-	var wrapper types.GenericTaskPayloadWrapper[types.QuestionReviewProcessingPayload]
+	var wrapper types.GenericTaskPayloadWrapper[types.SentenceReviewProcessingPayload]
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&wrapper); err != nil {
 		http.Error(writer, "Invalid payload format: "+err.Error(), http.StatusBadRequest)
@@ -48,9 +48,9 @@ func (server *Server) ServeHTTP(writer http.ResponseWriter, request *http.Reques
 
 	ctx, cancel := context.WithTimeout(request.Context(), 10*time.Second)
 	defer cancel()
-	if err := usecase.ReviewQuestion(ctx, server.QuestionRepo, server.ReviewRepo, wrapper.Payload); err != nil {
-		log.Printf("ERROR: Failed to process review for question %s, user %s: %v",
-			wrapper.Payload.QuestionID, wrapper.Payload.UserID, err)
+	if err := usecase.ReviewSentence(ctx, server.SentenceRepo, server.ReviewRepo, wrapper.Payload); err != nil {
+		log.Printf("ERROR: Failed to process review for sentence %s, user %s: %v",
+			wrapper.Payload.SentenceID, wrapper.Payload.UserID, err)
 		http.Error(writer, "Review failed: "+err.Error(), http.StatusBadRequest)
 		return
 	}
