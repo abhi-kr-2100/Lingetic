@@ -295,6 +295,10 @@
         {
           "name": "getQuestionType",
           "parameterTypes": []
+        },
+        {
+          "name": "getSourceWordExplanations",
+          "parameterTypes": []
         }
       ]
     },
@@ -338,6 +342,10 @@
         },
         {
           "name": "getQuestionType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSentenceID",
           "parameterTypes": []
         },
         {
@@ -411,6 +419,24 @@
       ]
     },
     {
+      "type": "com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.SentenceReviewProcessingPayload",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "sentenceId",
+          "parameterTypes": []
+        },
+        {
+          "name": "status",
+          "parameterTypes": []
+        },
+        {
+          "name": "userId",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus",
       "allDeclaredFields": true
     },
@@ -467,6 +493,37 @@
       "allDeclaredFields": true
     },
     {
+      "type": "com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "int",
+            "java.lang.String",
+            "java.util.List",
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "comment",
+          "parameterTypes": []
+        },
+        {
+          "name": "properties",
+          "parameterTypes": []
+        },
+        {
+          "name": "startIndex",
+          "parameterTypes": []
+        },
+        {
+          "name": "word",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.munetmo.lingetic.LanguageTestService.Repositories.QuestionListRepository"
     },
     {
@@ -474,6 +531,12 @@
     },
     {
       "type": "com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository"
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageTestService.Repositories.SentenceRepository"
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageTestService.Repositories.SentenceReviewRepository"
     },
     {
       "type": "com.munetmo.lingetic.LanguageTestService.UseCases.AttemptQuestionUseCase",
@@ -535,10 +598,30 @@
           ]
         },
         {
+          "name": "sentenceRepository",
+          "parameterTypes": [
+            "org.springframework.jdbc.core.JdbcTemplate"
+          ]
+        },
+        {
+          "name": "sentenceReviewRepository",
+          "parameterTypes": [
+            "org.springframework.jdbc.core.JdbcTemplate"
+          ]
+        },
+        {
           "name": "takeRegularTestUseCase",
           "parameterTypes": [
             "com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository",
             "com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository"
+          ]
+        },
+        {
+          "name": "takeRegularTestUseCase",
+          "parameterTypes": [
+            "com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository",
+            "com.munetmo.lingetic.LanguageTestService.Repositories.SentenceReviewRepository",
+            "com.munetmo.lingetic.LanguageTestService.Repositories.SentenceRepository"
           ]
         },
         {
@@ -648,6 +731,14 @@
     },
     {
       "type": "com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.QuestionReviewPostgresRepository",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.SentencePostgresRepository",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.SentenceReviewPostgresRepository",
       "allDeclaredFields": true
     },
     {
@@ -8437,6 +8528,27 @@
       "glob": "db/migration"
     },
     {
+      "glob": "db/migration/V10__Add_Word_Explanations_Table.sql"
+    },
+    {
+      "glob": "db/migration/V11__Add_Sentence_ID_To_Questions_Table.sql"
+    },
+    {
+      "glob": "db/migration/V12__Add_Sentence_Reviews.sql"
+    },
+    {
+      "glob": "db/migration/V13__Add_Difficulty_To_Sentences_Table.sql"
+    },
+    {
+      "glob": "db/migration/V14__Remove_Question_Lists.sql"
+    },
+    {
+      "glob": "db/migration/V15__Add_Source_Word_Explanation_To_Questions.sql"
+    },
+    {
+      "glob": "db/migration/V16__Add_Foreign_Key_To_Sentence_Reviews_Language.sql"
+    },
+    {
       "glob": "db/migration/V1__Create_Tables.sql"
     },
     {
@@ -8459,6 +8571,9 @@
     },
     {
       "glob": "db/migration/V8__Add_SourceToTargetTranslation_Question_Type.sql"
+    },
+    {
+      "glob": "db/migration/V9__Create_Sentences_Table.sql"
     },
     {
       "glob": "dictionaries/system_full.dic"
@@ -9523,7 +9638,6 @@
       "glob": "sun/net/idn/uidna.spp"
     }
   ],
-  
   "bundles": [
     {
       "name": "jakarta.servlet.LocalStrings",
