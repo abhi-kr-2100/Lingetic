@@ -40,12 +40,13 @@ class GeminiClient:
         config = {
             "response_mime_type": "application/json",
             "response_schema": response_schema,
-            "thinking_config": genai.types.ThinkingConfig(thinking_budget=0),
+            # thinking_config is not supported for non-reasoning models
+            # "thinking_config": genai.types.ThinkingConfig(thinking_budget=0),
             **kwargs,
         }
 
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash-preview-04-17",
+            model="gemini-1.5-flash-8b",
             contents=prompt,
             config=config,
         )
