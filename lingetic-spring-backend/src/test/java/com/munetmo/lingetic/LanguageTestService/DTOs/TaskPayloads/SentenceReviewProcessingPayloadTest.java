@@ -25,7 +25,7 @@ class SentenceReviewProcessingPayloadTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenQuestionIdIsBlank() {
+    void shouldThrowExceptionWhenSentenceIdIsBlank() {
         assertThrows(IllegalArgumentException.class, () -> new SentenceReviewProcessingPayload("user123", "", AttemptStatus.Success));
     }
 }

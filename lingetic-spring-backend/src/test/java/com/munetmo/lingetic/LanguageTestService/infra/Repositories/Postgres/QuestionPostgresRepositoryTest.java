@@ -154,7 +154,7 @@ public class QuestionPostgresRepositoryTest {
             10,
             List.of()
         ));
-        
+
         var question1 = new FillInTheBlanksQuestion(
             UUID.randomUUID().toString(),
             Language.English,
@@ -164,7 +164,7 @@ public class QuestionPostgresRepositoryTest {
             sentenceId,
             List.of()
         );
-        
+
         var question2 = new FillInTheBlanksQuestion(
             UUID.randomUUID().toString(),
             Language.English,
@@ -174,7 +174,7 @@ public class QuestionPostgresRepositoryTest {
             sentenceId,
             List.of()
         );
-        
+
         var question3 = new FillInTheBlanksQuestion(
             UUID.randomUUID().toString(),
             Language.English,
@@ -184,19 +184,18 @@ public class QuestionPostgresRepositoryTest {
             sentenceId2,
             List.of()
         );
-        
+
         questionRepository.addQuestion(question1);
         questionRepository.addQuestion(question2);
         questionRepository.addQuestion(question3);
-        
+
         var questions = questionRepository.getQuestionsBySentenceID(sentenceId);
-        
+
         assertEquals(2, questions.size());
         assertTrue(questions.stream().anyMatch(q -> q.getID().equals(question1.getID())));
         assertTrue(questions.stream().anyMatch(q -> q.getID().equals(question2.getID())));
         assertFalse(questions.stream().anyMatch(q -> q.getID().equals(question3.getID())));
-        
-        // Check that questions are ordered by difficulty
+
         assertEquals(question1.getID(), questions.get(0).getID());
         assertEquals(question2.getID(), questions.get(1).getID());
     }
@@ -207,4 +206,3 @@ public class QuestionPostgresRepositoryTest {
         assertTrue(questions.isEmpty());
     }
 }
-

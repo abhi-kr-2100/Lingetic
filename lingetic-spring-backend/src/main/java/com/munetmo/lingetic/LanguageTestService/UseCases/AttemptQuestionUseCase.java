@@ -9,7 +9,6 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.SentenceReview
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Queues.QueueNames;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.lib.tasks.TaskQueue;
 
 public class AttemptQuestionUseCase {
@@ -39,7 +38,7 @@ public class AttemptQuestionUseCase {
             taskQueue.submitTask(
                     generateTaskId(userId, request.getSentenceID()),
                     payload,
-                    QueueNames.QUESTION_REVIEW_PROCESSING_QUEUE);
+                    QueueNames.REVIEW_PROCESSING_QUEUE);
         });
 
         return response;

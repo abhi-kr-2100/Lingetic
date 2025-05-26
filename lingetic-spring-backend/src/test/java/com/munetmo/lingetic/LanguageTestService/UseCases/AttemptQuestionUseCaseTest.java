@@ -56,7 +56,6 @@ class AttemptQuestionUseCaseTest {
     private SentencePostgresRepository sentenceRepository;
 
     private static final String TEST_USER_ID = UUID.randomUUID().toString();
-    private static final String TEST_QUESTION_LIST_ID = UUID.randomUUID().toString();
     private static final String TEST_SENTENCE_ID = UUID.randomUUID().toString();
 
     @BeforeEach

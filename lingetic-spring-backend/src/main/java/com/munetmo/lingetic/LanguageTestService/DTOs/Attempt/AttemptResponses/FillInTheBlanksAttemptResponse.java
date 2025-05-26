@@ -4,7 +4,6 @@ import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
 import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 
-import java.util.Collections;
 import java.util.List;
 
 public final class FillInTheBlanksAttemptResponse implements AttemptResponse {

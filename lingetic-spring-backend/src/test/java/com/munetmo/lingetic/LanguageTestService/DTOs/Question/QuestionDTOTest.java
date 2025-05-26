@@ -10,7 +10,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuestionDTOTest {
-    private static final String TEST_QUESTION_LIST_ID = "test-list";
     private static final String TEST_SENTENCE_ID = "test-sentence-id";
 
     @Test

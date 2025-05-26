@@ -1,10 +1,8 @@
 package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
-import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
-// Remove SourceToTargetTranslation import
 
 public sealed interface QuestionDTO permits FillInTheBlanksQuestionDTO {
     QuestionType getQuestionType();
