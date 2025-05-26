@@ -6,12 +6,10 @@ import { BookOpen, XCircle } from "lucide-react";
 import useQuestions, { SuccessState } from "./useQuestions";
 import assert from "@/utilities/assert";
 import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
-import SourceToTargetTranslation from "@/app/components/questions/SourceToTargetTranslation/SourceToTargetTranslation";
 import type {
   AttemptStatus,
-  FillInTheBlanksQuestion,
-  SourceToTargetTranslationQuestion,
-  Question,
+  FillInTheBlanksQuestionDTO,
+  QuestionDTO,
 } from "@/utilities/api-types";
 import type QuestionProps from "@/app/components/questions/QuestionProps";
 import NextButton from "./NextButton";
@@ -130,7 +128,7 @@ interface LearnPageParams {
 }
 
 interface RenderQuestionProps {
-  question: Question;
+  question: QuestionDTO;
   afterAnswerCheck?: (attemptStatus?: AttemptStatus) => void;
   NextButton: ReactNode;
 }
@@ -152,7 +150,7 @@ const RenderQuestion = ({
   );
 };
 
-const validateQuestionOrDie = (question: Question) => {
+const validateQuestionOrDie = (question: QuestionDTO) => {
   assert(question != null, "question is null or undefined");
   assert(
     question.questionType != null,
@@ -167,14 +165,7 @@ const validateQuestionOrDie = (question: Question) => {
 const questionTypeToComponentMap = {
   FillInTheBlanks: (props: QuestionProps) => (
     <FillInTheBlanks
-      question={props.question as FillInTheBlanksQuestion}
-      afterAnswerCheck={props.afterAnswerCheck}
-      NextButton={props.NextButton}
-    />
-  ),
-  SourceToTargetTranslation: (props: QuestionProps) => (
-    <SourceToTargetTranslation
-      question={props.question as SourceToTargetTranslationQuestion}
+      question={props.question as FillInTheBlanksQuestionDTO}
       afterAnswerCheck={props.afterAnswerCheck}
       NextButton={props.NextButton}
     />

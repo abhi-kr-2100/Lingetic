@@ -7,6 +7,7 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.Fi
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageService.Entities.LanguageModels.LanguageModel;
+import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -14,43 +15,18 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class FillInTheBlanksQuestion implements Question {
-    public record WordExplanation(int startIndex, String word, List<String> properties, String comment) {
-        public WordExplanation {
-            if (startIndex < 0) {
-                throw new IllegalArgumentException("startIndex must be non-negative");
-            }
-
-            if (word.isBlank()) {
-                throw new IllegalArgumentException("Word cannot be blank");
-            }
-
-            if (properties.stream().anyMatch(String::isBlank)) {
-                throw new IllegalArgumentException("Properties cannot contain blank strings");
-            }
-
-            if (comment.isBlank()) {
-                throw new IllegalArgumentException("Comment cannot be blank");
-            }
-        }
-    }
-
     private final String id;
     private final Language language;
-    private final String questionListId;
+    private final String sentenceId;
+    private final List<WordExplanation> sourceWordExplanations;
 
     private final static QuestionType questionType = QuestionType.FillInTheBlanks;
 
     public final String questionText;
     public final String hint;
     public final String answer;
-    public final int difficulty;
-    public final List<WordExplanation> explanation;
 
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, String questionListId) {
-        this(id, language, questionText, hint, answer, difficulty, questionListId, null);
-    }
-
-    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, int difficulty, String questionListId, @Nullable List<WordExplanation> explanation) {
+    public FillInTheBlanksQuestion(String id, Language language, String questionText, @Nullable String hint, String answer, String sentenceId, List<WordExplanation> sourceWordExplanations) {
         if (id.isBlank()) {
             throw new IllegalArgumentException("ID cannot be blank");
         }
@@ -67,8 +43,8 @@ public final class FillInTheBlanksQuestion implements Question {
             throw new IllegalArgumentException("Answer cannot be blank");
         }
 
-        if (questionListId.isBlank()) {
-            throw new IllegalArgumentException("Question list ID cannot be blank");
+        if (sentenceId.isBlank()) {
+            throw new IllegalArgumentException("Sentence ID cannot be blank");
         }
 
         this.id = id;
@@ -76,9 +52,8 @@ public final class FillInTheBlanksQuestion implements Question {
         this.questionText = questionText;
         this.hint = Objects.requireNonNullElse(hint, "");
         this.answer = answer;
-        this.difficulty = difficulty;
-        this.questionListId = questionListId;
-        this.explanation = Objects.requireNonNullElse(explanation, List.of());
+        this.sentenceId = sentenceId;
+        this.sourceWordExplanations = sourceWordExplanations;
     }
 
     @Override
@@ -97,8 +72,13 @@ public final class FillInTheBlanksQuestion implements Question {
     }
 
     @Override
-    public String getQuestionListID() {
-        return questionListId;
+    public String getSentenceID() {
+        return sentenceId;
+    }
+
+    @Override
+    public List<WordExplanation> getSourceWordExplanations() {
+        return sourceWordExplanations;
     }
 
     @Override
@@ -115,13 +95,8 @@ public final class FillInTheBlanksQuestion implements Question {
         return new FillInTheBlanksAttemptResponse(
             areEquivalent ? AttemptStatus.Success : AttemptStatus.Failure,
             answer,
-            this.explanation
+            sourceWordExplanations
         );
-    }
-
-    @Override
-    public int getDifficulty() {
-        return difficulty;
     }
 
     @Override
@@ -129,12 +104,11 @@ public final class FillInTheBlanksQuestion implements Question {
         return Map.of(
             "questionText", questionText,
             "hint", hint,
-            "answer", answer,
-            "explanation", explanation
+            "answer", answer
         );
     }
 
-    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, int difficulty, String questionListId, Map<String, Object> data) {
+    public static FillInTheBlanksQuestion createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, List<WordExplanation> sourceWordExplanations, Map<String, Object> data) {
         if (!data.containsKey("questionText") || !data.containsKey("answer")) {
             throw new IllegalArgumentException("Required fields 'questionText' and 'answer' must be present in data");
         }
@@ -143,48 +117,6 @@ public final class FillInTheBlanksQuestion implements Question {
         var answer = (String) data.get("answer");
         var hint = (String) data.getOrDefault("hint", "");
 
-        if (data.containsKey("explanation") && !(data.get("explanation") instanceof List<?>)) {
-            throw new IllegalArgumentException("Field 'explanation' must be a List.");
-        }
-
-        var rawExplanation = (List<?>) data.getOrDefault("explanation", List.of());
-        var explanation = rawExplanation.stream().map(obj -> {
-            var rawWordExp = (Map<?, ?>) obj;
-
-            if (!rawWordExp.containsKey("startIndex")) {
-                throw new IllegalArgumentException("Required field 'startIndex' must be present in explanation");
-            } else if (!(rawWordExp.get("startIndex") instanceof Integer)) {
-                throw new IllegalArgumentException("Field 'startIndex' must be an integer.");
-            }
-
-            if (!rawWordExp.containsKey("word")) {
-                throw new IllegalArgumentException("Required field 'word' must be present in explanation");
-            } else if (!(rawWordExp.get("word") instanceof String)) {
-                throw new IllegalArgumentException("Field 'word' must be a string.");
-            }
-
-            if (!rawWordExp.containsKey("properties")) {
-                throw new IllegalArgumentException("Required field 'properties' must be present in explanation");
-            } else if (!(rawWordExp.get("properties") instanceof List<?>)) {
-                throw new IllegalArgumentException("Field 'properties' must be a List.");
-            } else if (((List<?>) rawWordExp.get("properties")).stream().anyMatch(prop -> !(prop instanceof String))) {
-                throw new IllegalArgumentException("Field 'properties' must be a List of Strings.");
-            }
-
-            if (!rawWordExp.containsKey("comment")) {
-                throw new IllegalArgumentException("Required field 'comment' must be present in explanation");
-            } else if (!(rawWordExp.get("comment") instanceof String)) {
-                throw new IllegalArgumentException("Field 'comment' must be a string.");
-            }
-
-            var startIndex = (int) rawWordExp.get("startIndex");
-            var word = (String) rawWordExp.get("word");
-            var properties = (List<String>) rawWordExp.get("properties");
-            var comment = (String) rawWordExp.get("comment");
-
-            return new WordExplanation(startIndex, word, properties, comment);
-        }).toList();
-
-        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, difficulty, questionListId, explanation);
+        return new FillInTheBlanksQuestion(id, language, questionText, hint, answer, sentenceId, sourceWordExplanations);
     }
 }

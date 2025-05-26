@@ -3,13 +3,14 @@ package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslation;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuestionDTOTest {
-    private static final String TEST_QUESTION_LIST_ID = "test-list";
+    private static final String TEST_SENTENCE_ID = "test-sentence-id";
 
     @Test
     void shouldConvertFillInTheBlanksQuestionToDTO() {
@@ -19,35 +20,16 @@ class QuestionDTOTest {
             "Fill in: ___",
             "This is a hint",
             "test answer",
-            5,
-            TEST_QUESTION_LIST_ID
+            TEST_SENTENCE_ID,
+            List.of()
         );
 
         QuestionDTO dto = QuestionDTO.fromQuestion(question);
 
         assertInstanceOf(FillInTheBlanksQuestionDTO.class, dto);
-        assertEquals("q123", dto.getID());
         assertEquals(QuestionType.FillInTheBlanks, dto.getQuestionType());
+        assertEquals(TEST_SENTENCE_ID, dto.getSentenceID());
         assertEquals("Fill in: ___", ((FillInTheBlanksQuestionDTO) dto).getText());
         assertEquals("This is a hint", ((FillInTheBlanksQuestionDTO) dto).getHint());
-    }
-
-    @Test
-    void shouldConvertSourceToTargetTranslationQuestionToDTO() {
-        var question = new SourceToTargetTranslation(
-            "q123",
-            Language.English,
-            "Jag heter David.",
-            "I'm David.",
-            5,
-            TEST_QUESTION_LIST_ID
-        );
-
-        var dto = QuestionDTO.fromQuestion(question);
-
-        assertInstanceOf(SourceToTargetTranslationDTO.class, dto);
-        assertEquals("q123", dto.getID());
-        assertEquals(QuestionType.SourceToTargetTranslation, dto.getQuestionType());
-        assertEquals("I'm David.", ((SourceToTargetTranslationDTO) dto).getTranslation());
     }
 }

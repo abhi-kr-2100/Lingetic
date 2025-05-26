@@ -6,7 +6,7 @@ import {
   getQuestionAssetTypes,
 } from "@/utilities/api";
 import assert from "@/utilities/assert";
-import type { Question } from "@/utilities/api-types";
+import type { QuestionDTO } from "@/utilities/api-types";
 import { useAuth } from "@clerk/nextjs";
 
 interface UseQuestionsParams {
@@ -36,7 +36,7 @@ export interface SuccessState {
   isLoading: false;
   isError: false;
   hasQuestions: true;
-  currentQuestion: Question;
+  currentQuestion: QuestionDTO;
   isLastQuestion: boolean;
   onNext: () => void;
   totalQuestions: number;
@@ -87,8 +87,8 @@ export default function useQuestions({
       const assetTypes = getQuestionAssetTypes(question.questionType);
       assetTypes.forEach((assetType) => {
         queryClient.prefetchQuery({
-          queryKey: ["questionAssets", question.id, assetType],
-          queryFn: () => fetchQuestionAsset(question.id, assetType),
+          queryKey: ["questionAssets", question.sentenceID, assetType],
+          queryFn: () => fetchQuestionAsset(question.sentenceID, assetType),
           // 1 hour; assumed time users would spend with a single question
           staleTime: 1 * 60 * 60 * 1000,
         });
@@ -134,7 +134,7 @@ export default function useQuestions({
     isLoading: false,
     isError: false,
     hasQuestions: true,
-    currentQuestion: questions.at(currentQuestionIndex) as Question,
+    currentQuestion: questions.at(currentQuestionIndex) as QuestionDTO,
     isLastQuestion: currentQuestionIndex === questions.length - 1,
     onNext,
     totalQuestions: questions.length,

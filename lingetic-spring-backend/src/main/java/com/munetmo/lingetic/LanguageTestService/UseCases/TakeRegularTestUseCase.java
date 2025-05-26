@@ -4,61 +4,77 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
+import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
+import com.munetmo.lingetic.LanguageTestService.Entities.SentenceReview;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.*;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
-import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionReviewRepository;
+import com.munetmo.lingetic.LanguageTestService.Repositories.SentenceReviewRepository;
+import com.munetmo.lingetic.LanguageTestService.Repositories.SentenceRepository;
 
 public class TakeRegularTestUseCase {
     public static final int limit = 10;
 
     private final QuestionRepository questionRepository;
-    private final QuestionReviewRepository questionReviewRepository;
+    private final SentenceReviewRepository sentenceReviewRepository;
+    private final SentenceRepository sentenceRepository;
 
     public TakeRegularTestUseCase(
         QuestionRepository questionRepository,
-        QuestionReviewRepository questionReviewRepository
+        SentenceReviewRepository sentenceReviewRepository,
+        SentenceRepository sentenceRepository
     ) {
         this.questionRepository = questionRepository;
-        this.questionReviewRepository = questionReviewRepository;
+        this.sentenceReviewRepository = sentenceReviewRepository;
+        this.sentenceRepository = sentenceRepository;
     }
 
-    public List<QuestionDTO> execute(String userId, Language language, @Nullable String questionListId) {
+    public List<QuestionDTO> execute(String userId, Language language) {
         var now = Instant.now();
 
-        // Some of the questions to review get filtered out by the question list filter.
-        // This is a bug, but not a severe one. Ideally, getTopQuestionsToReview should
-        // be modified to take a question list ID.
-        var questionReviews = questionReviewRepository.getTopQuestionsToReview(userId, language, limit);
-        var questionsToReviewNow = questionReviews.stream()
+        var sentenceReviews = sentenceReviewRepository.getTopSentencesToReview(userId, language, limit);
+        var sentencesToReviewNow = sentenceReviews.stream()
             .filter(r -> r.getNextReviewInstant().isBefore(now))
-            .map(r -> questionRepository.getQuestionByID(r.questionID))
-            .filter(q -> questionListId == null || q.getQuestionListID().equals(questionListId))
+            .map(this::getQuestionForSentenceReview)
             .toList();
-        var questionList = new ArrayList<>(questionsToReviewNow);
+
+        var questionList = new ArrayList<Question>(sentencesToReviewNow);
 
         int remainingCount = limit - questionList.size();
-        var unreviewedQuestions = questionRepository
-            .getUnreviewedQuestions(userId, language, remainingCount)
-            .stream()
-            .filter(q -> questionListId == null || q.getQuestionListID().equals(questionListId))
+
+        var unreviewedSentences = sentenceRepository.getUnreviewedSentences(userId, language, remainingCount);
+        var unreviewedQuestions = unreviewedSentences.stream()
+            .map(this::getQuestionForSentence)
+            .limit(remainingCount)
             .toList();
-        questionList.addAll(
-                unreviewedQuestions.subList(0, Math.min(unreviewedQuestions.size(), remainingCount)));
+        
+        questionList.addAll(unreviewedQuestions);
 
         int stillRemainingCount = limit - questionList.size();
-        var questionsToReviewLater = questionReviews.stream()
+        var sentencesToReviewLater = sentenceReviews.stream()
             .filter(r -> !r.getNextReviewInstant().isBefore(now))
-            .map(r -> questionRepository.getQuestionByID(r.questionID))
-            .filter(q -> questionListId == null || q.getQuestionListID().equals(questionListId))
+            .map(this::getQuestionForSentenceReview)
             .limit(stillRemainingCount)
             .toList();
-        questionList.addAll(questionsToReviewLater);
+        questionList.addAll(sentencesToReviewLater);
 
         return questionList.stream()
             .map(QuestionDTO::fromQuestion)
             .toList();
+    }
+
+    private Question getQuestionForSentenceReview(SentenceReview r) {
+        var sentence = sentenceRepository.getSentenceByID(r.sentenceID);
+        return getQuestionForSentence(sentence);
+    }
+
+    private Question getQuestionForSentence(Sentence sentence) {
+        var questions = questionRepository.getQuestionsBySentenceID(sentence.id().toString());
+        if (questions.isEmpty()) {
+            throw new IllegalStateException("No questions found for sentence " + sentence.id());
+        }
+        return questions.getFirst();
     }
 }

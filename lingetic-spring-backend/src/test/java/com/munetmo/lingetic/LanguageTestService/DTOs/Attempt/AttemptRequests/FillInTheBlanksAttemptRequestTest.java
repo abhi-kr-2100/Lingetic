@@ -13,26 +13,26 @@ class FillInTheBlanksAttemptRequestTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void constructorShouldThrowExceptionWhenQuestionIDIsBlank() {
+    void constructorShouldThrowExceptionWhenSentenceIDIsBlank() {
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> new FillInTheBlanksAttemptRequest("", "answer")
         );
         assertNotNull(exception.getMessage());
-        assertTrue(exception.getMessage().contains("questionID"));
+        assertTrue(exception.getMessage().contains("sentenceID"));
     }
 
     @Test
     void constructorShouldCreateAValidObjectWhenGivenValidArguments() {
         var request = new FillInTheBlanksAttemptRequest("test-id", "test-response");
 
-        assertEquals("test-id", request.getQuestionID());
+        assertEquals("test-id", request.getSentenceID());
         assertEquals("test-response", request.getUserResponse());
         assertEquals(QuestionType.FillInTheBlanks, request.getQuestionType());
     }
 
     @Test
-    void fromJsonNodeShouldThrowExceptionWhenQuestionIDIsMissing() throws JsonProcessingException {
+    void fromJsonNodeShouldThrowExceptionWhenSentenceIDIsMissing() throws JsonProcessingException {
         var json = """
             {
                 "userResponse": "test answer"
@@ -45,14 +45,14 @@ class FillInTheBlanksAttemptRequestTest {
             () -> FillInTheBlanksAttemptRequest.fromJsonNode(node)
         );
         assertNotNull(exception.getMessage());
-        assertTrue(exception.getMessage().contains("questionID"));
+        assertTrue(exception.getMessage().contains("sentenceID"));
     }
 
     @Test
     void fromJsonNodeShouldThrowExceptionWhenUserResponseIsMissing() throws JsonProcessingException {
         var json = """
             {
-                "questionID": "123"
+                "sentenceID": "123"
             }
             """;
         var node = objectMapper.readTree(json);
@@ -69,7 +69,7 @@ class FillInTheBlanksAttemptRequestTest {
     void shouldCreateValidRequestFromValidJson() throws JsonProcessingException {
         var json = """
             {
-                "questionID": "123",
+                "sentenceID": "123",
                 "userResponse": "test answer"
             }
             """;
@@ -77,7 +77,7 @@ class FillInTheBlanksAttemptRequestTest {
 
         var request = FillInTheBlanksAttemptRequest.fromJsonNode(node);
 
-        assertEquals("123", request.getQuestionID());
+        assertEquals("123", request.getSentenceID());
         assertEquals("test answer", request.getUserResponse());
         assertEquals(QuestionType.FillInTheBlanks, request.getQuestionType());
     }

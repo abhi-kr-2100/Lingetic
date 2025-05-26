@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import assert from "@/utilities/assert";
 import type QuestionProps from "../QuestionProps";
 import type {
-  FillInTheBlanksQuestion,
+  FillInTheBlanksQuestionDTO,
   FillInTheBlanksAttemptResponse,
 } from "@/utilities/api-types";
 
@@ -15,7 +15,7 @@ import MainComponent from "./MainComponent";
 import useTextUserAnswer from "../hooks/useTextUserAnswer";
 
 interface FillInTheBlanksProps extends QuestionProps {
-  question: FillInTheBlanksQuestion;
+  question: FillInTheBlanksQuestionDTO;
 }
 
 export default function FillInTheBlanks({
@@ -31,7 +31,7 @@ export default function FillInTheBlanks({
 
   useEffect(() => {
     setAttemptResponse(undefined);
-  }, [question.id]);
+  }, [question.sentenceID]);
 
   const { answer, setAnswer, checkAnswer, isChecking, isChecked, isError } =
     useTextUserAnswer<FillInTheBlanksAttemptResponse>(question);
@@ -81,9 +81,12 @@ export default function FillInTheBlanks({
   );
 }
 
-function validateQuestionOrDie(question: FillInTheBlanksQuestion) {
+function validateQuestionOrDie(question: FillInTheBlanksQuestionDTO) {
   assert(question != null, "question is null or undefined");
-  assert(question.id?.trim()?.length > 0, "question.id is empty");
+  assert(
+    question.sentenceID?.trim()?.length > 0,
+    "question.sentenceID is empty"
+  );
   assert(
     question.questionType === "FillInTheBlanks",
     "question.questionType is not FillInTheBlanks"

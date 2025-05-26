@@ -13,7 +13,7 @@ class AttemptRequestTest {
     void shouldThrowExceptionWhenQuestionTypeMissing() throws JsonProcessingException {
         var json = """
             {
-                "questionID": "123"
+                "sentenceID": "123"
             }
             """;
         var node = objectMapper.readTree(json);
@@ -31,7 +31,7 @@ class AttemptRequestTest {
         var json = """
             {
                 "questionType": "ExampleInvalidType",
-                "questionID": "123"
+                "sentenceID": "123"
             }
             """;
         var node = objectMapper.readTree(json);
@@ -46,7 +46,7 @@ class AttemptRequestTest {
         var json = """
             {
                 "questionType": "FillInTheBlanks",
-                "questionID": "123",
+                "sentenceID": "123",
                 "userResponse": "test answer"
             }
             """;
@@ -57,29 +57,8 @@ class AttemptRequestTest {
         assertInstanceOf(FillInTheBlanksAttemptRequest.class, request);
 
         var fillInBlanksRequest = (FillInTheBlanksAttemptRequest) request;
-        assertEquals("123", fillInBlanksRequest.getQuestionID());
+        assertEquals("123", fillInBlanksRequest.getSentenceID());
         assertEquals("test answer", fillInBlanksRequest.getUserResponse());
         assertEquals(QuestionType.FillInTheBlanks, fillInBlanksRequest.getQuestionType());
-    }
-
-    @Test
-    void shouldCreateSourceToTargetTranslationRequestWhenTypeMatches() throws JsonProcessingException {
-        var json = """
-            {
-                "questionType": "SourceToTargetTranslation",
-                "questionID": "123",
-                "userResponse": "test answer"
-            }
-            """;
-        var node = objectMapper.readTree(json);
-
-        var request = AttemptRequest.fromJsonNode(node);
-
-        assertInstanceOf(SourceToTargetTranslationAttemptRequest.class, request);
-
-        var sourceToTargetTranslationRequest = (SourceToTargetTranslationAttemptRequest) request;
-        assertEquals("123", sourceToTargetTranslationRequest.getQuestionID());
-        assertEquals("test answer", sourceToTargetTranslationRequest.getUserResponse());
-        assertEquals(QuestionType.SourceToTargetTranslation, sourceToTargetTranslationRequest.getQuestionType());
     }
 }

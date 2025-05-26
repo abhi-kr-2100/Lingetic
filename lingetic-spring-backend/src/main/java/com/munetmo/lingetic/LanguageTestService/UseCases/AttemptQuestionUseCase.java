@@ -5,11 +5,10 @@ import java.util.concurrent.ExecutorService;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
-import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.QuestionReviewProcessingPayload;
+import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.SentenceReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Queues.QueueNames;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.lib.tasks.TaskQueue;
 
 public class AttemptQuestionUseCase {
@@ -27,29 +26,29 @@ public class AttemptQuestionUseCase {
 
     public AttemptResponse execute(String userId, AttemptRequest request)
             throws QuestionNotFoundException {
-        var question = questionRepository.getQuestionByID(request.getQuestionID());
+        var question = questionRepository.getQuestionBySentenceID(request.getSentenceID());
         var response = question.assessAttempt(request);
 
-        var payload = new QuestionReviewProcessingPayload(
+        var payload = new SentenceReviewProcessingPayload(
                 userId,
-                question.getID(),
+                request.getSentenceID(),
                 response.getAttemptStatus());
 
-        taskSubmitExecutor.submit(() -> {
+        var unused = taskSubmitExecutor.submit(() -> {
             taskQueue.submitTask(
-                    generateTaskId(userId, question),
+                    generateTaskId(userId, request.getSentenceID()),
                     payload,
-                    QueueNames.QUESTION_REVIEW_PROCESSING_QUEUE);
+                    QueueNames.REVIEW_PROCESSING_QUEUE);
         });
 
         return response;
     }
 
-    private String generateTaskId(String userId, Question question) {
+    private String generateTaskId(String userId, String sentenceID) {
         // timestamp in seconds because updates to the same question by the same user
         // should be considered duplicates if they happen in quick succession
         var timestamp = Instant.now().getEpochSecond();
 
-        return String.format("AttemptQuestionUseCase|%s|%s|%s", userId, question.getID(), timestamp);
+        return String.format("AttemptQuestionUseCase|%s|%s|%s", userId, sentenceID, timestamp);
     }
 }

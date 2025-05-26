@@ -1,0 +1,22 @@
+{
+  "schema": [
+    {
+      "instructions": "Teach basic greetings (Bonjour, Salut, Au revoir), politeness (S'il vous plaît, Merci), introductions (Je m'appelle, Voici), simple questions (Comment ça va?), subject pronouns (je, tu, il, elle, on), and the verb s'appeler (present tense). Average sentence length: 3 words.",
+      "level": "A1",
+      "number": 5,
+      "theme": "Greetings and Introductions"
+    },
+    {
+      "instructions": "Expand vocabulary for food items and cooking actions (préparer, manger, boire). Revisit partitive articles. Understand basic recipes. Average sentence length: 6 words.",
+      "level": "A2",
+      "number": 2,
+      "theme": "Food and Cooking"
+    },
+    {
+      "instructions": "Teach discussing environmental problems (pollution, réchauffement climatique), sustainability (développement durable), and solutions (énergie renouvelable, recyclage). Use conditional for hypotheticals and complex structures for cause/effect. Average sentence length: 10 words.",
+      "level": "B2",
+      "number": 5,
+      "theme": "Environmental Issues and Sustainability"
+    }
+  ]
+}

@@ -4,17 +4,19 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.Fil
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.FillInTheBlanksAttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
-import org.junit.jupiter.api.Nested;
+import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FillInTheBlanksQuestionTest {
-    private final String defaultQuestionListId ="list-id";
+    private final String defaultSentenceId = "sentence-id";
 
     @Test
     void constructorShouldCreateValidObjectWithCorrectValues() {
@@ -24,11 +26,7 @@ class FillInTheBlanksQuestionTest {
         var hint = "test hint";
         var answer = "blank";
 
-        var explanation = new ArrayList<FillInTheBlanksQuestion.WordExplanation>();
-        explanation.add(new FillInTheBlanksQuestion.WordExplanation(
-                1, "blank", List.of("article", "plural", "definite"), "test comment"));
-
-        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, 5, defaultQuestionListId, explanation);
+        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, defaultSentenceId, List.of());
 
         assertEquals(id, question.getID());
         assertEquals(language, question.getLanguage());
@@ -36,25 +34,23 @@ class FillInTheBlanksQuestionTest {
         assertEquals(questionText, question.questionText);
         assertEquals(hint, question.hint);
         assertEquals(answer, question.answer);
-        assertEquals(5, question.difficulty);
-        assertEquals(defaultQuestionListId, question.getQuestionListID());
-
-        assertEquals(1, question.explanation.size());
-        var first = explanation.getFirst();
-        assertEquals(1, first.startIndex());
-        assertEquals("blank", first.word());
-        assertEquals(List.of("article", "plural", "definite"), first.properties());
-        assertEquals("test comment", first.comment());
+        assertEquals(defaultSentenceId, question.getSentenceID());
+        assertEquals(Collections.emptyList(), question.getSourceWordExplanations());
     }
 
     @Test
-    void constructorShouldCreateValidObjectWithoutExplanation() {
+    void constructorShouldCreateValidObjectWithSourceWordExplanation() {
         var id = "test-id";
         var language = Language.English;
         var questionText = "Fill in the ___";
         var hint = "test hint";
         var answer = "blank";
-        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, 5, defaultQuestionListId);
+        var wordExplanations = List.of(
+            new WordExplanation(0, "Fill", List.of("verb"), "To complete something"),
+            new WordExplanation(8, "the", List.of("article"), "Definite article")
+        );
+
+        FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(id, language, questionText, hint, answer, defaultSentenceId, wordExplanations);
 
         assertEquals(id, question.getID());
         assertEquals(language, question.getLanguage());
@@ -62,24 +58,17 @@ class FillInTheBlanksQuestionTest {
         assertEquals(questionText, question.questionText);
         assertEquals(hint, question.hint);
         assertEquals(answer, question.answer);
-        assertEquals(5, question.difficulty);
-        assertEquals(defaultQuestionListId, question.getQuestionListID());
-        assertTrue(question.explanation.isEmpty());
+        assertEquals(defaultSentenceId, question.getSentenceID());
+        assertEquals(wordExplanations, question.getSourceWordExplanations());
     }
+
+
 
     @ParameterizedTest
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenIdIsInvalid(String id) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion(id, Language.English, "Fill in the ___", "hint", "answer", 5, defaultQuestionListId)
-        );
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {" ", "   ", "\t", "\n"})
-    void constructorShouldThrowExceptionWhenQuestionListIdIsInvalid(String questionListId) {
-        assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", "answer", 5, questionListId)
+            new FillInTheBlanksQuestion(id, Language.English, "Fill in the ___", "hint", "answer", defaultSentenceId, List.of())
         );
     }
 
@@ -87,7 +76,7 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n", "No blank here", "Multiple___ ___blanks", "Wrong blank --"})
     void constructorShouldThrowExceptionWhenQuestionTextIsInvalid(String questionText) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, questionText, "hint", "answer", 5, defaultQuestionListId)
+            new FillInTheBlanksQuestion("id", Language.English, questionText, "hint", "answer", defaultSentenceId, List.of())
         );
     }
 
@@ -95,17 +84,14 @@ class FillInTheBlanksQuestionTest {
     @ValueSource(strings = {"", " ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenAnswerIsInvalid(String answer) {
         assertThrows(IllegalArgumentException.class, () ->
-            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", answer, 5, defaultQuestionListId)
+            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", answer, defaultSentenceId, List.of())
         );
     }
 
     @Test
     void assessAttemptShouldReturnSuccessForCorrectAnswer() {
-        var explanation = List.of(
-            new FillInTheBlanksQuestion.WordExplanation(1, "blank", List.of("article", "plural", "definite"), "test comment")
-        );
         FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "blank", 5, defaultQuestionListId, explanation
+            "id", Language.English, "Fill in the ___", "hint", "blank", defaultSentenceId, List.of()
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), question.answer);
 
@@ -113,16 +99,12 @@ class FillInTheBlanksQuestionTest {
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());
         assertEquals(question.answer, response.getCorrectAnswer());
-        assertEquals(explanation, response.getExplanation());
     }
 
     @Test
     void assessAttemptShouldReturnFailureForIncorrectAnswer() {
-        var explanation = List.of(
-            new FillInTheBlanksQuestion.WordExplanation(1, "blank", List.of("article", "plural", "definite"), "test comment")
-        );
         FillInTheBlanksQuestion question = new FillInTheBlanksQuestion(
-            "id", Language.English, "Fill in the ___", "hint", "blank", 5, defaultQuestionListId, explanation
+            "id", Language.English, "Fill in the ___", "hint", "blank", defaultSentenceId, List.of()
         );
         var request = new FillInTheBlanksAttemptRequest(question.getID(), "wrong");
 
@@ -130,7 +112,6 @@ class FillInTheBlanksQuestionTest {
 
         assertEquals(AttemptStatus.Failure, response.getAttemptStatus());
         assertEquals(question.answer, response.getCorrectAnswer());
-        assertEquals(explanation, response.getExplanation());
     }
 
     @Test
@@ -141,8 +122,8 @@ class FillInTheBlanksQuestionTest {
             "Fill in the ___",
             "test hint",
             "blank",
-            5,
-            defaultQuestionListId
+            defaultSentenceId,
+            List.of()
         );
 
         var data = question.getQuestionTypeSpecificData();
@@ -150,12 +131,6 @@ class FillInTheBlanksQuestionTest {
         assertEquals("Fill in the ___", data.get("questionText"));
         assertEquals("test hint", data.get("hint"));
         assertEquals("blank", data.get("answer"));
-
-        var explanation = data.get("explanation");
-        assertInstanceOf(List.class, explanation);
-        var castedExplanation = (List<?>) explanation;
-        assertNotNull(castedExplanation);
-        assertTrue((castedExplanation.isEmpty()));
     }
 
     @Test
@@ -166,27 +141,26 @@ class FillInTheBlanksQuestionTest {
             "Fill in the ___",
             "test hint",
             "blank",
-            5,
-            defaultQuestionListId
+            defaultSentenceId,
+            List.of()
         );
 
         var data = originalQuestion.getQuestionTypeSpecificData();
+        
         var newQuestion = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
             originalQuestion.getID(),
             originalQuestion.getLanguage(),
-            originalQuestion.getDifficulty(),
-            originalQuestion.getQuestionListID(),
+            originalQuestion.getSentenceID(),
+            Collections.emptyList(),
             data
         );
-
+        
         assertEquals(originalQuestion.getID(), newQuestion.getID());
         assertEquals(originalQuestion.getLanguage(), newQuestion.getLanguage());
-        assertEquals(originalQuestion.getDifficulty(), newQuestion.getDifficulty());
-        assertEquals(originalQuestion.getQuestionListID(), newQuestion.getQuestionListID());
-        assertEquals(originalQuestion.questionText, ((FillInTheBlanksQuestion)newQuestion).questionText);
-        assertEquals(originalQuestion.hint, ((FillInTheBlanksQuestion)newQuestion).hint);
-        assertEquals(originalQuestion.answer, ((FillInTheBlanksQuestion)newQuestion).answer);
-        assertTrue(newQuestion.explanation.isEmpty());
+        assertEquals(originalQuestion.questionText, newQuestion.questionText);
+        assertEquals(originalQuestion.hint, newQuestion.hint);
+        assertEquals(originalQuestion.answer, newQuestion.answer);
+        assertEquals(originalQuestion.getSentenceID(), newQuestion.getSentenceID());
     }
 
     @Test
@@ -199,13 +173,12 @@ class FillInTheBlanksQuestionTest {
         var newQuestion = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
             "test-id",
             Language.English,
-            5,
-            defaultQuestionListId,
+            defaultSentenceId,
+            Collections.emptyList(),
             data
         );
 
         assertEquals("", newQuestion.hint);
-        assertTrue(newQuestion.explanation.isEmpty());
     }
 
     @Test
@@ -216,220 +189,14 @@ class FillInTheBlanksQuestionTest {
                 FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
-                        5,
-                        defaultQuestionListId,
+                        defaultSentenceId,
+                        Collections.emptyList(),
                         incompleteData
                 )
         );
     }
 
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenStartIndexIsMissing() {
-        var explanationData = Map.of(
-                "word", "example",
-                "properties", List.of("prop1"),
-                "comment", "This is a comment"
-        );
 
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenStartIndexIsNotAnInt() {
-        var explanationData = Map.of(
-                "startIndex", "not an int",
-                "word", "example",
-                "properties", List.of("prop1"),
-                "comment", "This is a comment"
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenWordIsMissing() {
-        var explanationData = Map.of(
-                "startIndex", 1,
-                "properties", List.of("prop1"),
-                "comment", "This is a comment"
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenWordIsNotAString() {
-        var explanationData = Map.of(
-                "startIndex", 1,
-                "word", 1,
-                "properties", List.of("prop1"),
-                "comment", "This is a comment"
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenCommentIsMissing() {
-        var explanationData = Map.of(
-                "startIndex", 1,
-                "word", "example",
-                "properties", List.of("prop1")
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenCommentIsNotAString() {
-        var explanationData = Map.of(
-                "startIndex", 1,
-                "word", "example",
-                "properties", List.of("prop1"),
-                "comment", 1
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenPropertiesIsMissing() {
-        var explanationData = Map.of(
-                "startIndex", 1,
-                "word", "example",
-                "comment", "This is a comment"
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenPropertiesIsNotAList() {
-        var explanationData = Map.of(
-                "startIndex", 1,
-                "word", "example",
-                "properties", "not a list",
-                "comment", "This is a comment"
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenPropertiesIsNotAListOfStrings() {
-        var explanationData = Map.of(
-                "startIndex", 1,
-                "word", "example",
-                "properties", List.of(1),
-                "comment", "This is a comment"
-        );
-
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldHandleExplanationField() {
-        var explanationList = List.of(
-            Map.of(
-                "startIndex", 1,
-                "word", "Les",
-                "properties", List.of("article", "plural", "definite"),
-                "comment", "Used because 'étudiants' is plural noun."
-            )
-        );
-
-        var data = Map.of(
-            "questionText", "Les ___ étudiants",
-            "answer", "Les",
-            "hint", "article",
-            "explanation", explanationList
-        );
-        var question = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
-            "id",
-            Language.French,
-            3,
-            defaultQuestionListId,
-            data
-        );
-        assertFalse(question.explanation.isEmpty());
-        var first = question.explanation.get(0);
-        assertEquals(1, first.startIndex());
-        assertEquals("Les", first.word());
-        assertEquals(java.util.List.of("article", "plural", "definite"), first.properties());
-        assertEquals("Used because 'étudiants' is plural noun.", first.comment());
-    }
 
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenAnswerIsMissing() {
@@ -439,91 +206,45 @@ class FillInTheBlanksQuestionTest {
                 FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
-                        5,
-                        defaultQuestionListId,
+                        defaultSentenceId,
+                        Collections.emptyList(),
                         incompleteData
                 )
         );
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {" ", "   ", "\t", "\n"})
+    void constructorShouldThrowExceptionWhenSentenceIdIsInvalid(String sentenceId) {
+        assertThrows(IllegalArgumentException.class, () ->
+            new FillInTheBlanksQuestion("id", Language.English, "Fill in the ___", "hint", "answer", sentenceId, List.of())
+        );
+    }
+
     @Test
-    void createFromQuestionTypeSpecificDataShouldHandleMissingExplanationField() {
+    void createFromQuestionTypeSpecificDataWithSourceWordExplanationParameter() {
+        var wordExplanations = List.of(
+            new WordExplanation(0, "Fill", List.of("verb"), "To complete something"),
+            new WordExplanation(8, "the", List.of("article"), "Definite article")
+        );
+        
         Map<String, Object> data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank"
+            "questionText", "Fill in the ___",
+            "answer", "blank",
+            "hint", "test hint"
         );
 
-        var question = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        assertTrue(question.explanation.isEmpty());
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenExplanationIsNotAList() {
-        Map<String, Object> data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", "not a list"
+        var newQuestion = FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(
+            "test-id",
+            Language.English,
+            defaultSentenceId,
+            wordExplanations,
+            data
         );
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenExplanationIsMapButNotMapFromString() {
-        var explanationData = Map.of(
-                123, "value" // not a Map<String, Object>
-        );
-        var data = Map.of(
-                "questionText", "Fill in the ___",
-                "answer", "blank",
-                "explanation", List.of(explanationData)
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            FillInTheBlanksQuestion.createFromQuestionTypeSpecificData("id", Language.English, 1, "list-id", data);
-        });
-    }
-
-    @Nested
-    class WordExplanationTest {
-        @Test
-        void constructorShouldThrowExceptionForNegativeStartIndex() {
-            assertThrows(IllegalArgumentException.class, () -> {
-                new FillInTheBlanksQuestion.WordExplanation(-1, "word", Arrays.asList("prop1"), "comment");
-            });
-        }
-
-        @Test
-        void constructorShouldThrowExceptionForBlankWord() {
-            assertThrows(IllegalArgumentException.class, () -> {
-                new FillInTheBlanksQuestion.WordExplanation(1, "", Arrays.asList("prop1"), "comment");
-            });
-        }
-
-        @Test
-        void constructorShouldThrowExceptionForBlankProperties() {
-            assertThrows(IllegalArgumentException.class, () -> {
-                new FillInTheBlanksQuestion.WordExplanation(1, "word", Arrays.asList("prop1", ""), "comment");
-            });
-        }
-
-        @Test
-        void constructorShouldThrowExceptionForBlankComment() {
-            assertThrows(IllegalArgumentException.class, () -> {
-                new FillInTheBlanksQuestion.WordExplanation(1, "word", Arrays.asList("prop1"), "");
-            });
-        }
-
-        @Test
-        void constructorShouldCreateValidObject() {
-            FillInTheBlanksQuestion.WordExplanation wordExplanation = new FillInTheBlanksQuestion.WordExplanation(1, "word", Arrays.asList("prop1"), "comment");
-            assertNotNull(wordExplanation);
-            assertEquals(1, wordExplanation.startIndex());
-            assertEquals("word", wordExplanation.word());
-            assertEquals(Arrays.asList("prop1"), wordExplanation.properties());
-            assertEquals("comment", wordExplanation.comment());
-        }
+        assertEquals("Fill in the ___", newQuestion.questionText);
+        assertEquals("test hint", newQuestion.hint);
+        assertEquals("blank", newQuestion.answer);
+        assertEquals(wordExplanations, newQuestion.getSourceWordExplanations());
     }
 }

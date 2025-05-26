@@ -1,51 +1,34 @@
-export type QuestionType = "FillInTheBlanks" | "SourceToTargetTranslation";
+export type QuestionType = "FillInTheBlanks";
 export type AssetType = "audio";
 export type AttemptStatus = "Success" | "Failure";
 
-export interface Question {
-  id: string;
+export interface QuestionDTO {
+  sentenceID: string;
   questionType: QuestionType;
 }
 
-export interface FillInTheBlanksQuestion extends Question {
+export interface FillInTheBlanksQuestionDTO extends QuestionDTO {
   questionType: "FillInTheBlanks";
-  language: string;
   text: string;
   hint: string;
 }
 
-export interface SourceToTargetTranslationQuestion extends Question {
-  questionType: "SourceToTargetTranslation";
-  language: string;
-  translation: string;
-}
-
 export interface AttemptRequest {
   questionType: QuestionType;
-  questionID: string;
+  sentenceID: string;
 }
 
 export interface FillInTheBlanksAttemptRequest extends AttemptRequest {
   userResponse: string;
 }
 
-export interface SourceToTargetTranslationAttemptRequest
-  extends AttemptRequest {
-  userResponse: string;
-}
-
 export interface AttemptResponse {
   questionType: QuestionType;
   attemptStatus: AttemptStatus;
+  sourceWordExplanations: WordExplanation[];
 }
 
 export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
-  correctAnswer: string;
-  explanation: WordExplanation[];
-}
-
-export interface SourceToTargetTranslationAttemptResponse
-  extends AttemptResponse {
   correctAnswer: string;
 }
 

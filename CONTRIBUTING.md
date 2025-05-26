@@ -44,7 +44,7 @@
 
 - Frontend: Vercel
 - Backend: Google Cloud Run
-- questionreviewer worker: Render
+- sentencereviewer worker: Render
 
 ## Files
 
@@ -65,7 +65,7 @@
 - Asynchronous task workers: `workers/`
 
   - Each subdirectory is a separate independent worker
-  - `workers/questionreviewer/` reviews user answers to questions
+  - `workers/sentencereviewer/` reviews user answers to questions and updates scores for sentences.
 
 - Python scripts: `scripts/`
   - All scripts are run from `scripts/main.py`; scripts are not run directly. So, the scripts must have a `get_parser` function, and a main function whose arguments exactly match the names of the command-line arguments.
@@ -85,10 +85,10 @@
 - Run the backend without docker: `./gradlew bootRun` inside `lingetic-spring-backend/`
 - Create a Jar of the backend: `./gradlew bootJar` inside `lingetic-spring-backend/`
 - Collect reachability metadata for GraalVM: `java -agentlib:native-image-agent=config-merge-dir=src/main/resources/META-INF/native-image/com.munetmo/lingetic -jar build/libs/lingetic-0.0.1-SNAPSHOT.jar`
-- Build `questionreviewer` worker: `docker buildx build -t lingetic-worker-questionreviewer:latest .`
-- Tag `questionreviewer` worker image: `docker tag lingetic-worker-questionreviewer:latest abhishek123kumar/lingetic-worker-questionreviewer:latest`
-- Push `questionreviewer` worker image: `docker push abhishek123kumar/lingetic-worker-questionreviewer:latest`
-- Run `questionreviewer` worker: `docker run -p 8080:8080 --env-file ../../.env -e DATABASE_HOST=postgres --network lingetic-spring-backend_default lingetic-worker-questionreviewer`
+- Build `sentencereviewer` worker: `docker buildx build -t lingetic-worker-sentencereviewer:latest .`
+- Tag `sentencereviewer` worker image: `docker tag lingetic-worker-sentencereviewer:latest abhishek123kumar/lingetic-worker-sentencereviewer:latest`
+- Push `sentencereviewer` worker image: `docker push abhishek123kumar/lingetic-worker-sentencereviewer:latest`
+- Run `sentencereviewer` worker: `docker run -p 8080:8080 --env-file ../../.env -e DATABASE_HOST=postgres --network lingetic-spring-backend_default lingetic-worker-sentencereviewer`
 
 ## Supporting a new language
 

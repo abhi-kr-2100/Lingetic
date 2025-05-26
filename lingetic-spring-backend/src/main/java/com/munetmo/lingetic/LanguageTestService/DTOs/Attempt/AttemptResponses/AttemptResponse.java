@@ -2,8 +2,12 @@ package com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses;
 
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
+import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 
-public sealed interface AttemptResponse permits FillInTheBlanksAttemptResponse, SourceToTargetTranslationAttemptResponse {
+import java.util.List;
+
+public sealed interface AttemptResponse permits FillInTheBlanksAttemptResponse {
     QuestionType getQuestionType();
     AttemptStatus getAttemptStatus();
+    List<WordExplanation> getSourceWordExplanations();
 }

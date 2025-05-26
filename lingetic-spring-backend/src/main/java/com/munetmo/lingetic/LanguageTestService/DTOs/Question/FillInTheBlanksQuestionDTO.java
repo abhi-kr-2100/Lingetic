@@ -8,34 +8,32 @@ import java.util.Objects;
 
 public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
     public static final QuestionType questionType = QuestionType.FillInTheBlanks;
-    private final String id;
-    private final Language language;
     public final String text;
     public final String hint;
+    private final String sentenceID;
 
-    public FillInTheBlanksQuestionDTO(String id, Language language, String text, @Nullable String hint) {
-        if (id.isBlank()) {
-            throw new IllegalArgumentException("id must not be blank");
-        }
-
+    public FillInTheBlanksQuestionDTO(String text, @Nullable String hint, String sentenceID) {
         if (text.isBlank()) {
             throw new IllegalArgumentException("text must not be blank");
         }
 
-        this.id = id;
-        this.language = language;
+        if (sentenceID.isBlank()) {
+            throw new IllegalArgumentException("sentenceID must not be blank");
+        }
+
         this.text = text;
         this.hint = Objects.requireNonNullElse(hint, "");
-    }
-
-    @Override
-    public String getID() {
-        return id;
+        this.sentenceID = sentenceID;
     }
 
     @Override
     public QuestionType getQuestionType() {
         return questionType;
+    }
+
+    @Override
+    public String getSentenceID() {
+        return sentenceID;
     }
 
     public String getText() {
@@ -44,10 +42,5 @@ public final class FillInTheBlanksQuestionDTO implements QuestionDTO {
 
     public String getHint() {
         return hint;
-    }
-
-    @Override
-    public Language getLanguage() {
-        return language;
     }
 }
