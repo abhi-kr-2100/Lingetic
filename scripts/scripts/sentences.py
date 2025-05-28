@@ -12,6 +12,7 @@ from library.gemini_client import get_global_gemini_client
 SYSTEM_PROMPT = """You'll be given a theme (politics, introducing yourself, basic words, etc.) and level (Beginner, A1, B2, Advanced, etc.), and you should generate a list of sentences in {language} for a {language} learner to learn from them. You should also generate one translation of each sentence in {translation_language}.
 
 You should generate as many sentences as asked. Once you've generated a sentence, assume that sentence to be learned. You can then use words used in that sentence to construct more expressive sentences.
+You should only generate full sentences. For example, instead of "My name is ...", generate the full sentence "My name is Alice." Don't use placeholder text.
 """
 
 
@@ -66,12 +67,12 @@ Output:
 {
 "data": [
     {
-        "sourceText": "Watashi wa shitte imasu!",
+        "sourceText": "私は知っています！",
         "translationText": "I know!"
     },
     {
-        "sourceText": "Tomu ga katteimasu.",
-        "translationText": "Tom is winning."
+        "sourceText": "彼は勝っている！",
+        "translationText": "He is winning."
     }
 ]
 }
