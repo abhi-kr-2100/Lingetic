@@ -325,10 +325,10 @@ def process_sentence_with_gemini(
 
 
 def save_to_cache(
-    cache_path: Path, result: Dict[str, Any], lock: threading.Lock
+    cache_path: Path, result: Dict[str, Any], lock: threading.Lock, idx: int
 ):
     """Save processed result to cache file in a thread-safe manner."""
-    cache_entry = {**result}
+    cache_entry = {"idx": idx, **result}
 
     with lock:
         with open(cache_path, "a", encoding="utf-8") as cache_file:
@@ -345,7 +345,7 @@ def process_sentence_with_cache(
     """Process a single sentence and update the cache with the result."""
     questions = process_sentence_with_gemini(sentence)
     result = {"questions": questions}
-    save_to_cache(cache_path, result, cache_file_lock)
+    save_to_cache(cache_path, result, cache_file_lock, idx)
     cached_results[idx] = result
 
 
