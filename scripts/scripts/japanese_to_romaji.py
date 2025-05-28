@@ -11,7 +11,7 @@ import json
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Tuple, Set
 from pydantic import BaseModel
 
 from library.gemini_client import get_global_gemini_client
@@ -19,15 +19,19 @@ from library.gemini_client import get_global_gemini_client
 SYSTEM_PROMPT = """Convert the following Japanese text to Romaji using the Hepburn romanization system.
 
 Rules:
-1. Use only regular ASCII characters (no special Unicode characters like macrons or apostrophes)
-2. Use standard Hepburn romanization
-3. Keep the original punctuation and spacing
-4. Do not translate the text, only convert it to Romaji
-5. Output just the converted text, nothing else
-6. Capitalize correctly.
+1. Use standard Hepburn romanization.
+2. Keep the original punctuation and spacing.
+3. Do not translate the text, only convert it to Romaji.
+4. Output just the converted text, nothing else.
+5. Capitalize correctly.
+6. Use macrons and apostrophes where appropriate.
 
 Example Input: こんにちは
 Example Output: Konnichiwa
+
+See the glossary for words that have already been converted.
+Follow the glossary to avoid converting the same word differently.
+Glossary: {accumulated_words}
 
 Input: """
 
@@ -38,17 +42,20 @@ class RomajiResponse(BaseModel):
     romaji: str
 
 
-def convert_to_romaji(text: str) -> str:
+def convert_to_romaji(text: str, accumulated_words: Set[str]) -> str:
     """Convert Japanese text to Romaji using the Gemini API.
 
     Args:
         text: Japanese text to convert to Romaji
+        accumulated_words: Set of accumulated words
 
     Returns:
         str: The converted Romaji text
     """
     client = get_global_gemini_client()
-    prompt = SYSTEM_PROMPT
+    prompt = SYSTEM_PROMPT.format(
+        accumulated_words=", ".join(accumulated_words)
+    )
     prompt += f"{text}\n"
 
     response = client.generate_content(
@@ -63,7 +70,9 @@ def process_single_sentence(
     idx: int,
     sentence: Dict[str, Any],
     cache_filepath: Path,
-    log_lock: threading.Lock,
+    cache_file_lock: threading.Lock,
+    accumulated_words: Set[str],
+    accumulated_words_lock: threading.Lock,
 ) -> Tuple[int, Dict[str, Any]]:
     """Process a single sentence and update the cache.
 
@@ -71,31 +80,42 @@ def process_single_sentence(
         idx: Index of the sentence in the original list
         sentence: The sentence dictionary to process
         cache_filepath: Path to the cache file
-        log_lock: Thread lock for logging
+        cache_file_lock: Thread lock for cache file
+        accumulated_words: Set of accumulated words
+        accumulated_words_lock: Thread lock for accumulated words
 
     Returns:
         Tuple of (index, processed_sentence) if successful
     """
     processed = sentence.copy()
-    processed["sourceText"] = convert_to_romaji(processed["sourceText"])
+    processed["sourceText"] = convert_to_romaji(
+        processed["sourceText"], accumulated_words
+    )
     processed["original_index"] = idx
 
-    with log_lock:
+    with cache_file_lock:
         with open(cache_filepath, "a", encoding="utf-8") as f:
             json.dump(processed, f, ensure_ascii=False)
             f.write("\n")
+
+    with accumulated_words_lock:
+        words = processed["sourceText"].split()
+        accumulated_words.update(words)
 
     return idx, processed
 
 
 def process_sentences_parallel(
-    sentences: List[Dict[str, Any]], cache_file_path: Path
+    sentences: List[Dict[str, Any]],
+    cache_file_path: Path,
+    accumulated_words: Set[str],
 ) -> List[Dict[str, Any]]:
     """Process sentences in parallel using ThreadPoolExecutor.
 
     Args:
         sentences: List of sentence dictionaries to process
         cache_file_path: Path to the cache file
+        accumulated_words: Set of accumulated words
 
     Returns:
         List of processed sentences in original order
@@ -103,7 +123,8 @@ def process_sentences_parallel(
     cache_file_path.parent.mkdir(parents=True, exist_ok=True)
     cache_file_path.touch(exist_ok=True)
 
-    log_lock = threading.Lock()
+    cache_file_lock = threading.Lock()
+    accumulated_words_lock = threading.Lock()
 
     results = {}
     with ThreadPoolExecutor() as executor:
@@ -113,7 +134,9 @@ def process_sentences_parallel(
                 idx,
                 sentence,
                 cache_file_path,
-                log_lock,
+                cache_file_lock,
+                accumulated_words,
+                accumulated_words_lock,
             )
             for idx, sentence in enumerate(sentences)
         ]
@@ -128,7 +151,7 @@ def process_sentences_parallel(
 
 def load_processed_sentences(
     cache_file_path: Path,
-) -> Dict[int, Dict[str, Any]]:
+) -> Tuple[Dict[int, Dict[str, Any]], Set[str]]:
     """Load already processed sentences from cache file.
 
     Args:
@@ -138,17 +161,20 @@ def load_processed_sentences(
         Dictionary mapping original indices to processed sentences
     """
     if not cache_file_path.exists():
-        return {}
+        return {}, set()
 
     processed = {}
+    accumulated_words = set()
     with open(cache_file_path, "r", encoding="utf-8") as f:
         for line in f:
             if line.strip():
                 sentence = json.loads(line)
                 idx = sentence["original_index"]
                 processed[idx] = sentence
+                words = sentence["sourceText"].split()
+                accumulated_words.update(words)
 
-    return processed
+    return processed, accumulated_words
 
 
 def get_cache_file_path(output: str) -> Path:
@@ -199,7 +225,9 @@ def main(input_file: str, output: str):
         data = json.load(f)
 
     cache_file_path = get_cache_file_path(output)
-    cached_results = load_processed_sentences(cache_file_path)
+    cached_results, accumulated_words = load_processed_sentences(
+        cache_file_path
+    )
     cached_indices = set(cached_results.keys())
 
     to_process = [
@@ -209,7 +237,7 @@ def main(input_file: str, output: str):
     ]
 
     processed_new = process_sentences_parallel(
-        [s for _, s in to_process], cache_file_path
+        [s for _, s in to_process], cache_file_path, accumulated_words
     )
 
     for (idx, _), processed in zip(to_process, processed_new):
