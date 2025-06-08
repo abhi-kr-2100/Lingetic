@@ -200,13 +200,13 @@ def get_explanation_for_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
 
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Generate word-by-word explanations for FillInTheBlanks questions"
+        description="Generate word-by-word explanations for sentences"
     )
     parser.add_argument(
         "filepath",
         nargs="?",
         default="-",
-        help="Path to questions JSON file, '-' for stdin",
+        help="Path to sentences JSON file, '-' for stdin",
     )
     parser.add_argument(
         "-o",
