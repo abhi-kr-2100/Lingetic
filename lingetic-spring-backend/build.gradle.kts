@@ -66,7 +66,6 @@ dependencies {
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("com.clerk:backend-api:1.5.0")
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
-	implementation("com.worksap.nlp:sudachi:0.7.5")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
