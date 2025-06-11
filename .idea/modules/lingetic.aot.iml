@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="AdditionalModuleElements">
+    <content url="file://$MODULE_DIR$/../../lingetic-spring-backend/build/generated/sources/annotationProcessor/java/aot">
+      <sourceFolder url="file://$MODULE_DIR$/../../lingetic-spring-backend/build/generated/sources/annotationProcessor/java/aot" isTestSource="false" generated="true" />
+    </content>
+  </component>
+</module>
