@@ -6,7 +6,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 
 import java.util.List;
 
-public sealed interface AttemptResponse permits FillInTheBlanksAttemptResponse {
+public sealed interface AttemptResponse permits FillInTheBlanksAttemptResponse, SourceToTargetTranslationAttemptResponse {
     QuestionType getQuestionType();
     AttemptStatus getAttemptStatus();
     List<WordExplanation> getSourceWordExplanations();
