@@ -26,10 +26,12 @@ export interface AttemptRequest {
 }
 
 export interface FillInTheBlanksAttemptRequest extends AttemptRequest {
+  questionType: "FillInTheBlanks";
   userResponse: string;
 }
 
 export interface SourceToTargetTranslationAttemptRequest extends AttemptRequest {
+  questionType: "SourceToTargetTranslation";
   userResponse: string;
 }
 
@@ -40,10 +42,12 @@ export interface AttemptResponse {
 }
 
 export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
+  questionType: "FillInTheBlanks";
   correctAnswer: string;
 }
 
 export interface SourceToTargetTranslationAttemptResponse extends AttemptResponse {
+  questionType: "SourceToTargetTranslation";
   correctAnswer: string;
 }
 
