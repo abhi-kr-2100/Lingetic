@@ -2,9 +2,6 @@ package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
 
 public final class SourceToTargetTranslationQuestionDTO implements QuestionDTO {
     public static final QuestionType questionType = QuestionType.SourceToTargetTranslation;
