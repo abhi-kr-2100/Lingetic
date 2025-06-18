@@ -1,24 +1,31 @@
 package com.munetmo.lingetic.LanguageTestService.UseCases;
 
 import java.time.Instant;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.AttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.SentenceReviewProcessingPayload;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslationQuestion;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Queues.QueueNames;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
+import com.munetmo.lingetic.LanguageTestService.Repositories.SentenceRepository;
 import com.munetmo.lingetic.lib.tasks.TaskQueue;
 
 public class AttemptQuestionUseCase {
+    private final SentenceRepository sentenceRepository;
     private final QuestionRepository questionRepository;
 
     private final TaskQueue taskQueue;
     private final ExecutorService taskSubmitExecutor;
 
-    public AttemptQuestionUseCase(QuestionRepository questionRepository, TaskQueue taskQueue,
+    public AttemptQuestionUseCase(SentenceRepository sentenceRepository, QuestionRepository questionRepository, TaskQueue taskQueue,
             ExecutorService taskSubmitExecutor) {
+        this.sentenceRepository = sentenceRepository;
         this.questionRepository = questionRepository;
         this.taskQueue = taskQueue;
         this.taskSubmitExecutor = taskSubmitExecutor;
@@ -26,7 +33,22 @@ public class AttemptQuestionUseCase {
 
     public AttemptResponse execute(String userId, AttemptRequest request)
             throws QuestionNotFoundException {
-        var question = questionRepository.getQuestionBySentenceID(request.getSentenceID());
+        Question question;
+        if (request.getQuestionType() == QuestionType.SourceToTargetTranslation) {
+            var sentence = sentenceRepository.getSentenceByID(request.getSentenceID());
+            question = new SourceToTargetTranslationQuestion(
+                    UUID.randomUUID().toString(),
+                    sentence.sourceLanguage(),
+                    sentence.translationLanguage(),
+                    sentence.sourceText(),
+                    sentence.translationText(),
+                    sentence.id().toString(),
+                    sentence.sourceWordExplanations()
+            );
+        } else {
+            question = questionRepository.getQuestionBySentenceID(request.getSentenceID());
+        }
+
         var response = question.assessAttempt(request);
 
         var payload = new SentenceReviewProcessingPayload(

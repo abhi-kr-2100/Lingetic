@@ -30,8 +30,8 @@ public class Beans {
 
     @Bean
     public AttemptQuestionUseCase attemptQuestionUseCase(
-            QuestionRepository questionRepository, TaskQueue taskQueue, ExecutorService taskSubmitExecutor) {
-        return new AttemptQuestionUseCase(questionRepository, taskQueue, taskSubmitExecutor);
+            SentenceRepository sentenceRepository, QuestionRepository questionRepository, TaskQueue taskQueue, ExecutorService taskSubmitExecutor) {
+        return new AttemptQuestionUseCase(sentenceRepository, questionRepository, taskQueue, taskSubmitExecutor);
     }
 
     @Bean(destroyMethod = "shutdown")
