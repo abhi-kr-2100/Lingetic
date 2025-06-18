@@ -71,12 +71,15 @@ public class TakeRegularTestUseCase {
         var sentence = sentenceRepository.getSentenceByID(r.sentenceID);
         if (r.getRepetitions() >= 2)
         {
+            // In case of Sentence, source is the original language. However, in case of
+            // SourceToTargetTranslationQuestion, source is the language the user speaks and target is the language the
+            // user is learning.
             return new SourceToTargetTranslationQuestion(
                 UUID.randomUUID().toString(),
-                sentence.sourceLanguage(),
                 sentence.translationLanguage(),
-                sentence.sourceText(),
+                sentence.sourceLanguage(),
                 sentence.translationText(),
+                sentence.sourceText(),
                 sentence.id().toString(),
                 sentence.sourceWordExplanations()
             );

@@ -36,12 +36,15 @@ public class AttemptQuestionUseCase {
         Question question;
         if (request.getQuestionType() == QuestionType.SourceToTargetTranslation) {
             var sentence = sentenceRepository.getSentenceByID(request.getSentenceID());
+            // In case of Sentence, source is the original language. However, in case of
+            // SourceToTargetTranslationQuestion, source is the language the user speaks and target is the language the
+            // user is learning.
             question = new SourceToTargetTranslationQuestion(
                     UUID.randomUUID().toString(),
-                    sentence.sourceLanguage(),
                     sentence.translationLanguage(),
-                    sentence.sourceText(),
+                    sentence.sourceLanguage(),
                     sentence.translationText(),
+                    sentence.sourceText(),
                     sentence.id().toString(),
                     sentence.sourceWordExplanations()
             );
