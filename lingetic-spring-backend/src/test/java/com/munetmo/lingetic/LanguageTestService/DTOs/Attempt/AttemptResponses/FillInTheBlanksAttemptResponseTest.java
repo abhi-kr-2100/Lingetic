@@ -35,7 +35,7 @@ class FillInTheBlanksAttemptResponseTest {
     }
 
     @Test
-    void constructorShouldHandleNullWordExplanations() {
+    void constructorShouldHandleEmptyWordExplanations() {
         var response = new FillInTheBlanksAttemptResponse(AttemptStatus.Success, "test answer", List.of());
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());

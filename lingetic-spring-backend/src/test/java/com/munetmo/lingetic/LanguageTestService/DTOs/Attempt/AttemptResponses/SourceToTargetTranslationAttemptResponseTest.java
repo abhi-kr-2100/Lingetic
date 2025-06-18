@@ -35,7 +35,7 @@ class SourceToTargetTranslationAttemptResponseTest {
     }
 
     @Test
-    void constructorShouldHandleNullWordExplanations() {
+    void constructorShouldHandleEmptyWordExplanations() {
         var response = new SourceToTargetTranslationAttemptResponse(AttemptStatus.Success, "test answer", List.of());
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());
