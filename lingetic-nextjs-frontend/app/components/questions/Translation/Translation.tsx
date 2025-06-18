@@ -4,27 +4,27 @@ import { useEffect, useState } from "react";
 import assert from "@/utilities/assert";
 import type QuestionProps from "../QuestionProps";
 import type {
-    SourceToTargetTranslationQuestionDTO,
-    SourceToTargetTranslationAttemptResponse,
+    TranslationQuestionDTO,
+    TranslationAttemptResponse,
 } from "@/utilities/api-types";
 import ActionButton from "../components/ActionButton";
 import AnswerCheckStatus from "../components/AnswerCheckStatus";
 import MainComponent from "./MainComponent";
 import useTextUserAnswer from "../hooks/useTextUserAnswer";
 
-interface SourceToTargetTranslationProps extends QuestionProps {
-    question: SourceToTargetTranslationQuestionDTO;
+interface TranslationProps extends QuestionProps {
+    question: TranslationQuestionDTO;
 }
 
-export default function SourceToTargetTranslation({
+export default function Translation({
     question,
     afterAnswerCheck,
     NextButton,
-}: SourceToTargetTranslationProps) {
+}: TranslationProps) {
     validateQuestionOrDie(question);
 
     const [attemptResponse, setAttemptResponse] = useState<
-        SourceToTargetTranslationAttemptResponse | undefined
+        TranslationAttemptResponse | undefined
     >(undefined);
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function SourceToTargetTranslation({
     }, [question.sentenceID]);
 
     const { answer, setAnswer, checkAnswer, isChecking, isChecked, isError } =
-        useTextUserAnswer<SourceToTargetTranslationAttemptResponse>(question);
+        useTextUserAnswer<TranslationAttemptResponse>(question);
 
     async function handleCheckAnswer() {
         const response = await checkAnswer();
@@ -79,26 +79,26 @@ export default function SourceToTargetTranslation({
     );
 }
 
-function validateQuestionOrDie(question: SourceToTargetTranslationQuestionDTO) {
+function validateQuestionOrDie(question: TranslationQuestionDTO) {
     assert(question != null, "question is null or undefined");
     assert(
         question.sentenceID?.trim()?.length > 0,
         "question.sentenceID is empty"
     );
     assert(
-        question.questionType === "SourceToTargetTranslation",
-        "question.questionType is not SourceToTargetTranslation"
+        question.questionType === "Translation",
+        "question.questionType is not Translation"
     );
     assert(
-        question.sourceText?.trim()?.length > 0,
-        "question.sourceText is empty"
+        question.toTranslateText?.trim()?.length > 0,
+        "question.toTranslateText is empty"
     );
     assert(
-        question.sourceLanguage?.trim()?.length > 0,
-        "question.sourceLanguage is empty"
+        question.translateFromLanguage?.trim()?.length > 0,
+        "question.translateFromLanguage is empty"
     );
     assert(
-        question.targetLanguage?.trim()?.length > 0,
-        "question.targetLanguage is empty"
+        question.translateToLanguage?.trim()?.length > 0,
+        "question.translateToLanguage is empty"
     );
 }

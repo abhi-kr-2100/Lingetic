@@ -8,11 +8,10 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO;
-import com.munetmo.lingetic.LanguageTestService.DTOs.Question.SourceToTargetTranslationQuestionDTO;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Question.TranslationQuestionDTO;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.FillInTheBlanksQuestionDTO;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslationQuestion;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.*;
 import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
 import org.junit.jupiter.api.BeforeEach;
@@ -339,7 +338,7 @@ class TakeRegularTestUseCaseTest {
     }
 
     @Test
-    void shouldReturnSourceToTargetTranslationQuestionWhenRepetitionsGreaterThanOrEqualToTwo() {
+    void shouldReturnTranslationQuestionWhenRepetitionsGreaterThanOrEqualToTwo() {
         // Given: A sentence with a FillInTheBlanks question that has been reviewed twice (repetitions = 2)
         var question = new FillInTheBlanksQuestion(
                 UUID.randomUUID().toString(),
@@ -358,18 +357,18 @@ class TakeRegularTestUseCaseTest {
         // When
         var result = useCase.execute(TEST_USER_ID, Language.English);
 
-        // Then: Should return SourceToTargetTranslationQuestionDTO
+        // Then: Should return TranslationQuestionDTO
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof SourceToTargetTranslationQuestionDTO);
+        assertTrue(result.get(0) instanceof TranslationQuestionDTO);
         assertEquals(TEST_SENTENCE_ID, result.get(0).getSentenceID());
 
-        var translationQuestion = (SourceToTargetTranslationQuestionDTO) result.get(0);
-        assertEquals(Language.English, translationQuestion.getSourceLanguage());
-        assertEquals("He walks to school.", translationQuestion.getSourceText());
+        var translationQuestion = (TranslationQuestionDTO) result.get(0);
+        assertEquals(Language.Turkish, translationQuestion.getTranslateFromLanguage());
+        assertEquals("O okula yürür.", translationQuestion.getToTranslateText());
     }
 
     @Test
-    void shouldReturnSourceToTargetTranslationQuestionWhenRepetitionsGreaterThanTwo() {
+    void shouldReturnTranslationQuestionWhenRepetitionsGreaterThanTwo() {
         // Given: A sentence with a FillInTheBlanks question that has been reviewed multiple times (repetitions = 5)
         var question = new FillInTheBlanksQuestion(
                 UUID.randomUUID().toString(),
@@ -388,9 +387,9 @@ class TakeRegularTestUseCaseTest {
         // When
         var result = useCase.execute(TEST_USER_ID, Language.English);
 
-        // Then: Should return SourceToTargetTranslationQuestionDTO
+        // Then: Should return TranslationQuestionDTO
         assertEquals(1, result.size());
-        assertTrue(result.get(0) instanceof SourceToTargetTranslationQuestionDTO);
+        assertTrue(result.get(0) instanceof TranslationQuestionDTO);
         assertEquals(TEST_SENTENCE_ID, result.get(0).getSentenceID());
     }
 
@@ -486,7 +485,7 @@ class TakeRegularTestUseCaseTest {
         // Sentence 2 (repetitions = 1): should be FillInTheBlanks
         assertTrue(questionBySentenceId.get(sentence2.id().toString()) instanceof FillInTheBlanksQuestionDTO);
 
-        // Sentence 3 (repetitions = 3): should be SourceToTargetTranslation
-        assertTrue(questionBySentenceId.get(sentence3.id().toString()) instanceof SourceToTargetTranslationQuestionDTO);
+        // Sentence 3 (repetitions = 3): should be Translation
+        assertTrue(questionBySentenceId.get(sentence3.id().toString()) instanceof TranslationQuestionDTO);
     }
 }

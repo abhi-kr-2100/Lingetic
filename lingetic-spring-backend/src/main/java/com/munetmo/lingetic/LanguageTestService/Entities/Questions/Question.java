@@ -8,7 +8,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 import java.util.List;
 import java.util.Map;
 
-public sealed interface Question permits FillInTheBlanksQuestion, SourceToTargetTranslationQuestion {
+public sealed interface Question permits FillInTheBlanksQuestion, TranslationQuestion {
     String getID();
     QuestionType getQuestionType();
     Language getLanguage();
@@ -19,7 +19,7 @@ public sealed interface Question permits FillInTheBlanksQuestion, SourceToTarget
     static Question createFromQuestionTypeSpecificData(String id, Language language, String sentenceId, QuestionType questionType, List<WordExplanation> sourceWordExplanations, Map<String, Object> data) {
         return switch (questionType) {
             case FillInTheBlanks -> FillInTheBlanksQuestion.createFromQuestionTypeSpecificData(id, language, sentenceId, sourceWordExplanations, data);
-            case SourceToTargetTranslation -> SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(id, language, sentenceId, sourceWordExplanations, data);
+            case Translation -> TranslationQuestion.createFromQuestionTypeSpecificData(id, language, sentenceId, sourceWordExplanations, data);
         };
     }
 

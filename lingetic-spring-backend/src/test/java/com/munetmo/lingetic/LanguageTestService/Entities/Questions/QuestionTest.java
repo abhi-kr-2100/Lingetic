@@ -16,7 +16,7 @@ public class QuestionTest {
         var id = "1";
         var language = Language.English;
         var sentenceId = "sentence1";
-        
+
         Map<String, Object> data = Map.of(
             "questionText", "Fill in the ___",
             "answer", "blank"
@@ -29,7 +29,7 @@ public class QuestionTest {
         assertEquals(sentenceId, question.getSentenceID());
         assertTrue(question.getSourceWordExplanations().isEmpty());
     }
-    
+
     @Test
     public void createFromQuestionTypeSpecificDataShouldCreateFillInTheBlanksQuestionWithWordExplanations() {
         var id = "1";
@@ -39,7 +39,7 @@ public class QuestionTest {
             new WordExplanation(0, "Fill", List.of("verb"), "To complete something"),
             new WordExplanation(8, "the", List.of("article"), "Definite article")
         );
-        
+
         Map<String, Object> data = Map.of(
             "questionText", "Fill in the ___",
             "answer", "blank"
@@ -54,22 +54,22 @@ public class QuestionTest {
     }
 
     @Test
-    public void createFromQuestionTypeSpecificDataShouldCreateSourceToTargetTranslationQuestion() {
+    public void createFromQuestionTypeSpecificDataShouldCreateTranslationQuestion() {
         var id = "1";
         var language = Language.English;
         var sentenceId = "sentence1";
 
         Map<String, Object> data = Map.of(
-            "sourceLanguage", Language.English.name(),
-            "targetLanguage", Language.Turkish.name(),
-            "sourceText", "Hello",
-            "targetText", "Merhaba"
+            "translateFromLanguage", Language.English.name(),
+            "translateToLanguage", Language.Turkish.name(),
+            "toTranslateText", "Hello",
+            "translatedText", "Merhaba"
         );
 
-        var question = Question.createFromQuestionTypeSpecificData(id, language, sentenceId, QuestionType.SourceToTargetTranslation, Collections.emptyList(), data);
+        var question = Question.createFromQuestionTypeSpecificData(id, language, sentenceId, QuestionType.Translation, Collections.emptyList(), data);
 
         assertNotNull(question);
-        assertEquals(QuestionType.SourceToTargetTranslation, question.getQuestionType());
+        assertEquals(QuestionType.Translation, question.getQuestionType());
         assertEquals(sentenceId, question.getSentenceID());
         assertTrue(question.getSourceWordExplanations().isEmpty());
     }

@@ -357,7 +357,6 @@ def process_sentences(
     Process sentences in three steps:
     1. Synchronously tokenize all sentences using a connection pool
     2. Process sentences in parallel with Gemini API while maintaining order
-    3. Directly handle SourceToTargetTranslation questions without Gemini API
     """
     cache_path = (
         Path(output).with_suffix(".cache")

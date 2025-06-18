@@ -3,15 +3,15 @@ import Result from "../components/Result";
 import assert from "@/utilities/assert";
 
 import type {
-    SourceToTargetTranslationAttemptResponse,
-    SourceToTargetTranslationQuestionDTO,
+    TranslationAttemptResponse,
+    TranslationQuestionDTO,
 } from "@/utilities/api-types";
 import type { ChangeEvent, KeyboardEvent } from "react";
 
 interface MainComponentProps {
     isChecked: boolean;
-    attemptResponse: SourceToTargetTranslationAttemptResponse | undefined;
-    question: SourceToTargetTranslationQuestionDTO;
+    attemptResponse: TranslationAttemptResponse | undefined;
+    question: TranslationQuestionDTO;
     answer: string;
     handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
     handleInputKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -50,7 +50,7 @@ export default function MainComponent({
                 )}
             </div>
             <div className="text-sm text-gray-600">
-                Translate from {question.sourceLanguage} to {question.targetLanguage}
+                Translate from {question.translateFromLanguage} to {question.translateToLanguage}
             </div>
         </div>
     );

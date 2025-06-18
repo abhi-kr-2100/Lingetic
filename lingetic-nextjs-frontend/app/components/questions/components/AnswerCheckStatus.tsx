@@ -1,11 +1,11 @@
 import React from "react";
-import type { FillInTheBlanksAttemptResponse, SourceToTargetTranslationAttemptResponse } from "@/utilities/api-types";
+import type { FillInTheBlanksAttemptResponse, TranslationAttemptResponse } from "@/utilities/api-types";
 import assert from "@/utilities/assert";
 import AnswerFeedbackBox from "./AnswerFeedbackBox";
 import DiffHighlight from "./DiffHighlight";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-type TextAttemptResponse = FillInTheBlanksAttemptResponse | SourceToTargetTranslationAttemptResponse;
+type TextAttemptResponse = FillInTheBlanksAttemptResponse | TranslationAttemptResponse;
 
 interface AnswerCheckStatusProps {
     isError: boolean;

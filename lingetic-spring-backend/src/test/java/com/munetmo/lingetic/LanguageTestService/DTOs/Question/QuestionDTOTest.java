@@ -3,7 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.DTOs.Question;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslationQuestion;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.TranslationQuestion;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -35,8 +35,8 @@ class QuestionDTOTest {
     }
 
     @Test
-    void shouldConvertSourceToTargetTranslationQuestionToDTO() {
-        var question = new SourceToTargetTranslationQuestion(
+    void shouldConvertTranslationQuestionToDTO() {
+        var question = new TranslationQuestion(
             "q123",
             Language.English,
             Language.Turkish,
@@ -48,11 +48,11 @@ class QuestionDTOTest {
 
         QuestionDTO dto = QuestionDTO.fromQuestion(question);
 
-        assertInstanceOf(SourceToTargetTranslationQuestionDTO.class, dto);
-        assertEquals(QuestionType.SourceToTargetTranslation, dto.getQuestionType());
+        assertInstanceOf(TranslationQuestionDTO.class, dto);
+        assertEquals(QuestionType.Translation, dto.getQuestionType());
         assertEquals(TEST_SENTENCE_ID, dto.getSentenceID());
-        assertEquals("Hello", ((SourceToTargetTranslationQuestionDTO) dto).getSourceText());
-        assertEquals(Language.English, ((SourceToTargetTranslationQuestionDTO) dto).getSourceLanguage());
-        assertEquals(Language.Turkish, ((SourceToTargetTranslationQuestionDTO) dto).getTargetLanguage());
+        assertEquals("Hello", ((TranslationQuestionDTO) dto).getToTranslateText());
+        assertEquals(Language.English, ((TranslationQuestionDTO) dto).getTranslateFromLanguage());
+        assertEquals(Language.Turkish, ((TranslationQuestionDTO) dto).getTranslateToLanguage());
     }
 }

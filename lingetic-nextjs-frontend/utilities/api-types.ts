@@ -1,4 +1,4 @@
-export type QuestionType = "FillInTheBlanks" | "SourceToTargetTranslation";
+export type QuestionType = "FillInTheBlanks" | "Translation";
 export type AssetType = "audio";
 export type AttemptStatus = "Success" | "Failure";
 
@@ -13,11 +13,11 @@ export interface FillInTheBlanksQuestionDTO extends QuestionDTO {
   hint: string;
 }
 
-export interface SourceToTargetTranslationQuestionDTO extends QuestionDTO {
-  questionType: "SourceToTargetTranslation";
-  sourceText: string;
-  sourceLanguage: string;
-  targetLanguage: string;
+export interface TranslationQuestionDTO extends QuestionDTO {
+  questionType: "Translation";
+  toTranslateText: string;
+  translateFromLanguage: string;
+  translateToLanguage: string;
 }
 
 export interface AttemptRequest {
@@ -30,8 +30,8 @@ export interface FillInTheBlanksAttemptRequest extends AttemptRequest {
   userResponse: string;
 }
 
-export interface SourceToTargetTranslationAttemptRequest extends AttemptRequest {
-  questionType: "SourceToTargetTranslation";
+export interface TranslationAttemptRequest extends AttemptRequest {
+  questionType: "Translation";
   userResponse: string;
 }
 
@@ -46,8 +46,8 @@ export interface FillInTheBlanksAttemptResponse extends AttemptResponse {
   correctAnswer: string;
 }
 
-export interface SourceToTargetTranslationAttemptResponse extends AttemptResponse {
-  questionType: "SourceToTargetTranslation";
+export interface TranslationAttemptResponse extends AttemptResponse {
+  questionType: "Translation";
   correctAnswer: string;
 }
 

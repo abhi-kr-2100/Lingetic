@@ -1,8 +1,8 @@
-import type { SourceToTargetTranslationQuestionDTO } from "@/utilities/api-types";
+import type { TranslationQuestionDTO } from "@/utilities/api-types";
 import type { ChangeEvent, KeyboardEvent } from "react";
 
 interface QuestionBoxProps {
-    question: SourceToTargetTranslationQuestionDTO;
+    question: TranslationQuestionDTO;
     value: string;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -19,7 +19,7 @@ export default function QuestionBox({
     return (
         <div className="flex flex-col gap-4">
             <div className="text-lg">
-                {question.sourceText}
+                {question.toTranslateText}
             </div>
             <div>
                 <input
