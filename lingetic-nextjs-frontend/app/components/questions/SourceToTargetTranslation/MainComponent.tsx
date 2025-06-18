@@ -36,7 +36,7 @@ export default function MainComponent({
                         value={answer}
                         onChange={handleInputChange}
                         onKeyDown={handleInputKeyDown}
-                        disabled={isChecked || isChecking}
+                        disabled={isChecking}
                     />
                 ) : attemptResponse !== undefined ? (
                     <Result sentenceID={question.sentenceID} fullSentence={attemptResponse.correctAnswer} attemptResponse={attemptResponse} />
