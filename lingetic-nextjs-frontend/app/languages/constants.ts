@@ -52,13 +52,13 @@ export const languages: LanguageProperty[] = [
   // },
   {
     id: "JapaneseModifiedHepburn",
-    name: "Japanese 1",
+    name: "Japanese (Romanized)",
     image: "/img/languages/japanese-flag.png",
     isSupported: true,
   },
   // {
   //   id: "Japanese",
-  //   name: "Japanese 2",
+  //   name: "Japanese",
   //   image: "/img/languages/japanese-flag.png",
   //   isSupported: false,
   // },
@@ -101,3 +101,7 @@ export const languageNameToCode: Record<Language, string> = {
   Turkish: "tr",
   JapaneseModifiedHepburn: "ja-hepburn",
 };
+
+export const languageIDToName: Record<string, string> = Object.fromEntries(
+  languages.map((lang) => [lang.id, lang.name])
+);
