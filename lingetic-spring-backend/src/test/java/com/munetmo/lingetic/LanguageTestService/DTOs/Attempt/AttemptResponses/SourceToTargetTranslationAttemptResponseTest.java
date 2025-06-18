@@ -10,14 +10,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FillInTheBlanksAttemptResponseTest {
+class SourceToTargetTranslationAttemptResponseTest {
     @Test
     void constructorShouldCreateValidObjectWithCorrectValues() {
-        var response = new FillInTheBlanksAttemptResponse(AttemptStatus.Success, "test answer", List.of());
+        var response = new SourceToTargetTranslationAttemptResponse(AttemptStatus.Success, "test answer", List.of());
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());
         assertEquals("test answer", response.getCorrectAnswer());
-        assertEquals(QuestionType.FillInTheBlanks, response.getQuestionType());
+        assertEquals(QuestionType.SourceToTargetTranslation, response.getQuestionType());
         assertEquals(Collections.emptyList(), response.getSourceWordExplanations());
     }
 
@@ -26,21 +26,21 @@ class FillInTheBlanksAttemptResponseTest {
         var wordExplanations = List.of(
             new WordExplanation(0, "test", List.of("noun"), "A test word")
         );
-        var response = new FillInTheBlanksAttemptResponse(AttemptStatus.Success, "test answer", wordExplanations);
+        var response = new SourceToTargetTranslationAttemptResponse(AttemptStatus.Success, "test answer", wordExplanations);
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());
         assertEquals("test answer", response.getCorrectAnswer());
-        assertEquals(QuestionType.FillInTheBlanks, response.getQuestionType());
+        assertEquals(QuestionType.SourceToTargetTranslation, response.getQuestionType());
         assertEquals(wordExplanations, response.getSourceWordExplanations());
     }
 
     @Test
     void constructorShouldHandleEmptyWordExplanations() {
-        var response = new FillInTheBlanksAttemptResponse(AttemptStatus.Success, "test answer", List.of());
+        var response = new SourceToTargetTranslationAttemptResponse(AttemptStatus.Success, "test answer", List.of());
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());
         assertEquals("test answer", response.getCorrectAnswer());
-        assertEquals(QuestionType.FillInTheBlanks, response.getQuestionType());
+        assertEquals(QuestionType.SourceToTargetTranslation, response.getQuestionType());
         assertEquals(Collections.emptyList(), response.getSourceWordExplanations());
     }
 
@@ -48,7 +48,7 @@ class FillInTheBlanksAttemptResponseTest {
     void constructorShouldThrowExceptionWhenCorrectAnswerIsBlank() {
         var exception = assertThrows(
             IllegalArgumentException.class,
-            () -> new FillInTheBlanksAttemptResponse(AttemptStatus.Success, "", List.of())
+            () -> new SourceToTargetTranslationAttemptResponse(AttemptStatus.Success, "", List.of())
         );
         assertNotNull(exception.getMessage());
         assertTrue(exception.getMessage().contains("correctAnswer"));

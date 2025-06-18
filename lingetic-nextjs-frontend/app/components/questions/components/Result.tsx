@@ -1,25 +1,21 @@
 import type {
-  FillInTheBlanksAttemptResponse,
+  AttemptResponse,
   WordExplanation,
 } from "@/utilities/api-types";
 import WordExplanationHover from "./WordExplanationHover";
-import type { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
 import log from "@/utilities/logger";
 
 interface ResultBoxProps {
-  question: FillInTheBlanksQuestionDTO;
-  attemptResponse: FillInTheBlanksAttemptResponse;
+  sentenceID: string;
+  fullSentence: string;
+  attemptResponse: AttemptResponse;
 }
 
 export default function ResultBox({
-  question,
+  sentenceID,
+  fullSentence,
   attemptResponse,
 }: ResultBoxProps) {
-  const fullSentence = question.text.replace(
-    /_+/,
-    attemptResponse.correctAnswer
-  );
-
   const parts = getSentenceParts(
     fullSentence,
     attemptResponse.sourceWordExplanations
@@ -28,7 +24,7 @@ export default function ResultBox({
   const actualSentence = parts.map((p) => p.text).join("");
   if (actualSentence !== fullSentence) {
     log(
-      `sentenceId: ${question.sentenceID}: actualSentence: ${actualSentence} !== fullSentence: ${fullSentence}`,
+      `sentenceId: ${sentenceID}: actualSentence: ${actualSentence} !== fullSentence: ${fullSentence}`,
       "error"
     );
   }

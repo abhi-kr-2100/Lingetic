@@ -3,7 +3,9 @@ package com.munetmo.lingetic.LanguageTestService.UseCases;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslationQuestion;
 import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
 import com.munetmo.lingetic.LanguageTestService.Entities.SentenceReview;
 
@@ -67,6 +69,22 @@ public class TakeRegularTestUseCase {
 
     private Question getQuestionForSentenceReview(SentenceReview r) {
         var sentence = sentenceRepository.getSentenceByID(r.sentenceID);
+        if (r.getRepetitions() >= 2)
+        {
+            // In case of Sentence, source is the original language. However, in case of
+            // SourceToTargetTranslationQuestion, source is the language the user speaks and target is the language the
+            // user is learning.
+            return new SourceToTargetTranslationQuestion(
+                UUID.randomUUID().toString(),
+                sentence.translationLanguage(),
+                sentence.sourceLanguage(),
+                sentence.translationText(),
+                sentence.sourceText(),
+                sentence.id().toString(),
+                sentence.sourceWordExplanations()
+            );
+        }
+
         return getQuestionForSentence(sentence);
     }
 

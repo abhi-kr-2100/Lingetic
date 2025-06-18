@@ -52,4 +52,25 @@ public class QuestionTest {
         assertEquals(sentenceId, question.getSentenceID());
         assertEquals(wordExplanations, question.getSourceWordExplanations());
     }
+
+    @Test
+    public void createFromQuestionTypeSpecificDataShouldCreateSourceToTargetTranslationQuestion() {
+        var id = "1";
+        var language = Language.English;
+        var sentenceId = "sentence1";
+
+        Map<String, Object> data = Map.of(
+            "sourceLanguage", Language.English.name(),
+            "targetLanguage", Language.Turkish.name(),
+            "sourceText", "Hello",
+            "targetText", "Merhaba"
+        );
+
+        var question = Question.createFromQuestionTypeSpecificData(id, language, sentenceId, QuestionType.SourceToTargetTranslation, Collections.emptyList(), data);
+
+        assertNotNull(question);
+        assertEquals(QuestionType.SourceToTargetTranslation, question.getQuestionType());
+        assertEquals(sentenceId, question.getSentenceID());
+        assertTrue(question.getSourceWordExplanations().isEmpty());
+    }
 }

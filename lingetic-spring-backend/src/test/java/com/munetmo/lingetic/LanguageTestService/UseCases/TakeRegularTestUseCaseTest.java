@@ -8,8 +8,11 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import com.munetmo.lingetic.LanguageTestService.DTOs.Question.QuestionDTO;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Question.SourceToTargetTranslationQuestionDTO;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Question.FillInTheBlanksQuestionDTO;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.FillInTheBlanksQuestion;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslationQuestion;
 import com.munetmo.lingetic.LanguageTestService.infra.Repositories.Postgres.*;
 import com.munetmo.lingetic.LanguageTestService.Entities.Sentence;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,6 +114,18 @@ class TakeRegularTestUseCaseTest {
 
             --n;
         }
+    }
+
+    private void reviewQuestionToRepetitionCount(String sentenceId, int targetRepetitions) {
+        var sentence = sentenceRepository.getSentenceByID(sentenceId);
+        var sentenceReview = sentenceReviewRepository.getReviewForSentenceOrCreateNew(TEST_USER_ID, sentence);
+
+        // Review with quality 4 (good) to increase repetitions
+        for (int i = 0; i < targetRepetitions; i++) {
+            sentenceReview.review(4);
+        }
+
+        sentenceReviewRepository.update(sentenceReview);
     }
 
     @Test
@@ -295,5 +310,183 @@ class TakeRegularTestUseCaseTest {
                        id.equals(question4.getSentenceID()) ||
                        id.equals(question5.getSentenceID()));
         });
+    }
+
+    @Test
+    void shouldReturnFillInTheBlanksQuestionWhenRepetitionsLessThanTwo() {
+        // Given: A sentence with a FillInTheBlanks question that has been reviewed once (repetitions = 1)
+        var question = new FillInTheBlanksQuestion(
+                UUID.randomUUID().toString(),
+                Language.English,
+                "He ____ to school.",
+                "motion verb",
+                "walks",
+                TEST_SENTENCE_ID,
+                List.of()
+        );
+        questionRepository.addQuestion(question);
+
+        // Review the question once to get repetitions = 1
+        reviewQuestionToRepetitionCount(TEST_SENTENCE_ID, 1);
+
+        // When
+        var result = useCase.execute(TEST_USER_ID, Language.English);
+
+        // Then: Should return FillInTheBlanksQuestionDTO
+        assertEquals(1, result.size());
+        assertTrue(result.get(0) instanceof FillInTheBlanksQuestionDTO);
+        assertEquals(TEST_SENTENCE_ID, result.get(0).getSentenceID());
+    }
+
+    @Test
+    void shouldReturnSourceToTargetTranslationQuestionWhenRepetitionsGreaterThanOrEqualToTwo() {
+        // Given: A sentence with a FillInTheBlanks question that has been reviewed twice (repetitions = 2)
+        var question = new FillInTheBlanksQuestion(
+                UUID.randomUUID().toString(),
+                Language.English,
+                "He ____ to school.",
+                "motion verb",
+                "walks",
+                TEST_SENTENCE_ID,
+                List.of()
+        );
+        questionRepository.addQuestion(question);
+
+        // Review the question twice to get repetitions = 2
+        reviewQuestionToRepetitionCount(TEST_SENTENCE_ID, 2);
+
+        // When
+        var result = useCase.execute(TEST_USER_ID, Language.English);
+
+        // Then: Should return SourceToTargetTranslationQuestionDTO
+        assertEquals(1, result.size());
+        assertTrue(result.get(0) instanceof SourceToTargetTranslationQuestionDTO);
+        assertEquals(TEST_SENTENCE_ID, result.get(0).getSentenceID());
+
+        var translationQuestion = (SourceToTargetTranslationQuestionDTO) result.get(0);
+        assertEquals(Language.English, translationQuestion.getSourceLanguage());
+        assertEquals("He walks to school.", translationQuestion.getSourceText());
+    }
+
+    @Test
+    void shouldReturnSourceToTargetTranslationQuestionWhenRepetitionsGreaterThanTwo() {
+        // Given: A sentence with a FillInTheBlanks question that has been reviewed multiple times (repetitions = 5)
+        var question = new FillInTheBlanksQuestion(
+                UUID.randomUUID().toString(),
+                Language.English,
+                "He ____ to school.",
+                "motion verb",
+                "walks",
+                TEST_SENTENCE_ID,
+                List.of()
+        );
+        questionRepository.addQuestion(question);
+
+        // Review the question 5 times to get repetitions = 5
+        reviewQuestionToRepetitionCount(TEST_SENTENCE_ID, 5);
+
+        // When
+        var result = useCase.execute(TEST_USER_ID, Language.English);
+
+        // Then: Should return SourceToTargetTranslationQuestionDTO
+        assertEquals(1, result.size());
+        assertTrue(result.get(0) instanceof SourceToTargetTranslationQuestionDTO);
+        assertEquals(TEST_SENTENCE_ID, result.get(0).getSentenceID());
+    }
+
+    @Test
+    void shouldReturnMixOfQuestionTypesBasedOnRepetitions() {
+        // Given: Multiple sentences with different repetition counts
+        sentenceRepository.deleteAllSentences();
+
+        // Sentence 1: repetitions = 0 (new)
+        var sentence1 = new Sentence(
+                UUID.randomUUID(),
+                Language.English,
+                "She runs fast.",
+                Language.Turkish,
+                "O hızlı koşar.",
+                10,
+                List.of()
+        );
+        sentenceRepository.addSentence(sentence1);
+        var question1 = new FillInTheBlanksQuestion(
+                UUID.randomUUID().toString(),
+                Language.English,
+                "She ____ fast.",
+                "motion verb",
+                "runs",
+                sentence1.id().toString(),
+                List.of()
+        );
+        questionRepository.addQuestion(question1);
+
+        // Sentence 2: repetitions = 1
+        var sentence2 = new Sentence(
+                UUID.randomUUID(),
+                Language.English,
+                "They dance together.",
+                Language.Turkish,
+                "Onlar birlikte dans eder.",
+                10,
+                List.of()
+        );
+        sentenceRepository.addSentence(sentence2);
+        var question2 = new FillInTheBlanksQuestion(
+                UUID.randomUUID().toString(),
+                Language.English,
+                "They ____ together.",
+                "motion verb",
+                "dance",
+                sentence2.id().toString(),
+                List.of()
+        );
+        questionRepository.addQuestion(question2);
+        reviewQuestionToRepetitionCount(sentence2.id().toString(), 1);
+
+        // Sentence 3: repetitions = 3
+        var sentence3 = new Sentence(
+                UUID.randomUUID(),
+                Language.English,
+                "I drive to work.",
+                Language.Turkish,
+                "İşe araba ile giderim.",
+                10,
+                List.of()
+        );
+        sentenceRepository.addSentence(sentence3);
+        var question3 = new FillInTheBlanksQuestion(
+                UUID.randomUUID().toString(),
+                Language.English,
+                "I ____ to work.",
+                "motion verb",
+                "drive",
+                sentence3.id().toString(),
+                List.of()
+        );
+        questionRepository.addQuestion(question3);
+        reviewQuestionToRepetitionCount(sentence3.id().toString(), 3);
+
+        // When
+        var result = useCase.execute(TEST_USER_ID, Language.English);
+
+        // Then: Should return a mix of question types
+        assertEquals(3, result.size());
+
+        // Find questions by sentence ID and verify their types
+        var questionBySentenceId = result.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        QuestionDTO::getSentenceID,
+                        q -> q
+                ));
+
+        // Sentence 1 (repetitions = 0): should be FillInTheBlanks
+        assertTrue(questionBySentenceId.get(sentence1.id().toString()) instanceof FillInTheBlanksQuestionDTO);
+
+        // Sentence 2 (repetitions = 1): should be FillInTheBlanks
+        assertTrue(questionBySentenceId.get(sentence2.id().toString()) instanceof FillInTheBlanksQuestionDTO);
+
+        // Sentence 3 (repetitions = 3): should be SourceToTargetTranslation
+        assertTrue(questionBySentenceId.get(sentence3.id().toString()) instanceof SourceToTargetTranslationQuestionDTO);
     }
 }

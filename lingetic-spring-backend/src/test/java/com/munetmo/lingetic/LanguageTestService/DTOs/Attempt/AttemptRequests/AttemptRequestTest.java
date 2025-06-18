@@ -61,4 +61,25 @@ class AttemptRequestTest {
         assertEquals("test answer", fillInBlanksRequest.getUserResponse());
         assertEquals(QuestionType.FillInTheBlanks, fillInBlanksRequest.getQuestionType());
     }
+
+    @Test
+    void shouldCreateSourceToTargetTranslationRequestWhenTypeMatches() throws JsonProcessingException {
+        var json = """
+            {
+                "questionType": "SourceToTargetTranslation",
+                "sentenceID": "123",
+                "userResponse": "test answer"
+            }
+            """;
+        var node = objectMapper.readTree(json);
+
+        var request = AttemptRequest.fromJsonNode(node);
+
+        assertInstanceOf(SourceToTargetTranslationAttemptRequest.class, request);
+
+        var sourceToTargetRequest = (SourceToTargetTranslationAttemptRequest) request;
+        assertEquals("123", sourceToTargetRequest.getSentenceID());
+        assertEquals("test answer", sourceToTargetRequest.getUserResponse());
+        assertEquals(QuestionType.SourceToTargetTranslation, sourceToTargetRequest.getQuestionType());
+    }
 }
