@@ -1,11 +1,11 @@
-import { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
+import { QuestionDTO } from "@/utilities/api-types";
 import log from "@/utilities/logger";
 import { useRef, useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchQuestionAsset } from "@/utilities/api";
 
 interface UseQuestionAudioPlaybackParams {
-  question: FillInTheBlanksQuestionDTO;
+  question: QuestionDTO;
   autoplay?: boolean;
 }
 
@@ -81,7 +81,7 @@ export default function useQuestionAudioPlayback({
     return {
       isLoading: true,
       isError: false,
-      playAudio: () => {},
+      playAudio: () => { },
     };
   }
 

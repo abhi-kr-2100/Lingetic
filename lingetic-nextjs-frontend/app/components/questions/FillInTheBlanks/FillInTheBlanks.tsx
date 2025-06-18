@@ -9,8 +9,8 @@ import type {
   FillInTheBlanksAttemptResponse,
 } from "@/utilities/api-types";
 
-import ActionButton from "./ActionButton";
-import AnswerCheckStatus from "./AnswerCheckStatus";
+import ActionButton from "../components/ActionButton";
+import AnswerCheckStatus from "../components/AnswerCheckStatus";
 import MainComponent from "./MainComponent";
 import useTextUserAnswer from "../hooks/useTextUserAnswer";
 

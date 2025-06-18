@@ -1,5 +1,5 @@
 import Question from "./Question";
-import Result from "./Result";
+import Result from "../components/Result";
 import assert from "@/utilities/assert";
 
 import type {
@@ -39,7 +39,9 @@ export default function MainComponent({
             disabled={isChecked || isChecking}
           />
         ) : attemptResponse !== undefined ? (
-          <Result question={question} attemptResponse={attemptResponse} />
+          <Result sentenceID={question.sentenceID} fullSentence={
+            question.text.replace(/_+/, attemptResponse.correctAnswer)
+          } attemptResponse={attemptResponse} />
         ) : (
           <>
             {assert(

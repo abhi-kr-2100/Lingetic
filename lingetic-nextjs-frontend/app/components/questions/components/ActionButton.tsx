@@ -1,14 +1,14 @@
 import Speaker from "./Speaker";
 
 import type { ReactNode } from "react";
-import type { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
+import type { QuestionDTO } from "@/utilities/api-types";
 
 interface ActionButtonProps {
   isChecked: boolean;
   isChecking: boolean;
   onCheck: () => void;
   NextButton: ReactNode;
-  question: FillInTheBlanksQuestionDTO;
+  question: QuestionDTO;
   value: string;
 }
 
@@ -35,8 +35,8 @@ export default function ActionButton({
           {isChecking
             ? "Checking..."
             : value.trim().length === 0
-            ? "Skip"
-            : "Check"}
+              ? "Skip"
+              : "Check"}
         </button>
       )}
     </div>

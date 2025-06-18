@@ -2,11 +2,11 @@
 
 import { Volume2 } from "lucide-react";
 
-import useQuestionAudioPlayback from "./useQuestionAudioPlayback";
-import type { FillInTheBlanksQuestionDTO } from "@/utilities/api-types";
+import useQuestionAudioPlayback from "../hooks/useQuestionAudioPlayback";
+import type { QuestionDTO } from "@/utilities/api-types";
 
 interface SpeakerProps {
-  question: FillInTheBlanksQuestionDTO;
+  question: QuestionDTO;
   autoplay?: boolean;
 }
 
