@@ -321,6 +321,28 @@
       ]
     },
     {
+      "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.TranslationAttemptResponse",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "getAttemptStatus",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCorrectAnswer",
+          "parameterTypes": []
+        },
+        {
+          "name": "getQuestionType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSourceWordExplanations",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Question.FillInTheBlanksQuestionDTO",
       "allDeclaredFields": true,
       "methods": [
@@ -375,6 +397,32 @@
         },
         {
           "name": "getTranslation",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.munetmo.lingetic.LanguageTestService.DTOs.Question.TranslationQuestionDTO",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "getQuestionType",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSentenceID",
+          "parameterTypes": []
+        },
+        {
+          "name": "getToTranslateText",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTranslateFromLanguage",
+          "parameterTypes": []
+        },
+        {
+          "name": "getTranslateToLanguage",
           "parameterTypes": []
         }
       ]
@@ -561,6 +609,15 @@
         {
           "name": "attemptQuestionUseCase",
           "parameterTypes": [
+            "com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository",
+            "com.munetmo.lingetic.lib.tasks.TaskQueue",
+            "java.util.concurrent.ExecutorService"
+          ]
+        },
+        {
+          "name": "attemptQuestionUseCase",
+          "parameterTypes": [
+            "com.munetmo.lingetic.LanguageTestService.Repositories.SentenceRepository",
             "com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository",
             "com.munetmo.lingetic.lib.tasks.TaskQueue",
             "java.util.concurrent.ExecutorService"
@@ -8547,6 +8604,15 @@
     },
     {
       "glob": "db/migration/V16__Add_Foreign_Key_To_Sentence_Reviews_Language.sql"
+    },
+    {
+      "glob": "db/migration/V17__Remove_Question_Reviews_Table.sql"
+    },
+    {
+      "glob": "db/migration/V18__Reenable_SourceToTranslation_Question_Type.sql"
+    },
+    {
+      "glob": "db/migration/V19__Rename_SourceToTargetTranslation_To_Translation.sql"
     },
     {
       "glob": "db/migration/V1__Create_Tables.sql"
