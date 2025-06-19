@@ -7,6 +7,7 @@ import type {
     TranslationQuestionDTO,
 } from "@/utilities/api-types";
 import type { ChangeEvent, KeyboardEvent } from "react";
+import { languageIDToName } from "@/app/languages/constants";
 
 interface MainComponentProps {
     isChecked: boolean;
@@ -50,7 +51,7 @@ export default function MainComponent({
                 )}
             </div>
             <div className="text-sm text-gray-600">
-                Translate from {question.translateFromLanguage} to {question.translateToLanguage}
+                Translate to {languageIDToName[question.translateToLanguage]}.
             </div>
         </div>
     );
