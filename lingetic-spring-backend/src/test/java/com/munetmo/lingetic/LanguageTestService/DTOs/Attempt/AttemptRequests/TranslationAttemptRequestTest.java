@@ -9,24 +9,24 @@ import java.util.InputMismatchException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SourceToTargetTranslationAttemptRequestTest {
+class TranslationAttemptRequestTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void constructorShouldThrowExceptionWhenSentenceIDIsBlank() {
         assertThrows(
             IllegalArgumentException.class,
-            () -> new SourceToTargetTranslationAttemptRequest("", "answer")
+            () -> new TranslationAttemptRequest("", "answer")
         );
     }
 
     @Test
     void constructorShouldCreateAValidObjectWhenGivenValidArguments() {
-        var request = new SourceToTargetTranslationAttemptRequest("test-id", "test-response");
+        var request = new TranslationAttemptRequest("test-id", "test-response");
 
         assertEquals("test-id", request.getSentenceID());
         assertEquals("test-response", request.getUserResponse());
-        assertEquals(QuestionType.SourceToTargetTranslation, request.getQuestionType());
+        assertEquals(QuestionType.Translation, request.getQuestionType());
     }
 
     @Test
@@ -40,7 +40,7 @@ class SourceToTargetTranslationAttemptRequestTest {
 
         assertThrows(
             InputMismatchException.class,
-            () -> SourceToTargetTranslationAttemptRequest.fromJsonNode(node)
+            () -> TranslationAttemptRequest.fromJsonNode(node)
         );
     }
 
@@ -55,7 +55,7 @@ class SourceToTargetTranslationAttemptRequestTest {
 
         assertThrows(
             InputMismatchException.class,
-            () -> SourceToTargetTranslationAttemptRequest.fromJsonNode(node)
+            () -> TranslationAttemptRequest.fromJsonNode(node)
         );
     }
 
@@ -69,10 +69,10 @@ class SourceToTargetTranslationAttemptRequestTest {
             """;
         var node = objectMapper.readTree(json);
 
-        var request = SourceToTargetTranslationAttemptRequest.fromJsonNode(node);
+        var request = TranslationAttemptRequest.fromJsonNode(node);
 
         assertEquals("123", request.getSentenceID());
         assertEquals("test answer", request.getUserResponse());
-        assertEquals(QuestionType.SourceToTargetTranslation, request.getQuestionType());
+        assertEquals(QuestionType.Translation, request.getQuestionType());
     }
 }

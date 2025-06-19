@@ -6,13 +6,13 @@ import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
 
 import java.util.List;
 
-public final class SourceToTargetTranslationAttemptResponse implements AttemptResponse {
-    private static final QuestionType questionType = QuestionType.SourceToTargetTranslation;
+public final class TranslationAttemptResponse implements AttemptResponse {
+    private static final QuestionType questionType = QuestionType.Translation;
     private final AttemptStatus attemptStatus;
     private final String correctAnswer;
     private final List<WordExplanation> sourceWordExplanations;
 
-    public SourceToTargetTranslationAttemptResponse(AttemptStatus attemptStatus, String correctAnswer, List<WordExplanation> sourceWordExplanations) {
+    public TranslationAttemptResponse(AttemptStatus attemptStatus, String correctAnswer, List<WordExplanation> sourceWordExplanations) {
         if (correctAnswer.isBlank()) {
             throw new IllegalArgumentException("correctAnswer cannot be blank.");
         }

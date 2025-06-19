@@ -6,12 +6,12 @@ import { BookOpen, XCircle } from "lucide-react";
 import useQuestions, { SuccessState } from "./useQuestions";
 import assert from "@/utilities/assert";
 import FillInTheBlanks from "@/app/components/questions/FillInTheBlanks/FillInTheBlanks";
-import SourceToTargetTranslation from "@/app/components/questions/SourceToTargetTranslation/SourceToTargetTranslation";
+import Translation from "@/app/components/questions/Translation/Translation";
 import type {
   AttemptStatus,
   FillInTheBlanksQuestionDTO,
   QuestionDTO,
-  SourceToTargetTranslationQuestionDTO,
+  TranslationQuestionDTO,
 } from "@/utilities/api-types";
 import type QuestionProps from "@/app/components/questions/QuestionProps";
 import NextButton from "./NextButton";
@@ -172,9 +172,9 @@ const questionTypeToComponentMap = {
       NextButton={props.NextButton}
     />
   ),
-  SourceToTargetTranslation: (props: QuestionProps) => (
-    <SourceToTargetTranslation
-      question={props.question as SourceToTargetTranslationQuestionDTO}
+  Translation: (props: QuestionProps) => (
+    <Translation
+      question={props.question as TranslationQuestionDTO}
       afterAnswerCheck={props.afterAnswerCheck}
       NextButton={props.NextButton}
     />

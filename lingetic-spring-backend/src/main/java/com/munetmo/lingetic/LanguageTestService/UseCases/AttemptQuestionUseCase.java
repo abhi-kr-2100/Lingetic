@@ -9,7 +9,7 @@ import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.At
 import com.munetmo.lingetic.LanguageTestService.DTOs.TaskPayloads.SentenceReviewProcessingPayload;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.QuestionType;
-import com.munetmo.lingetic.LanguageTestService.Entities.Questions.SourceToTargetTranslationQuestion;
+import com.munetmo.lingetic.LanguageTestService.Entities.Questions.TranslationQuestion;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
 import com.munetmo.lingetic.LanguageTestService.Queues.QueueNames;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
@@ -34,12 +34,9 @@ public class AttemptQuestionUseCase {
     public AttemptResponse execute(String userId, AttemptRequest request)
             throws QuestionNotFoundException {
         Question question;
-        if (request.getQuestionType() == QuestionType.SourceToTargetTranslation) {
+        if (request.getQuestionType() == QuestionType.Translation) {
             var sentence = sentenceRepository.getSentenceByID(request.getSentenceID());
-            // In case of Sentence, source is the original language. However, in case of
-            // SourceToTargetTranslationQuestion, source is the language the user speaks and target is the language the
-            // user is learning.
-            question = new SourceToTargetTranslationQuestion(
+            question = new TranslationQuestion(
                     UUID.randomUUID().toString(),
                     sentence.translationLanguage(),
                     sentence.sourceLanguage(),

@@ -2,9 +2,9 @@ package com.munetmo.lingetic.LanguageTestService.UseCases;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.FillInTheBlanksAttemptRequest;
-import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.SourceToTargetTranslationAttemptRequest;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.TranslationAttemptRequest;
 import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.AttemptResponse;
-import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.SourceToTargetTranslationAttemptResponse;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.TranslationAttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Exceptions.QuestionNotFoundException;
@@ -125,41 +125,41 @@ class AttemptQuestionUseCaseTest {
     }
 
     @Test
-    void shouldHandleSourceToTargetTranslationSpecially() throws QuestionNotFoundException, JsonProcessingException {
-        // For SourceToTargetTranslation, the use case should create a question dynamically from sentence data
-        // instead of querying the question repository
-        var request = new SourceToTargetTranslationAttemptRequest(TEST_SENTENCE_ID, "Kedi pencere eşiğinde tembelce gerildi.");
+    void shouldHandleTranslationSpecially() throws QuestionNotFoundException, JsonProcessingException {
+        // For Translation questions, the use case should create a question dynamically from sentence data instead of
+        // querying the question repository
+        var request = new TranslationAttemptRequest(TEST_SENTENCE_ID, "The cat stretched lazily on the windowsill.");
 
         AttemptResponse response = attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
         assertNotNull(response);
-        assertTrue(response instanceof SourceToTargetTranslationAttemptResponse);
-        var typedResponse = (SourceToTargetTranslationAttemptResponse) response;
+        assertTrue(response instanceof TranslationAttemptResponse);
+        var typedResponse = (TranslationAttemptResponse) response;
         assertSame(AttemptStatus.Success, response.getAttemptStatus());
-        assertEquals("Kedi pencere eşiğinde tembelce gerildi.", typedResponse.getCorrectAnswer());
+        assertEquals("The cat stretched lazily on the windowsill.", typedResponse.getCorrectAnswer());
     }
 
     @Test
-    void shouldReturnFailureForIncorrectSourceToTargetTranslation() throws QuestionNotFoundException, JsonProcessingException {
-        var request = new SourceToTargetTranslationAttemptRequest(TEST_SENTENCE_ID, "Wrong translation");
+    void shouldReturnFailureForIncorrectTranslation() throws QuestionNotFoundException, JsonProcessingException {
+        var request = new TranslationAttemptRequest(TEST_SENTENCE_ID, "Wrong translation");
 
         AttemptResponse response = attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
         assertNotNull(response);
-        assertTrue(response instanceof SourceToTargetTranslationAttemptResponse);
-        var typedResponse = (SourceToTargetTranslationAttemptResponse) response;
+        assertTrue(response instanceof TranslationAttemptResponse);
+        var typedResponse = (TranslationAttemptResponse) response;
         assertSame(AttemptStatus.Failure, response.getAttemptStatus());
-        assertEquals("Kedi pencere eşiğinde tembelce gerildi.", typedResponse.getCorrectAnswer());
+        assertEquals("The cat stretched lazily on the windowsill.", typedResponse.getCorrectAnswer());
     }
 
     @Test
-    void shouldNotQueryQuestionRepositoryForSourceToTargetTranslation() throws QuestionNotFoundException, JsonProcessingException {
+    void shouldNotQueryQuestionRepositoryForTranslation() throws QuestionNotFoundException, JsonProcessingException {
         // Verify that no question exists in the repository for this sentence
         assertThrows(QuestionNotFoundException.class, () ->
             questionRepository.getQuestionBySentenceID(TEST_SENTENCE_ID));
 
-        // But SourceToTargetTranslation should still work because it creates the question dynamically
-        var request = new SourceToTargetTranslationAttemptRequest(TEST_SENTENCE_ID, "Kedi pencere eşiğinde tembelce gerildi.");
+        // But codeTranslation should still work because it creates the question dynamically
+        var request = new TranslationAttemptRequest(TEST_SENTENCE_ID, "The cat stretched lazily on the windowsill.");
 
         AttemptResponse response = attemptQuestionUseCase.execute(TEST_USER_ID, request);
 
@@ -168,9 +168,9 @@ class AttemptQuestionUseCaseTest {
     }
 
     @Test
-    void shouldThrowQuestionNotFoundExceptionForSourceToTargetTranslationWithNonexistentSentence() {
+    void shouldThrowQuestionNotFoundExceptionForTranslationWithNonexistentSentence() {
         var nonexistentSentenceId = UUID.randomUUID().toString();
-        var request = new SourceToTargetTranslationAttemptRequest(nonexistentSentenceId, "Any translation");
+        var request = new TranslationAttemptRequest(nonexistentSentenceId, "Any translation");
 
         // Should throw exception because the sentence doesn't exist
         assertThrows(Exception.class, () -> attemptQuestionUseCase.execute(TEST_USER_ID, request));

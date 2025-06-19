@@ -8,12 +8,12 @@ import com.munetmo.lingetic.LanguageTestService.infra.Deserializers.AttemptReque
 import java.util.InputMismatchException;
 
 @JsonDeserialize(using = AttemptRequestDeserializer.class)
-public final class SourceToTargetTranslationAttemptRequest implements AttemptRequest {
-    private static final QuestionType questionType = QuestionType.SourceToTargetTranslation;
+public final class TranslationAttemptRequest implements AttemptRequest {
+    private static final QuestionType questionType = QuestionType.Translation;
     private final String sentenceID;
     private final String userResponse;
 
-    public SourceToTargetTranslationAttemptRequest(String sentenceID, String userResponse) {
+    public TranslationAttemptRequest(String sentenceID, String userResponse) {
         if (sentenceID.isBlank()) {
             throw new IllegalArgumentException("sentenceID cannot be blank.");
         }
@@ -27,7 +27,7 @@ public final class SourceToTargetTranslationAttemptRequest implements AttemptReq
         return questionType;
     }
 
-    public static SourceToTargetTranslationAttemptRequest fromJsonNode(JsonNode node) {
+    public static TranslationAttemptRequest fromJsonNode(JsonNode node) {
         var sentenceID = node.get("sentenceID");
         if (sentenceID == null) {
             throw new InputMismatchException("sentenceID is required.");
@@ -38,7 +38,7 @@ public final class SourceToTargetTranslationAttemptRequest implements AttemptReq
             throw new InputMismatchException("userResponse is required.");
         }
 
-        return new SourceToTargetTranslationAttemptRequest(sentenceID.asText(), userResponse.asText());
+        return new TranslationAttemptRequest(sentenceID.asText(), userResponse.asText());
     }
 
     @Override

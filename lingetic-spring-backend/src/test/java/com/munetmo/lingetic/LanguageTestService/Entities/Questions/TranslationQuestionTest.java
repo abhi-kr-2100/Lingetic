@@ -1,7 +1,7 @@
 package com.munetmo.lingetic.LanguageTestService.Entities.Questions;
 
-import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.SourceToTargetTranslationAttemptRequest;
-import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.SourceToTargetTranslationAttemptResponse;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptRequests.TranslationAttemptRequest;
+import com.munetmo.lingetic.LanguageTestService.DTOs.Attempt.AttemptResponses.TranslationAttemptResponse;
 import com.munetmo.lingetic.LanguageTestService.Entities.AttemptStatus;
 import com.munetmo.lingetic.LanguageService.Entities.Language;
 import com.munetmo.lingetic.LanguageTestService.Entities.WordExplanation;
@@ -15,22 +15,22 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SourceToTargetTranslationQuestionTest {
+class TranslationQuestionTest {
     private final String defaultSentenceId = "sentence-id";
 
     @Test
     void constructorShouldCreateValidObjectWithCorrectValues() {
         var id = "test-id";
-        var sourceLanguage = Language.English;
-        var targetLanguage = Language.Turkish;
-        var sourceText = "Hello, world";
-        var targetText = "Merhaba, dünya";
+        var translateFromLanguage = Language.English;
+        var translateToLanguage = Language.Turkish;
+        var toTranslateText = "Hello, world";
+        var translatedText = "Merhaba, dünya";
 
-        SourceToTargetTranslationQuestion question = new SourceToTargetTranslationQuestion(id, sourceLanguage, targetLanguage, sourceText, targetText, defaultSentenceId, List.of());
+        TranslationQuestion question = new TranslationQuestion(id, translateFromLanguage, translateToLanguage, toTranslateText, translatedText, defaultSentenceId, List.of());
 
         assertEquals(id, question.getID());
-        assertEquals(sourceLanguage, question.getLanguage());
-        assertEquals(QuestionType.SourceToTargetTranslation, question.getQuestionType());
+        assertEquals(translateToLanguage, question.getLanguage());
+        assertEquals(QuestionType.Translation, question.getQuestionType());
         assertEquals(defaultSentenceId, question.getSentenceID());
         assertEquals(Collections.emptyList(), question.getSourceWordExplanations());
     }
@@ -38,20 +38,20 @@ class SourceToTargetTranslationQuestionTest {
     @Test
     void constructorShouldCreateValidObjectWithSourceWordExplanation() {
         var id = "test-id";
-        var sourceLanguage = Language.English;
-        var targetLanguage = Language.Turkish;
-        var sourceText = "Hello, world";
-        var targetText = "Merhaba, dünya";
+        var translateFromLanguage = Language.English;
+        var translateToLanguage = Language.Turkish;
+        var toTranslateText = "Hello, world";
+        var translatedText = "Merhaba, dünya";
         var wordExplanations = List.of(
             new WordExplanation(0, "Hello", List.of("noun"), "A greeting"),
             new WordExplanation(7, "world", List.of("noun"), "The Earth")
         );
 
-        SourceToTargetTranslationQuestion question = new SourceToTargetTranslationQuestion(id, sourceLanguage, targetLanguage, sourceText, targetText, defaultSentenceId, wordExplanations);
+        TranslationQuestion question = new TranslationQuestion(id, translateFromLanguage, translateToLanguage, toTranslateText, translatedText, defaultSentenceId, wordExplanations);
 
         assertEquals(id, question.getID());
-        assertEquals(sourceLanguage, question.getLanguage());
-        assertEquals(QuestionType.SourceToTargetTranslation, question.getQuestionType());
+        assertEquals(translateToLanguage, question.getLanguage());
+        assertEquals(QuestionType.Translation, question.getQuestionType());
         assertEquals(defaultSentenceId, question.getSentenceID());
         assertEquals(wordExplanations, question.getSourceWordExplanations());
     }
@@ -60,23 +60,23 @@ class SourceToTargetTranslationQuestionTest {
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenIdIsInvalid(String id) {
         assertThrows(IllegalArgumentException.class, () ->
-            new SourceToTargetTranslationQuestion(id, Language.English, Language.Turkish, "Hello", "Merhaba", defaultSentenceId, List.of())
+            new TranslationQuestion(id, Language.English, Language.Turkish, "Hello", "Merhaba", defaultSentenceId, List.of())
         );
     }
 
     @ParameterizedTest
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
-    void constructorShouldThrowExceptionWhenSourceTextIsInvalid(String sourceText) {
+    void constructorShouldThrowExceptionWhentoTranslateTextIsInvalid(String toTranslateText) {
         assertThrows(IllegalArgumentException.class, () ->
-            new SourceToTargetTranslationQuestion("id", Language.English, Language.Turkish, sourceText, "Merhaba", defaultSentenceId, List.of())
+            new TranslationQuestion("id", Language.English, Language.Turkish, toTranslateText, "Merhaba", defaultSentenceId, List.of())
         );
     }
 
     @ParameterizedTest
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
-    void constructorShouldThrowExceptionWhenTargetTextIsInvalid(String targetText) {
+    void constructorShouldThrowExceptionWhenTranslatedTextIsInvalid(String translatedText) {
         assertThrows(IllegalArgumentException.class, () ->
-            new SourceToTargetTranslationQuestion("id", Language.English, Language.Turkish, "Hello", targetText, defaultSentenceId, List.of())
+            new TranslationQuestion("id", Language.English, Language.Turkish, "Hello", translatedText, defaultSentenceId, List.of())
         );
     }
 
@@ -84,39 +84,39 @@ class SourceToTargetTranslationQuestionTest {
     @ValueSource(strings = {" ", "   ", "\t", "\n"})
     void constructorShouldThrowExceptionWhenSentenceIdIsInvalid(String sentenceId) {
         assertThrows(IllegalArgumentException.class, () ->
-            new SourceToTargetTranslationQuestion("id", Language.English, Language.Turkish, "Hello", "Merhaba", sentenceId, List.of())
+            new TranslationQuestion("id", Language.English, Language.Turkish, "Hello", "Merhaba", sentenceId, List.of())
         );
     }
 
     @Test
     void assessAttemptShouldReturnSuccessForCorrectTranslation() {
-        var question = new SourceToTargetTranslationQuestion(
+        var question = new TranslationQuestion(
             "id", Language.English, Language.Turkish, "Hello", "Merhaba", defaultSentenceId, List.of()
         );
-        var request = new SourceToTargetTranslationAttemptRequest(question.getID(), question.targetText);
+        var request = new TranslationAttemptRequest(question.getID(), question.translatedText);
 
-        var response = (SourceToTargetTranslationAttemptResponse) question.assessAttempt(request);
+        var response = (TranslationAttemptResponse) question.assessAttempt(request);
 
         assertEquals(AttemptStatus.Success, response.getAttemptStatus());
-        assertEquals(question.targetText, response.getCorrectAnswer());
+        assertEquals(question.translatedText, response.getCorrectAnswer());
     }
 
     @Test
     void assessAttemptShouldReturnFailureForIncorrectTranslation() {
-        var question = new SourceToTargetTranslationQuestion(
+        var question = new TranslationQuestion(
             "id", Language.English, Language.Turkish, "Hello", "Merhaba", defaultSentenceId, List.of()
         );
-        var request = new SourceToTargetTranslationAttemptRequest(question.getID(), "wrong answer");
+        var request = new TranslationAttemptRequest(question.getID(), "wrong answer");
 
-        var response = (SourceToTargetTranslationAttemptResponse) question.assessAttempt(request);
+        var response = (TranslationAttemptResponse) question.assessAttempt(request);
 
         assertEquals(AttemptStatus.Failure, response.getAttemptStatus());
-        assertEquals(question.targetText, response.getCorrectAnswer());
+        assertEquals(question.translatedText, response.getCorrectAnswer());
     }
 
     @Test
     void getQuestionTypeSpecificDataShouldReturnCorrectMap() {
-        var question = new SourceToTargetTranslationQuestion(
+        var question = new TranslationQuestion(
             "test-id",
             Language.English,
             Language.Turkish,
@@ -128,15 +128,15 @@ class SourceToTargetTranslationQuestionTest {
 
         var data = question.getQuestionTypeSpecificData();
 
-        assertEquals(Language.English.name(), data.get("sourceLanguage"));
-        assertEquals(Language.Turkish.name(), data.get("targetLanguage"));
-        assertEquals("Hello", data.get("sourceText"));
-        assertEquals("Merhaba", data.get("targetText"));
+        assertEquals(Language.English.name(), data.get("translateFromLanguage"));
+        assertEquals(Language.Turkish.name(), data.get("translateToLanguage"));
+        assertEquals("Hello", data.get("toTranslateText"));
+        assertEquals("Merhaba", data.get("translatedText"));
     }
 
     @Test
     void createFromQuestionTypeSpecificDataShouldCreateEquivalentQuestion() {
-        var originalQuestion = new SourceToTargetTranslationQuestion(
+        var originalQuestion = new TranslationQuestion(
             "test-id",
             Language.English,
             Language.Turkish,
@@ -148,7 +148,7 @@ class SourceToTargetTranslationQuestionTest {
 
         var data = originalQuestion.getQuestionTypeSpecificData();
 
-        var newQuestion = SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+        var newQuestion = TranslationQuestion.createFromQuestionTypeSpecificData(
             originalQuestion.getID(),
             originalQuestion.getLanguage(),
             originalQuestion.getSentenceID(),
@@ -158,10 +158,10 @@ class SourceToTargetTranslationQuestionTest {
 
         assertEquals(originalQuestion.getID(), newQuestion.getID());
         assertEquals(originalQuestion.getLanguage(), newQuestion.getLanguage());
-        assertEquals(originalQuestion.sourceLanguage, newQuestion.sourceLanguage);
-        assertEquals(originalQuestion.targetLanguage, newQuestion.targetLanguage);
-        assertEquals(originalQuestion.sourceText, newQuestion.sourceText);
-        assertEquals(originalQuestion.targetText, newQuestion.targetText);
+        assertEquals(originalQuestion.translateFromLanguage, newQuestion.translateFromLanguage);
+        assertEquals(originalQuestion.translateToLanguage, newQuestion.translateToLanguage);
+        assertEquals(originalQuestion.toTranslateText, newQuestion.toTranslateText);
+        assertEquals(originalQuestion.translatedText, newQuestion.translatedText);
         assertEquals(originalQuestion.getSentenceID(), newQuestion.getSentenceID());
     }
 
@@ -172,13 +172,13 @@ class SourceToTargetTranslationQuestionTest {
         );
 
         Map<String, Object> data = Map.of(
-            "sourceLanguage", Language.English.name(),
-            "targetLanguage", Language.Turkish.name(),
-            "sourceText", "Hello",
-            "targetText", "Merhaba"
+            "translateFromLanguage", Language.English.name(),
+            "translateToLanguage", Language.Turkish.name(),
+            "toTranslateText", "Hello",
+            "translatedText", "Merhaba"
         );
 
-        var newQuestion = SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+        var newQuestion = TranslationQuestion.createFromQuestionTypeSpecificData(
             "test-id",
             Language.English,
             defaultSentenceId,
@@ -186,23 +186,23 @@ class SourceToTargetTranslationQuestionTest {
             data
         );
 
-        assertEquals(Language.English, newQuestion.sourceLanguage);
-        assertEquals(Language.Turkish, newQuestion.targetLanguage);
-        assertEquals("Hello", newQuestion.sourceText);
-        assertEquals("Merhaba", newQuestion.targetText);
+        assertEquals(Language.English, newQuestion.translateFromLanguage);
+        assertEquals(Language.Turkish, newQuestion.translateToLanguage);
+        assertEquals("Hello", newQuestion.toTranslateText);
+        assertEquals("Merhaba", newQuestion.translatedText);
         assertEquals(wordExplanations, newQuestion.getSourceWordExplanations());
     }
 
     @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenSourceLanguageIsMissing() {
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhentranslateFromLanguageIsMissing() {
         Map<String, Object> incompleteData = Map.of(
-            "targetLanguage", Language.Turkish.name(),
-            "sourceText", "Hello",
-            "targetText", "Merhaba"
+            "translateToLanguage", Language.Turkish.name(),
+            "toTranslateText", "Hello",
+            "translatedText", "Merhaba"
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+                TranslationQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
                         defaultSentenceId,
@@ -213,15 +213,15 @@ class SourceToTargetTranslationQuestionTest {
     }
 
     @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenTargetLanguageIsMissing() {
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhentranslateToLanguageIsMissing() {
         Map<String, Object> incompleteData = Map.of(
-            "sourceLanguage", Language.English.name(),
-            "sourceText", "Hello",
-            "targetText", "Merhaba"
+            "translateFromLanguage", Language.English.name(),
+            "toTranslateText", "Hello",
+            "translatedText", "Merhaba"
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+                TranslationQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
                         defaultSentenceId,
@@ -232,15 +232,15 @@ class SourceToTargetTranslationQuestionTest {
     }
 
     @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenSourceTextIsMissing() {
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhentoTranslateTextIsMissing() {
         Map<String, Object> incompleteData = Map.of(
-            "sourceLanguage", Language.English.name(),
-            "targetLanguage", Language.Turkish.name(),
-            "targetText", "Merhaba"
+            "translateFromLanguage", Language.English.name(),
+            "translateToLanguage", Language.Turkish.name(),
+            "translatedText", "Merhaba"
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+                TranslationQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
                         defaultSentenceId,
@@ -251,15 +251,15 @@ class SourceToTargetTranslationQuestionTest {
     }
 
     @Test
-    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenTargetTextIsMissing() {
+    void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenTranslatedTextIsMissing() {
         Map<String, Object> incompleteData = Map.of(
-            "sourceLanguage", Language.English.name(),
-            "targetLanguage", Language.Turkish.name(),
-            "sourceText", "Hello"
+            "translateFromLanguage", Language.English.name(),
+            "translateToLanguage", Language.Turkish.name(),
+            "toTranslateText", "Hello"
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+                TranslationQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
                         defaultSentenceId,
@@ -272,12 +272,12 @@ class SourceToTargetTranslationQuestionTest {
     @Test
     void createFromQuestionTypeSpecificDataShouldThrowExceptionWhenMultipleFieldsAreMissing() {
         Map<String, Object> incompleteData = Map.of(
-            "sourceLanguage", Language.English.name(),
-            "targetLanguage", Language.Turkish.name()
+            "translateFromLanguage", Language.English.name(),
+            "translateToLanguage", Language.Turkish.name()
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+                TranslationQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
                         defaultSentenceId,
@@ -292,7 +292,7 @@ class SourceToTargetTranslationQuestionTest {
         Map<String, Object> emptyData = Map.of();
 
         assertThrows(IllegalArgumentException.class, () ->
-                SourceToTargetTranslationQuestion.createFromQuestionTypeSpecificData(
+                TranslationQuestion.createFromQuestionTypeSpecificData(
                         "test-id",
                         Language.English,
                         defaultSentenceId,

@@ -63,10 +63,10 @@ class AttemptRequestTest {
     }
 
     @Test
-    void shouldCreateSourceToTargetTranslationRequestWhenTypeMatches() throws JsonProcessingException {
+    void shouldCreateTranslationRequestWhenTypeMatches() throws JsonProcessingException {
         var json = """
             {
-                "questionType": "SourceToTargetTranslation",
+                "questionType": "Translation",
                 "sentenceID": "123",
                 "userResponse": "test answer"
             }
@@ -75,11 +75,11 @@ class AttemptRequestTest {
 
         var request = AttemptRequest.fromJsonNode(node);
 
-        assertInstanceOf(SourceToTargetTranslationAttemptRequest.class, request);
+        assertInstanceOf(TranslationAttemptRequest.class, request);
 
-        var sourceToTargetRequest = (SourceToTargetTranslationAttemptRequest) request;
-        assertEquals("123", sourceToTargetRequest.getSentenceID());
-        assertEquals("test answer", sourceToTargetRequest.getUserResponse());
-        assertEquals(QuestionType.SourceToTargetTranslation, sourceToTargetRequest.getQuestionType());
+        var translationAttemptRequest = (TranslationAttemptRequest) request;
+        assertEquals("123", translationAttemptRequest.getSentenceID());
+        assertEquals("test answer", translationAttemptRequest.getUserResponse());
+        assertEquals(QuestionType.Translation, translationAttemptRequest.getQuestionType());
     }
 }
