@@ -1,6 +1,7 @@
 export type QuestionType = "FillInTheBlanks" | "Translation";
 export type AssetType = "audio";
 export type AttemptStatus = "Success" | "Failure";
+export type Language = "English" | "French" | "Turkish" | "Swedish" | "JapaneseModifiedHepburn";
 
 export interface QuestionDTO {
   sentenceID: string;
@@ -16,8 +17,8 @@ export interface FillInTheBlanksQuestionDTO extends QuestionDTO {
 export interface TranslationQuestionDTO extends QuestionDTO {
   questionType: "Translation";
   toTranslateText: string;
-  translateFromLanguage: string;
-  translateToLanguage: string;
+  translateFromLanguage: Language;
+  translateToLanguage: Language;
 }
 
 export interface AttemptRequest {
