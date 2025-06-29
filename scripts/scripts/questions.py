@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-import concurrent.futures
 import json
 import logging
 import sys
-from typing import List, Dict, Any, TextIO, Tuple, Set
+import uuid
+from typing import List, Dict, Any, TextIO
 import requests
 from pydantic import BaseModel
-import threading
-from pathlib import Path
 
 from library.gemini_client import get_global_gemini_client
 from library.errors import InvalidWordIDError
@@ -166,10 +164,10 @@ def tokenize_sentences(sentences: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return sentences_with_tokens
 
 
-def make_gemini_api_call(prompt: str, valid_ids: List[int]) -> List[int]:
+def make_gemini_api_call(prompt: str, valid_ids: List[int], request_id: uuid.UUID) -> List[int]:
     client = get_global_gemini_client()
     response = client.generate_content(
-        prompt=prompt, response_schema=SelectedWordsResponse
+        prompt=prompt, response_schema=SelectedWordsResponse, request_id=request_id
     )
 
     ids = response["selectedIds"]
@@ -203,33 +201,6 @@ def generate_prompt(
     prompt += "Output:\n"
 
     return prompt
-
-
-def load_cached_results(
-    cache_path: Path,
-) -> Tuple[Set[int], Dict[int, Dict[str, Any]]]:
-    """Load cached results from file if it exists."""
-    processed_idxes = set()
-    cached_results = {}
-
-    if not cache_path.exists():
-        return processed_idxes, cached_results
-
-    with open(cache_path, "r", encoding="utf-8") as cache_file:
-        for line in cache_file:
-            entry = json.loads(line)
-            idx = entry["idx"]
-            processed_idxes.add(idx)
-            cached_results[idx] = entry
-
-    return processed_idxes, cached_results
-
-
-def prepare_sentences_for_processing(
-    sentences: List[Dict[str, Any]],
-) -> List[Tuple[int, Dict[str, Any]]]:
-    """Prepare sentences for processing by adding sequence IDs."""
-    return [(i, sentence) for i, sentence in enumerate(sentences)]
 
 
 def get_word_tokens_with_ids(
@@ -292,6 +263,7 @@ def process_sentence_with_gemini(
     questions = []
     tokens = sentence["tokens"]
     language = sentence["sourceLanguage"]
+    translation_language = sentence["translationLanguage"]
 
     word_tokens_with_ids, valid_ids = get_word_tokens_with_ids(tokens)
 
@@ -300,7 +272,8 @@ def process_sentence_with_gemini(
         valid_ids,
     )
 
-    selected_ids = make_gemini_api_call(prompt, valid_ids)
+    request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f'questions-{sentence["sourceText"]}-{language}-{translation_language}')
+    selected_ids = make_gemini_api_call(prompt, valid_ids, request_id)
 
     seen_words = set()
 
@@ -324,85 +297,27 @@ def process_sentence_with_gemini(
     return questions
 
 
-def save_to_cache(
-    cache_path: Path, result: Dict[str, Any], lock: threading.Lock, idx: int
-):
-    """Save processed result to cache file in a thread-safe manner."""
-    cache_entry = {"idx": idx, **result}
-
-    with lock:
-        with open(cache_path, "a", encoding="utf-8") as cache_file:
-            cache_file.write(json.dumps(cache_entry, ensure_ascii=False) + "\n")
-
-
-def process_sentence_with_cache(
-    idx: int,
-    sentence: Dict[str, Any],
-    cache_path: Path,
-    cache_file_lock: threading.Lock,
-    cached_results: Dict[int, Dict[str, Any]],
-) -> None:
-    """Process a single sentence and update the cache with the result."""
-    questions = process_sentence_with_gemini(sentence)
-    result = {"questions": questions}
-    save_to_cache(cache_path, result, cache_file_lock, idx)
-    cached_results[idx] = result
-
-
 def process_sentences(
     sentences: List[Dict[str, Any]],
-    output: str,
 ) -> List[Dict[str, Any]]:
     """
     Process sentences in three steps:
     1. Synchronously tokenize all sentences using a connection pool
     2. Process sentences in parallel with Gemini API while maintaining order
     """
-    cache_path = (
-        Path(output).with_suffix(".cache")
-        if output != "-"
-        else Path("output.cache")
-    )
-    cache_file_lock = threading.Lock()
-    processed_idxes, cached_results = load_cached_results(cache_path)
-
     sentences = tokenize_sentences(sentences)
-    sentences_with_idxes = prepare_sentences_for_processing(sentences)
-    to_process = [
-        (i, sent)
-        for i, sent in sentences_with_idxes
-        if i not in processed_idxes
-    ]
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_to_idx = {
-            executor.submit(
-                process_sentence_with_cache,
-                idx,
-                sent,
-                cache_path,
-                cache_file_lock,
-                cached_results,
-            ): idx
-            for idx, sent in to_process
-        }
+    sentences_with_questions = []
+    for sentence in sentences:
+        try:
+            questions = process_sentence_with_gemini(sentence)
+            sentence_with_questions = dict(sentence)
+            sentence_with_questions["questions"] = questions
+            sentences_with_questions.append(sentence_with_questions)
+        except InvalidWordIDError as e:
+            logger.error("Error processing sentence '%s': %s", sentence["sourceText"], e)
 
-        for future in concurrent.futures.as_completed(future_to_idx):
-            idx = future_to_idx[future]
-            try:
-                future.result()
-            except InvalidWordIDError as e:
-                logger.error(f"Error processing sentence at index {idx}: {e}")
-
-    return [
-        {
-            **sent,
-            "questions": cached_results[i]["questions"]
-            if i in cached_results
-            else [],
-        }
-        for i, sent in enumerate(sentences)
-    ]
+    return sentences_with_questions
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -426,7 +341,7 @@ def get_parser() -> argparse.ArgumentParser:
 
 def main(filepath: str, output: str) -> None:
     sentences = load_sentences(filepath)
-    sentences_with_questions = process_sentences(sentences, output)
+    sentences_with_questions = process_sentences(sentences)
 
     output_file = get_output_file(output)
     needs_closing = output != "-"
