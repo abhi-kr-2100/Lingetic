@@ -26,7 +26,7 @@ def process_entries(entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     selected_questions: List[Dict[str, Any]] = []
     for entry in entries:
         questions = entry["questions"]
-        index = int(entry["idx"])
+        difficulty = int(entry["difficulty"])
         sentence_id = entry["id"]
         language = entry["sourceLanguage"]
         sourceWordExplanations = entry["sourceWordExplanations"]
@@ -34,10 +34,9 @@ def process_entries(entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             dict(
                 question,
                 id=str(uuid.uuid4()),
-                index=index,
                 sentence_id=sentence_id,
                 language=language,
-                difficulty=(index + 1) * 10,
+                difficulty=difficulty,
                 sourceWordExplanations=sourceWordExplanations,
             )
             for question in questions
