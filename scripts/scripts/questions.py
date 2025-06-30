@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
+import asyncio
 import json
 import logging
 import sys
 import uuid
-from typing import List, Dict, Any, TextIO
+from typing import List, Dict, Any, TextIO, Tuple
+
 import requests
 from pydantic import BaseModel
 
@@ -150,11 +152,11 @@ def tokenize_sentences(sentences: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         response.raise_for_status()
 
         tokens = response.json()
-        id = 1
+        id_counter = 1
         for token in tokens:
             if token["type"] == "Word":
-                token["id"] = id
-                id += 1
+                token["id"] = id_counter
+                id_counter += 1
 
         sentence_with_tokens = dict(sentence)
         sentence_with_tokens["tokens"] = tokens
@@ -164,16 +166,18 @@ def tokenize_sentences(sentences: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return sentences_with_tokens
 
 
-def make_gemini_api_call(prompt: str, valid_ids: List[int], request_id: uuid.UUID) -> List[int]:
+async def make_gemini_api_call(
+    prompt: str, valid_ids: List[int], request_id: uuid.UUID
+) -> List[int]:
     client = get_global_gemini_client()
-    response = client.generate_content(
+    response = await client.generate_content(
         prompt=prompt, response_schema=SelectedWordsResponse, request_id=request_id
     )
 
     ids = response["selectedIds"]
-    for id in ids:
-        if id not in valid_ids:
-            raise InvalidWordIDError(id, valid_ids)
+    for id_val in ids:
+        if id_val not in valid_ids:
+            raise InvalidWordIDError(id_val, valid_ids)
 
     return ids
 
@@ -256,9 +260,9 @@ def create_fill_in_blank_question(
     }
 
 
-def process_sentence_with_gemini(
+async def process_sentence_with_gemini(
     sentence: Dict[str, Any],
-) -> List[Dict[str, Any]]:
+) -> Dict[str, Any]:
     """Process a single sentence to generate questions using Gemini API."""
     questions = []
     tokens = sentence["tokens"]
@@ -272,8 +276,11 @@ def process_sentence_with_gemini(
         valid_ids,
     )
 
-    request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f'questions-{sentence["sourceText"]}-{language}-{translation_language}')
-    selected_ids = make_gemini_api_call(prompt, valid_ids, request_id)
+    request_id = uuid.uuid5(
+        uuid.NAMESPACE_DNS,
+        f'questions-{sentence["sourceText"]}-{language}-{translation_language}',
+    )
+    selected_ids = await make_gemini_api_call(prompt, valid_ids, request_id)
 
     seen_words = set()
 
@@ -294,10 +301,12 @@ def process_sentence_with_gemini(
 
         questions.append(question)
 
-    return questions
+    sentence_with_questions = dict(sentence)
+    sentence_with_questions["questions"] = questions
+    return sentence_with_questions
 
 
-def process_sentences(
+async def process_sentences(
     sentences: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
     """
@@ -307,15 +316,17 @@ def process_sentences(
     """
     sentences = tokenize_sentences(sentences)
 
+    tasks = [process_sentence_with_gemini(sentence) for sentence in sentences]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
     sentences_with_questions = []
-    for sentence in sentences:
-        try:
-            questions = process_sentence_with_gemini(sentence)
-            sentence_with_questions = dict(sentence)
-            sentence_with_questions["questions"] = questions
-            sentences_with_questions.append(sentence_with_questions)
-        except InvalidWordIDError as e:
-            logger.error("Error processing sentence '%s': %s", sentence["sourceText"], e)
+    for i, result in enumerate(results):
+        if isinstance(result, Exception):
+            logger.error(
+                "Error processing sentence '%s': %s", sentences[i]["sourceText"], result
+            )
+        else:
+            sentences_with_questions.append(result)
 
     return sentences_with_questions
 
@@ -340,18 +351,22 @@ def get_parser() -> argparse.ArgumentParser:
 
 
 def main(filepath: str, output: str) -> None:
-    sentences = load_sentences(filepath)
-    sentences_with_questions = process_sentences(sentences)
+    """Main function to process sentences and generate questions."""
+    async def async_main():
+        sentences = load_sentences(filepath)
+        sentences_with_questions = await process_sentences(sentences)
 
-    output_file = get_output_file(output)
-    needs_closing = output != "-"
-    try:
-        json.dump(
-            sentences_with_questions, output_file, ensure_ascii=False, indent=2
-        )
-    finally:
-        if needs_closing:
-            output_file.close()
+        output_file = get_output_file(output)
+        needs_closing = output != "-"
+        try:
+            json.dump(
+                sentences_with_questions, output_file, ensure_ascii=False, indent=2
+            )
+        finally:
+            if needs_closing:
+                output_file.close()
+
+    asyncio.run(async_main())
 
 
 if __name__ == "__main__":
