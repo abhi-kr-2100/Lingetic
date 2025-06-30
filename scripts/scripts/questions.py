@@ -23,89 +23,27 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-PROMPT_EXAMPLES = {
-    "French": {
-        "sentence": "Les étudiants étudient dans la bibliothèque",
-        "word": "dans",
-        "words": ["étudiants", "bibliothèque"],
-        "blank1": "Les étudiants étudient ____ la bibliothèque",
-        "blanks": [
-            "Les _____ étudient dans la bibliothèque",
-            "Les étudiants étudient dans la _____",
-        ],
-        "example": """
-Example:
-Sentence: "Le supermarché est à gauche."
-Words: [{{"value":"Le","id":1}}, {{"value":"supermarché","id":2}}, {{"value":"est","id":3}}, {{"value":"à","id":4}}, {{"value":"gauche","id":5}}]
+PROMPT_TEMPLATE = """Your job is to select the most important words for language learners to focus on from the given sentence.
 
-Theme: Asking for Directions and Getting Around
-Instructions: Teach phrases for asking directions (Où est...?, Comment aller à...?) and basic directions (tout droit, à gauche, à droite). Introduce basic imperative forms (Allez...) and prepositions of direction. Average sentence length: 5 words.
+When selecting words, prioritize:
+1. Key vocabulary words that are fundamental to the language
+2. Words that are commonly used in everyday conversation
+3. Words that might be challenging for language learners
+4. Content words (nouns, verbs, adjectives, adverbs) over function words
+
+Example:
+
+Input: 1: Les, 2: étudiants, 3: étudient, 4: dans, 5: la, 6: bibliothèque
 
 Output:
-{{ "selectedIds": [4, 5] }}
+{{ "selectedIds": [2, 6] }}
 
-Reason: Both words `à` and `gauche` are relevant to the theme and instructions.""",
-    },
-    "Swedish": {
-        "sentence": "Studenten läser en bok i biblioteket",
-        "word": "bok",
-        "words": ["studenten", "biblioteket"],
-        "blank1": "Studenten läser en ____ i biblioteket",
-        "blanks": [
-            "_____ läser en bok i biblioteket",
-            "Studenten läser en bok i _____",
-        ],
-        "example": """
-Example:
-Sentence: "Studenterna läser i biblioteket."
-Words: [{{"value":"Studenten","id":1}},{{"value":"läser","id":2}},{{"value":"en","id":3}},{{"value":"bok","id":4}},{{"value":"i","id":5}},{{"value":"biblioteket","id":6}}]
-
-Theme: Objects and nouns
-Instructions: Teach nouns that are basic everyday objects. Average sentence length: 5 words.
-
-Output:
-{{ "selectedIds": [4, 6] }}
-
-Reason: Both words `bok` and `biblioteket` are relevant to the theme and instructions. The word `Studenten` is not relevant to the theme and instructions, as it is a proper noun and does not fit the context of basic everyday objects.
-        """,
-    },
-    "JapaneseModifiedHepburn": {
-        "sentence": "gakusei wa toshokan de benkyou shimasu",
-        "word": "de",
-        "words": ["gakusei", "toshokan"],
-        "blank1": "gakusei wa toshokan ____ benkyou shimasu",
-        "blanks": [
-            "_____ wa toshokan de benkyou shimasu",
-            "gakusei wa _____ de benkyou shimasu",
-        ],
-        "example": """
-Example:
-Sentence: "Watashi wa eki e ikimasu."
-Words: [{{"value":"watashi","id":1}},{{"value":"wa","id":2}},{{"value":"eki","id":3}},{{"value":"e","id":4}},{{"value":"ikimasu","id":5}}]
-
-Theme: Basic Locations and Transportation
-Instructions: Teach basic location particles (e, ni, de) and verbs of motion (iku, kuru). Focus on simple sentence structures using basic particles. Average sentence length: 3-5 words.
-
-Output:
-{{ "selectedIds": [3, 4] }}
-
-Reason: Both words `eki` (station) and `e` (direction particle) are relevant to the theme and instructions, as they deal with locations and particles used for indicating direction.
-        """,
-    },
-}
-
-PROMPT_TEMPLATE = """Your job is to create fill-in-the-blank questions. To create a fill-in-the-blank question, start with a set of words: "{sentence}" Then choose a word to hide, say, "{word}". The fill-in-the-blank question becomes: "{blank1}"
-
-You can also select multiple words: "{words[0]}", "{words[1]}". In this case, two fill-in-the-blanks can be created:
-
-* {blanks[0]}
-* {blanks[1]}
-
-You'll be given a sentence, and you have to select a word to make a fill-in-the-blank question. You should decide which word to select based on the given theme and instructions to help a language learner in his practice.
-
-{example}
+Reason: Selected "étudiants" (students) and "bibliothèque" (library) as they are content words that are important for language learning.
 
 You must select at least one word!
+
+Sentence: {sentence}
+Words: {tokens}
 """
 
 
@@ -187,18 +125,17 @@ def generate_prompt(
     valid_ids: List[int],
 ) -> str:
     """Generate a prompt for the Gemini API based on the tokens and context."""
-    language = sentence["sourceLanguage"]
-    examples = PROMPT_EXAMPLES[language]
-
     text = sentence["sourceText"]
     tokens = sentence["tokens"]
-    theme = sentence["theme"]
-    instructions = sentence["instructions"]
 
-    prompt = PROMPT_TEMPLATE.format(**examples)
-    prompt += f"\nSentence: {text}\nWords: {json.dumps(tokens)}\n\n"
-    prompt += f"Theme: {theme}\n"
-    prompt += f"Instructions: {instructions}\n\n"
+    prompt = PROMPT_TEMPLATE.format(
+        sentence=text,
+        tokens=", ".join([
+            f"{idx}: {token['value']}"
+            for idx, token in enumerate(tokens, start=1)
+            if token["type"] == "Word"
+        ]),
+    )
     prompt += (
         f"You must select one or more IDs from the following: {valid_ids}\n\n"
     )
