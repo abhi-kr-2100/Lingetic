@@ -132,6 +132,40 @@ wheels = [
 ]
 
 [[package]]
+name = "cutlet"
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fugashi" },
+    { name = "jaconv" },
+    { name = "mojimoji" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ae/f0/a873f5f7066166aaff2557f875130aecb5417fa5db429633219e5c7cd558/cutlet-0.5.0.tar.gz", hash = "sha256:5e8435ba2a46d3b4aa2468f7be6a39da3c33dcfafe8c5c7f976df343eb189927", size = 412479, upload_time = "2025-01-04T07:56:12.682Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/cd/72d711472e32ef9e22fdf63c053254ec64ef4a9f281a87dcb52fee53c503/cutlet-0.5.0-py3-none-any.whl", hash = "sha256:183eef14b2587c5f2058208e1df50112105fe68c14d0fa938f7ccd283e255232", size = 11803, upload_time = "2025-01-04T07:56:17.33Z" },
+]
+
+[[package]]
+name = "fugashi"
+version = "1.5.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5e/09/e41bb13152e591f3dd5984be112a97927f6a1ae73ab0301f3cbd1c38db20/fugashi-1.5.1.tar.gz", hash = "sha256:3ff9b4d0e40e04d56d7ced906ae8fba6c6fa41aac46f5210de1b56d6626e7a1f", size = 339745, upload_time = "2025-06-05T10:29:49.158Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/03/cb79fcc4ec503e39e4aec9878aa4ee2038f56794f418de7e5dccc127b6c3/fugashi-1.5.1-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:9d6e6398a1dd8d704dbd26790195455166f6f93d0fdbebf5d1913a69d15adb22", size = 562515, upload_time = "2025-06-05T10:35:16.458Z" },
+    { url = "https://files.pythonhosted.org/packages/17/6d/cf637e80350e2127d682593ba51916c19dbea9eb7abc5f69b58c5cbbd0d6/fugashi-1.5.1-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:a02a8e4ab7758c29d8b217c8d7b019079220846fdeb04b7e1ddd4dfdb2570b7e", size = 507454, upload_time = "2025-06-05T10:35:17.982Z" },
+    { url = "https://files.pythonhosted.org/packages/51/a1/41eeea4f5e71615b60f0ad39037dbbd787b9376e383219a2cc48e94b3733/fugashi-1.5.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a01c97af19a378545d7600bcb10552bebb4fe70b54a66032cc78cee1be328d66", size = 503416, upload_time = "2025-06-05T10:35:19.041Z" },
+    { url = "https://files.pythonhosted.org/packages/a6/c1/02fa1c2bcdbb661cc618d11ef23aef5ed243a8f2e680cbf7398ae913961e/fugashi-1.5.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:97906d1c7c56907b87c3fcf587a4990504784d7beecb67673c78c8dd608644c1", size = 675822, upload_time = "2025-06-05T10:54:33.357Z" },
+    { url = "https://files.pythonhosted.org/packages/ee/be/e5723a9c3a6866c14207e7dbb6d06bc49d55ea97e1784bf1096c86f0d954/fugashi-1.5.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:823e6db97d57079da4c3fcc26f04943b894974af5a22f4762e6f6ba2ed63f212", size = 697875, upload_time = "2025-06-05T10:30:50.634Z" },
+    { url = "https://files.pythonhosted.org/packages/f4/bc/a65acd05eca1e5583f34f215df866635a232e6345a80d965ed23d1af0718/fugashi-1.5.1-cp312-cp312-win_amd64.whl", hash = "sha256:5afa5a2bf11d039a8e45eac0ba5c2bff54ed9ef9379cb9ad7f67c987a7f6dfc0", size = 513282, upload_time = "2025-06-05T10:29:38.667Z" },
+    { url = "https://files.pythonhosted.org/packages/0d/2c/684cd6bb8d0a988f1d4b7e41c8eebe0385417113b2a18006c3d032df7139/fugashi-1.5.1-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:e6f69766af17299635fa5c2ee9fe99476482003126ee1769f565a661ebd4cfb1", size = 560845, upload_time = "2025-06-05T10:35:20.042Z" },
+    { url = "https://files.pythonhosted.org/packages/96/c8/e8ce5efa5a7a80a5ad75770f1944c4b22694408e956b7d8a5780cda879dd/fugashi-1.5.1-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:2055a0e0993261906f3010522ccc94b8bb9278b35a726ed58b314a5b539b9511", size = 506664, upload_time = "2025-06-05T10:35:21.015Z" },
+    { url = "https://files.pythonhosted.org/packages/1a/5d/46a06d2ed06cccf8a553ba0c6d723bb9863b0a02ba81463a425e30eab082/fugashi-1.5.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:f0f3e269bfd9ba92c64086d9e6963a0bd81a3dffb9b6eeb981f33902738b7956", size = 502687, upload_time = "2025-06-05T10:35:22.298Z" },
+    { url = "https://files.pythonhosted.org/packages/14/89/7f90847fd65ea1ef50a070b0cb63a8fad12b18f54d95627cf4ac57af3a41/fugashi-1.5.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:53ff43069ed46bd0d5dec4140115f7883bf4a590d70f3c90a422c61260be342b", size = 672332, upload_time = "2025-06-05T10:54:34.757Z" },
+    { url = "https://files.pythonhosted.org/packages/72/6e/b92fec651f430e258c9fd0a82b924be2fcc23d0defd74e76ad6a5bbd97f6/fugashi-1.5.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:53ce31df44b4e95904793280eda0e9895646828859801d457314efc1d535cb4f", size = 693962, upload_time = "2025-06-05T10:30:52.246Z" },
+    { url = "https://files.pythonhosted.org/packages/84/a9/72a7c8261ddceb0fbaee8fe075d4acd9023504c8fa8cbea2cf6140892040/fugashi-1.5.1-cp313-cp313-win_amd64.whl", hash = "sha256:adf1646103151af5c0b78f11fd01e145c506774609243935c0978606e4a96ad3", size = 513083, upload_time = "2025-06-05T10:29:30.189Z" },
+]
+
+[[package]]
 name = "google-api-core"
 version = "2.24.2"
 source = { registry = "https://pypi.org/simple" }
@@ -251,12 +285,32 @@ wheels = [
 ]
 
 [[package]]
+name = "jaconv"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d2/e1/670cefc7f00b0e1890e114a37a98ea425f7e06131342aeb9636856ac663c/jaconv-0.4.0.tar.gz", hash = "sha256:32da74b247f276e09a52d6b35c153df2387965cb85a6f034cc8af21d446f8161", size = 17402, upload_time = "2024-07-25T16:35:24.75Z" }
+
+[[package]]
 name = "jmespath"
 version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/00/2a/e867e8531cf3e36b41201936b7fa7ba7b5702dbef42922193f05c8976cd6/jmespath-1.0.1.tar.gz", hash = "sha256:90261b206d6defd58fdd5e85f478bf633a2901798906be2ad389150c5c60edbe", size = 25843, upload_time = "2022-06-17T18:00:12.224Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/31/b4/b9b800c45527aadd64d5b442f9b932b00648617eb5d63d2c7a6587b7cafc/jmespath-1.0.1-py3-none-any.whl", hash = "sha256:02e2e4cc71b5bcab88332eebf907519190dd9e6e82107fa7f83b1003a6252980", size = 20256, upload_time = "2022-06-17T18:00:10.251Z" },
+]
+
+[[package]]
+name = "mojimoji"
+version = "0.0.13"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/08/fb/ee22357cd7622fb879fac575feaffc54469ed9a0c1d9073355b1ebc62b7f/mojimoji-0.0.13.tar.gz", hash = "sha256:0e6d2fba22cc8bf132a5bdf3a964296d9287a618d09681a12868f0fd518e4230", size = 5010, upload_time = "2024-01-12T10:38:30.532Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/55/51/4f8fb6d6d96ef623d5014b8f5b006c697d045d2df5696194811246570ac9/mojimoji-0.0.13-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:9d8f1618fb9b100bba172f2629df20e6db591ce5912996ac630d215627dd7553", size = 49596, upload_time = "2024-01-12T10:37:59.259Z" },
+    { url = "https://files.pythonhosted.org/packages/5b/12/b21c4ecf2fb5d162c0f6fde9dc401cc9a730dab4f85373ca25c350c204e7/mojimoji-0.0.13-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ad4a2e1fb2b643ac3166f30be97a95ad1877e4670c6dc656c4ef580681b84c49", size = 46720, upload_time = "2024-01-12T10:38:00.44Z" },
+    { url = "https://files.pythonhosted.org/packages/0d/85/954d806efbead02c87320b96436d2834d7f2f164de3ef4dd7e5f71f92f71/mojimoji-0.0.13-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d001f2042073b194bad071925b7ee36d9f320b79c93b4463df87267fee986e86", size = 204364, upload_time = "2024-01-12T10:38:02.149Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/bc/f262abd0bec2316cbfe972ba2a79c0d5836f0f536877fa59347a76065f80/mojimoji-0.0.13-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3c5fd38d1f4079dc54ac79f93b0e5442c660b297a3868308251ffc37beb1216b", size = 211246, upload_time = "2024-01-12T10:38:03.296Z" },
+    { url = "https://files.pythonhosted.org/packages/51/a4/5ec16d4570a4f64d4abf70d21282d4c59e0665fa0badf2793c14263765bc/mojimoji-0.0.13-cp312-cp312-win32.whl", hash = "sha256:c97ee81e4f7083df13b8ef690366e67afd8170c8f7c259161bae6ed12d41fe5b", size = 38641, upload_time = "2024-01-12T10:38:05.306Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/da/aa46aa90ddeab3a00b8c36d5f3d64b630a0a1fa8ad6468f10365ffbb80a2/mojimoji-0.0.13-cp312-cp312-win_amd64.whl", hash = "sha256:6e442d6dcfb2fc1a08eea86da80ebe71ad63fbc4217fa4faede7023c0b51d055", size = 42280, upload_time = "2024-01-12T10:38:07.045Z" },
 ]
 
 [[package]]
@@ -485,6 +539,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "boto3" },
+    { name = "cutlet" },
     { name = "google-api-core" },
     { name = "google-genai" },
     { name = "gtts" },
@@ -492,12 +547,14 @@ dependencies = [
     { name = "pydub" },
     { name = "requests" },
     { name = "ruff" },
+    { name = "unidic-lite" },
     { name = "uuid" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "boto3", specifier = ">=1.37.37" },
+    { name = "cutlet", specifier = ">=0.5.0" },
     { name = "google-api-core", specifier = ">=2.24.2" },
     { name = "google-genai", specifier = ">=1.13.0" },
     { name = "gtts", specifier = ">=2.5.4" },
@@ -505,6 +562,7 @@ requires-dist = [
     { name = "pydub", specifier = ">=0.25.1" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "ruff", specifier = ">=0.9.9" },
+    { name = "unidic-lite", specifier = ">=1.0.8" },
     { name = "uuid", specifier = ">=1.30" },
 ]
 
@@ -546,6 +604,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/82/5c/e6082df02e215b846
 wheels = [
     { url = "https://files.pythonhosted.org/packages/31/08/aa4fdfb71f7de5176385bd9e90852eaf6b5d622735020ad600f2bab54385/typing_inspection-0.4.0-py3-none-any.whl", hash = "sha256:50e72559fcd2a6367a19f7a7e610e6afcb9fac940c650290eed893d61386832f", size = 14125, upload_time = "2025-02-25T17:27:57.754Z" },
 ]
+
+[[package]]
+name = "unidic-lite"
+version = "1.0.8"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/55/2b/8cf7514cb57d028abcef625afa847d60ff1ffbf0049c36b78faa7c35046f/unidic-lite-1.0.8.tar.gz", hash = "sha256:db9d4572d9fdd4d00a97949d4b0741ec480ee05a7e7e2e32f547500dae27b245", size = 47356746, upload_time = "2021-01-25T06:07:54.719Z" }
 
 [[package]]
 name = "urllib3"
