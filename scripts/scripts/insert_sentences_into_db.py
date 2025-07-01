@@ -59,7 +59,7 @@ def insert_sentences(conn, sentences: List[Dict[str, Any]]):
                     sentence["id"],
                     sentence["sourceLanguage"],
                     sentence["sourceText"],
-                    sentence["idx"] * 10,
+                    int(sentence["difficulty"]),
                     sentence["translationLanguage"],
                     sentence["translationText"],
                     json.dumps(sentence.get("sourceWordExplanations", [])),
