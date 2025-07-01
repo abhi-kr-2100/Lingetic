@@ -7,6 +7,7 @@ from . import explanations
 from . import insert_sentences_into_db
 from . import insert_questions_into_db
 from . import japanese_to_romaji
+from . import combine_sentences
 
 __all__ = [
     "sentences",
@@ -18,4 +19,5 @@ __all__ = [
     "insert_sentences_into_db",
     "insert_questions_into_db",
     "japanese_to_romaji",
+    "combine_sentences",
 ]
