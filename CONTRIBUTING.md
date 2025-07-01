@@ -38,6 +38,7 @@
 
 - Python utility scripts
 - uv for Python
+- To add a new Python dependency, run `uv add <dependency-name>` in the `scripts/` directory.
 - devenv for local development environment
 
 ## Deployment Details
