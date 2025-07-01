@@ -265,7 +265,7 @@ def main(filepath: str, output: str) -> None:
         # with Gemini client's cache.
         for entry in explained_entries:
             for exp in entry["sourceWordExplanations"]:
-                del exp["id"]
+                exp.pop("id", None)
 
         write_results({"sentences": explained_entries}, output)
         logger.info("Processing complete. Successfully processed %d out of %d entries.", len(explained_entries), len(all_entries))
