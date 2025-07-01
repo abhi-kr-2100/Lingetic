@@ -16,20 +16,78 @@ from pydantic import BaseModel
 
 from library.gemini_client import get_global_gemini_client
 
-SYSTEM_PROMPT = """Convert the following Japanese text to Romaji using the Hepburn romanization system.
+SYSTEM_PROMPT = """Convert Japanese text to Romaji using the Modified Hepburn system with meticulous attention to detail. Adhere strictly to the rules below:
 
-Rules:
-1. Use standard Hepburn romanization.
-2. Keep the original punctuation and spacing.
-3. Do not translate the text, only convert it to Romaji.
-4. Output just the converted text, nothing else.
-5. Capitalize correctly.
-6. Use macrons and apostrophes where appropriate.
+Detailed Romanization Rules:
 
-Example Input: こんにちは
-Example Output: Konnichiwa
+Rule 1: Long Vowels (Chōon)
+All long vowels must be represented with a macron (e.g., ā, ī, ū, ē, ō). Do not use double vowels (e.g., oo, uu) or digraphs (e.g., ou).
+ああ → ā (e.g., おかあさん → okāsan)
+いい → ī (e.g., おいしい → oishī)
+うう → ū (e.g., すうじ → sūji)
+ええ → ē (e.g., おねえさん → onēsan)
+おお → ō (e.g., おおきい → ōkii)
+おう → ō (e.g., ありがとう → arigatō)
 
-Input: """
+The katakana long vowel marker ー also follows this rule. (e.g., ラーメン → rāmen, コーヒー → kōhī)
+Exception: For distinct words where the vowels are pronounced separately, do not use a macron. This is rare. (e.g., 思う → omou). When in doubt, default to the macron rule.
+
+Rule 2: Syllabic Nasal ん (Hatsuon)
+The romanization of ん is critical and follows strict contextual rules.
+    2a. Before Labial Consonants: Before b, p, or m, ん is always romanized as m.
+        しんぶん → shimbun
+        てんぷら → tempura
+        ぐんま → Gumma
+    2b. The Mandatory Apostrophe (n'):
+        An apostrophe (') MUST be used after n when it precedes a vowel (a, i, u, e, o) or the consonant y. This is not optional and is essential to prevent mispronunciation by separating the n syllable from the following vowel or y-initial syllable.
+        Before Vowels: しんい → shin'i (This distinguishes it from しに → shini). かんおん → kan'on (distinguishes from かのん → kanon).
+        Before 'y': This is a strict, non-negotiable requirement.
+        しんよう → shin'yō (Correct) vs. shinyō (Incorrect, implies しにょう).
+        ほんや → hon'ya (Correct) vs. honya (Incorrect, implies ほにゃ).
+        じゅんいちろう → Jun'ichirō (Correct).
+    2c. Standard 'n':
+        In all other contexts (i.e., before any consonant other than b, p, m, y, and at the end of a word), ん is romanized as n.
+        かんじ → kanji
+        げんき → genki
+        あんない → annai
+
+Rule 3: Double Consonants (Sokuon)
+The small っ (sokuon) doubles the consonant of the following syllable. (e.g., きって → kitte, がっこう → gakkō, ざっし → zasshi)
+Exception: When followed by a ch sound, it becomes tch. (e.g., まっちゃ → matcha)
+
+Rule 4: Particles
+Grammatical particles must be romanized based on their pronunciation, not their spelling.
+は (as a particle) → wa (e.g., わたしは → watashi wa)
+へ (as a particle) → e (e.g., えきへ → eki e)
+を (as a particle) → o (e.g., ほんをよむ → hon o yomu)
+
+Rule 5: Spacing & Punctuation
+Spacing: Preserve the semantic spacing of the original Japanese. Do not merge distinct words. Romanize おはようございます as Ohayō gozaimasu, not Ohayōgozaimasu.
+Punctuation: Convert Japanese punctuation to their standard English equivalents.
+。 (maru) → . (period)
+、 (ten) → , (comma)
+「 and 」 (kagikakko) → " (quotation marks)
+？ (tenmaru) → ? (question mark)
+！ (tenkuten) → ! (exclamation mark)
+
+Rule 6: Capitalization
+Capitalize the first letter of the first word in every sentence. Capitalize all proper nouns, including names of people, places, and organizations. (e.g., 東京 → Tōkyō, 田中さん → Tanaka-san)
+
+Verification Examples:
+
+Example 1 Input: 東京へ行きます。
+Example 1 Output: Tōkyō e ikimasu.
+
+Example 2 Input: すみません、ちょっと待ってください。
+Example 2 Output: Sumimasen, chotto matte kudasai.
+
+Example 3 Input: これは本や雑誌ではありません。
+Example 3 Output: Kore wa hon'ya zasshi dewa arimasen.
+
+Example 4 Input: 「おはようございます」と田中さんは言いました。
+Example 4 Output: "Ohayō gozaimasu," to Tanaka-san wa iimashita.
+
+Text:"""
 
 
 class RomajiResponse(BaseModel):
@@ -116,4 +174,3 @@ if __name__ == "__main__":
         input_file=args.input_file,
         output=args.output,
     )
-
