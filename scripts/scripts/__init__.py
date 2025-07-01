@@ -1,5 +1,4 @@
 from . import questions
-from . import sentences
 from . import select_questions
 from . import tts
 from . import upload_to_r2
@@ -11,7 +10,8 @@ from . import combine_sentences
 from . import enrich_sentences
 
 __all__ = [
-    "sentences",
+    "combine_sentences",
+    "enrich_sentences",
     "explanations",
     "questions",
     "select_questions",
@@ -20,6 +20,4 @@ __all__ = [
     "insert_sentences_into_db",
     "insert_questions_into_db",
     "japanese_to_romaji",
-    "combine_sentences",
-    "enrich_sentences",
 ]
