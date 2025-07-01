@@ -2,22 +2,12 @@ import argparse
 import json
 import sys
 import uuid
-import logging
-import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any
 
 from pydantic import BaseModel
 
 from library.gemini_client import get_global_gemini_client
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stderr)],
-)
-logger = logging.getLogger(__name__)
 
 
 class DifficultyRating(BaseModel):
@@ -78,106 +68,12 @@ def get_prompt_template() -> str:
         return f.read()
 
 
-def get_difficulty_from_llm(sentence: str, prompt_template: str) -> int:
+def get_difficulty_from_llm(sentence: str, prompt_template: str, request_id: uuid.UUID) -> int:
     """Gets the difficulty of a sentence from the LLM."""
     client = get_global_gemini_client()
     prompt = prompt_template + f"\n\nSentence: \"{sentence}\""
-    response = client.generate_content(prompt, response_schema=DifficultyRating)
-    return response["difficulty"]
-
-
-def get_cache_file_path(output: str) -> Path:
-    """Determine the cache file path based on the output path."""
-    return (
-        Path(output).with_suffix(".cache")
-        if output != "-"
-        else Path("output.cache")
-    )
-
-
-def load_processed_entries(
-    cache_file_path: Path,
-) -> tuple[set[int], dict[int, Dict[str, Any]]]:
-    """Load already processed entries from cache file."""
-    processed_idxes = set()
-    cached_results = {}
-
-    if not cache_file_path.exists():
-        return processed_idxes, cached_results
-
-    with open(cache_file_path, "r", encoding="utf-8") as cache_file:
-        for line in cache_file:
-            entry = json.loads(line)
-            processed_idxes.add(entry["idx"])
-            cached_results[entry["idx"]] = entry
-
-    return processed_idxes, cached_results
-
-
-def get_entries_to_process(
-    all_entries: List[Dict[str, Any]],
-    processed_idxes: set[int],
-) -> list[tuple[int, Dict[str, Any]]]:
-    """Prepare entries for processing, filtering out already processed ones."""
-    entries_to_process = [
-        (i, entry)
-        for i, entry in enumerate(all_entries)
-        if i not in processed_idxes
-    ]
-
-    return entries_to_process
-
-
-def process_single_entry(
-    idx: int,
-    entry: Dict[str, Any],
-    prompt_template: str,
-    cache_filepath: Path,
-    log_lock: threading.Lock,
-) -> tuple[int, Dict[str, Any]]:
-    """Process a single entry and log the result."""
-    difficulty = get_difficulty_from_llm(entry["sourceText"], prompt_template)
-    entry["llm_difficulty"] = difficulty
-    entry["idx"] = idx
-    to_cache = json.dumps(entry, ensure_ascii=False)
-
-    with log_lock, open(cache_filepath, "a", encoding="utf-8") as cache_file:
-        cache_file.write(f"{to_cache}\n")
-
-    return idx, entry
-
-
-def process_entries_parallel(
-    entries_to_process: List[tuple[int, Dict[str, Any]]],
-    prompt_template: str,
-    cache_file_path: Path,
-    max_workers: int = None,
-) -> Dict[int, Dict[str, Any]]:
-    """Process entries in parallel using ThreadPoolExecutor."""
-    results_map = {}
-    log_lock = threading.Lock()
-
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        future_to_idx = {
-            executor.submit(
-                process_single_entry, idx, entry, prompt_template, cache_file_path, log_lock
-            ): idx
-            for idx, entry in entries_to_process
-        }
-
-        for future in as_completed(future_to_idx):
-            try:
-                idx, result = future.result()
-                results_map[idx] = result
-            except Exception as e:
-                logger.error(
-                    "Error processing entry %s: %s",
-                    future_to_idx[future],
-                    str(e),
-                )
-                continue
-
-    return results_map
+    response = client.generate_content(prompt, response_schema=DifficultyRating, request_id=request_id)
+    return response['difficulty']
 
 
 def main(input: str, output: str, source_language: str, translation_language: str):
@@ -187,16 +83,16 @@ def main(input: str, output: str, source_language: str, translation_language: st
     data = json.loads(content)
     all_entries = data["sentences"]
 
-    cache_file_path = get_cache_file_path(output)
-    processed_idxes, cached_results = load_processed_entries(cache_file_path)
-    entries_to_process = get_entries_to_process(all_entries, processed_idxes)
-
-    new_results = process_entries_parallel(
-        entries_to_process, prompt_template, cache_file_path
-    )
-    cached_results.update(new_results)
-
-    enriched_sentences = list(cached_results.values())
+    enriched_sentences = []
+    for sentence in all_entries:
+        request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f'enrich-sentence-{sentence["sourceText"]}-{source_language}')
+        difficulty = get_difficulty_from_llm(sentence["sourceText"], prompt_template, request_id)
+        enriched_sentences.append(
+            {
+                **sentence,
+                "llm_difficulty": difficulty,
+            }
+        )
 
     enriched_sentences.sort(key=lambda x: (x["llm_difficulty"], len(x["sourceText"])))
 

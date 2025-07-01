@@ -2,8 +2,7 @@ import argparse
 import json
 import logging
 import sys
-import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Literal
 
@@ -143,10 +142,10 @@ class ExplanationResult(BaseModel):
     explanation: List[WordExplanation]
 
 
-def make_explanation_api_call(prompt: str) -> Dict[str, Any]:
+def make_explanation_api_call(prompt: str, request_id: uuid.UUID) -> Dict[str, Any]:
     client = get_global_gemini_client()
     response = client.generate_content(
-        prompt=prompt, response_schema=ExplanationResult
+        prompt=prompt, response_schema=ExplanationResult, request_id=request_id
     )
 
     return response
@@ -184,7 +183,8 @@ def get_explanation_for_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
     acceptable_ids = {t["id"] for t in word_tokens}
 
     prompt = f"{SYSTEM_PROMPT.format(language=translation_language)}\n{EXAMPLES[language]}\n\nInput: {token_str}\n\nOutput:"
-    result = make_explanation_api_call(prompt)
+    request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f'explain-sentence-{sentence}-{language}-{translation_language}')
+    result = make_explanation_api_call(prompt, request_id)
 
     id_to_start_index = {t["id"]: t["startIndex"] for t in word_tokens}
     explanations = result["explanation"]
@@ -217,15 +217,6 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def get_cache_file_path(output: str) -> Path:
-    """Determine the cache file path based on the output path."""
-    return (
-        Path(output).with_suffix(".cache")
-        if output != "-"
-        else Path("output.cache")
-    )
-
-
 def load_entries(filepath: str) -> List[Dict[str, Any]]:
     """Load entries from file or stdin."""
     if filepath == "-":
@@ -234,102 +225,6 @@ def load_entries(filepath: str) -> List[Dict[str, Any]]:
         with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
     return data["sentences"]
-
-
-def load_processed_entries(
-    cache_file_path: Path,
-) -> tuple[set[int], dict[int, Dict[str, Any]]]:
-    """Load already processed entries from cache file."""
-    processed_idxes = set()
-    cached_results = {}
-
-    if not cache_file_path.exists():
-        return processed_idxes, cached_results
-
-    with open(cache_file_path, "r", encoding="utf-8") as cache_file:
-        for line in cache_file:
-            entry = json.loads(line)
-            processed_idxes.add(entry["idx"])
-            cached_results[entry["idx"]] = entry
-
-    return processed_idxes, cached_results
-
-
-def get_entries_to_process(
-    all_entries: List[Dict[str, Any]],
-    processed_idxes: set[int],
-) -> list[tuple[int, Dict[str, Any]]]:
-    """Prepare entries for processing, filtering out already processed ones."""
-    entries_to_process = [
-        (i, entry)
-        for i, entry in enumerate(all_entries)
-        if i not in processed_idxes
-    ]
-
-    return entries_to_process
-
-
-def process_single_entry(
-    idx: int,
-    entry: Dict[str, Any],
-    cache_filepath: Path,
-    log_lock: threading.Lock,
-) -> tuple[int, Dict[str, Any]]:
-    """Process a single entry and log the result."""
-    result = get_explanation_for_entry(entry)
-    result["idx"] = idx
-    to_cache = json.dumps(result, ensure_ascii=False)
-
-    with log_lock, open(cache_filepath, "a", encoding="utf-8") as cache_file:
-        cache_file.write(f"{to_cache}\n")
-
-    return idx, result
-
-
-def process_entries_parallel(
-    entries_to_process: List[tuple[int, Dict[str, Any]]],
-    cache_file_path: Path,
-    max_workers: int = None,
-) -> Dict[int, Dict[str, Any]]:
-    """Process entries in parallel using ThreadPoolExecutor."""
-    results_map = {}
-    log_lock = threading.Lock()
-
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        future_to_idx = {
-            executor.submit(
-                process_single_entry, idx, entry, cache_file_path, log_lock
-            ): idx
-            for idx, entry in entries_to_process
-        }
-
-        for future in as_completed(future_to_idx):
-            try:
-                idx, result = future.result()
-            except InvalidWordIDError as e:
-                logger.error(
-                    "Error processing entry %s: %s",
-                    future_to_idx[future],
-                    str(e),
-                )
-                continue
-            results_map[idx] = result
-
-    return results_map
-
-
-def generate_final_results(
-    entries: List[Dict[str, Any]], results_map: Dict[int, Dict[str, Any]]
-) -> Dict[str, List[Dict[str, Any]]]:
-    """Generate final results list in original order."""
-    return {
-        "sentences": [
-            results_map[i]
-            for i in range(len(entries))
-            # if i is not in results_map, it may have been skipped due to an error
-            if i in results_map
-        ]
-    }
 
 
 def write_results(
@@ -347,17 +242,21 @@ def write_results(
 
 def main(filepath: str, output: str) -> None:
     """Main function to process language entries and generate explanations."""
-    cache_file_path = get_cache_file_path(output)
     all_entries = load_entries(filepath)
 
-    processed_idxes, cached_results = load_processed_entries(cache_file_path)
-    entries_to_process = get_entries_to_process(all_entries, processed_idxes)
+    explained_entries = []
+    for entry in all_entries:
+        try:
+            explained_entries.append(get_explanation_for_entry(entry))
+        except InvalidWordIDError as e:
+            logger.error(
+                "Error processing entry %s: %s",
+                entry["sourceText"],
+                str(e),
+            )
+            continue
 
-    new_results = process_entries_parallel(entries_to_process, cache_file_path)
-    cached_results.update(new_results)
-
-    final_results = generate_final_results(all_entries, cached_results)
-    write_results(final_results, output)
+    write_results({"sentences": explained_entries}, output)
 
 
 if __name__ == "__main__":

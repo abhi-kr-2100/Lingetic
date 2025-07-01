@@ -45,3 +45,5 @@ devenv.local.nix
 # pre-commit
 .pre-commit-config.yaml
 lingetic-spring-backend/src/main/resources/dictionaries/system_full.dic
+
+.gemini_cache.json
