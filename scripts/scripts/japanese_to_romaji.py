@@ -7,8 +7,11 @@ using the Hepburn romanization system, while preserving all other fields in the 
 """
 
 import argparse
+import asyncio
 import json
 import uuid
+from typing import Dict, Any, List
+
 from pydantic import BaseModel
 
 from library.gemini_client import get_global_gemini_client
@@ -35,7 +38,7 @@ class RomajiResponse(BaseModel):
     romaji: str
 
 
-def convert_to_romaji(
+async def convert_to_romaji(
     text: str,
 ) -> str:
     """Convert Japanese text to Romaji using the Gemini API.
@@ -50,11 +53,9 @@ def convert_to_romaji(
 
     prompt = SYSTEM_PROMPT + f"{text}\n"
 
-    request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f'romaji-{text}')
-    response = client.generate_content(
-        prompt=prompt,
-        response_schema=RomajiResponse,
-        request_id=request_id
+    request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f"romaji-{text}")
+    response = await client.generate_content(
+        prompt=prompt, response_schema=RomajiResponse, request_id=request_id
     )
 
     return response["romaji"]
@@ -84,23 +85,28 @@ def get_parser() -> argparse.ArgumentParser:
 
 def main(input_file: str, output: str):
     """Main function to handle command line arguments and process the input file."""
-    with open(input_file, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    async def async_main():
+        with open(input_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
-    processed_sentences = []
-    for sentence in data["sentences"]:
-        processed = sentence.copy()
-        processed["sourceText"] = convert_to_romaji(processed["sourceText"])
-        processed_sentences.append(processed)
+        async def process_sentence(sentence: Dict[str, Any]) -> Dict[str, Any]:
+            processed = sentence.copy()
+            processed["sourceText"] = await convert_to_romaji(processed["sourceText"])
+            return processed
 
-    result = {"sentences": processed_sentences}
-    output_to_write = json.dumps(result, ensure_ascii=False, indent=2)
+        tasks = [process_sentence(sentence) for sentence in data["sentences"]]
+        processed_sentences: List[Dict[str, Any]] = await asyncio.gather(*tasks)
 
-    if output == "-":
-        print(output_to_write)
-    else:
-        with open(output, "w", encoding="utf-8") as f:
-            f.write(output_to_write)
+        result = {"sentences": processed_sentences}
+        output_to_write = json.dumps(result, ensure_ascii=False, indent=2)
+
+        if output == "-":
+            print(output_to_write)
+        else:
+            with open(output, "w", encoding="utf-8") as f:
+                f.write(output_to_write)
+
+    asyncio.run(async_main())
 
 
 if __name__ == "__main__":
@@ -110,3 +116,4 @@ if __name__ == "__main__":
         input_file=args.input_file,
         output=args.output,
     )
+

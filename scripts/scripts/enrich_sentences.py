@@ -1,9 +1,10 @@
 import argparse
+import asyncio
 import json
 import sys
 import uuid
 from pathlib import Path
-from typing import Any
+from typing import Any, Coroutine, List, Dict
 
 from pydantic import BaseModel
 
@@ -68,31 +69,48 @@ def get_prompt_template() -> str:
         return f.read()
 
 
-def get_difficulty_from_llm(sentence: str, prompt_template: str, request_id: uuid.UUID) -> int:
+async def get_difficulty_from_llm(
+    sentence: str, prompt_template: str, request_id: uuid.UUID
+) -> int:
     """Gets the difficulty of a sentence from the LLM."""
     client = get_global_gemini_client()
     prompt = prompt_template + f"\n\nSentence: \"{sentence}\""
-    response = client.generate_content(prompt, response_schema=DifficultyRating, request_id=request_id)
-    return response['difficulty']
+    response = await client.generate_content(
+        prompt, response_schema=DifficultyRating, request_id=request_id
+    )
+    return response["difficulty"]
 
 
-def main(input: str, output: str, source_language: str, translation_language: str):
-    """Main function to enrich sentence data."""
+async def enrich_sentence(
+    sentence: Dict[str, Any], source_language: str, prompt_template: str
+) -> Dict[str, Any]:
+    request_id = uuid.uuid5(
+        uuid.NAMESPACE_DNS,
+        f'enrich-sentence-{sentence["sourceText"]}-{source_language}',
+    )
+    difficulty = await get_difficulty_from_llm(
+        sentence["sourceText"], prompt_template, request_id
+    )
+    return {
+        **sentence,
+        "llm_difficulty": difficulty,
+    }
+
+
+async def async_main(
+    input_path: str, output_path: str, source_language: str, translation_language: str
+):
+    """Asynchronous main function to enrich sentence data."""
     prompt_template = get_prompt_template()
-    content = get_content(input)
+    content = get_content(input_path)
     data = json.loads(content)
     all_entries = data["sentences"]
 
-    enriched_sentences = []
-    for sentence in all_entries:
-        request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f'enrich-sentence-{sentence["sourceText"]}-{source_language}')
-        difficulty = get_difficulty_from_llm(sentence["sourceText"], prompt_template, request_id)
-        enriched_sentences.append(
-            {
-                **sentence,
-                "llm_difficulty": difficulty,
-            }
-        )
+    tasks: List[Coroutine] = [
+        enrich_sentence(sentence, source_language, prompt_template)
+        for sentence in all_entries
+    ]
+    enriched_sentences: List[Dict[str, Any]] = await asyncio.gather(*tasks)
 
     enriched_sentences.sort(key=lambda x: (x["llm_difficulty"], len(x["sourceText"])))
 
@@ -109,11 +127,19 @@ def main(input: str, output: str, source_language: str, translation_language: st
             }
         )
 
-    with get_output_file(output) as f:
+    with get_output_file(output_path) as f:
         json.dump({"sentences": final_sentences}, f, ensure_ascii=False, indent=2)
+
+
+def main(
+    input: str, output: str, source_language: str, translation_language: str
+):
+    """Main function to enrich sentence data."""
+    asyncio.run(async_main(input, output, source_language, translation_language))
 
 
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
     main(args.input, args.output, args.source_language, args.translation_language)
+

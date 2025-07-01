@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import json
 import logging
 import sys
@@ -12,7 +13,6 @@ from pydantic import BaseModel
 
 from library.errors import InvalidWordIDError
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -32,7 +32,7 @@ EXAMPLES: Dict[str, str] = {
     "French": """
 Example:
 
-Input: 1: Les 2: étudiants 3: étudient 4: dans 5: la 6: bibliothèque
+Input: 1: Les, 2: étudiants, 3: étudient, 4: dans, 5: la, 6: bibliothèque
 
 Output:
 {
@@ -46,7 +46,7 @@ Output:
     "Turkish": """
 Example:
 
-Input: 1: Ben 2: kitabı 3: okuyorum
+Input: 1: Ben, 2: kitabı, 3: okuyorum
 
 Output:
 {
@@ -60,7 +60,7 @@ Output:
     "Swedish": """
 Example:
 
-Input: 1: Jag 2: vet
+Input: 1: Jag, 2: vet
 
 Output:
 {
@@ -73,7 +73,7 @@ Output:
     "JapaneseModifiedHepburn": """
 Example:
 
-Input: 1: watashi 2: wa 3: eki 4: e 5: ikimasu
+Input: 1: watashi, 2: wa, 3: eki, 4: e, 5: ikimasu
 
 Output:
 {
@@ -92,7 +92,6 @@ Output:
 class WordExplanation(BaseModel):
     id: int
     word: str
-    startIndex: int  # Add startIndex field
     properties: List[
         Literal[
             "adjective",
@@ -142,9 +141,11 @@ class ExplanationResult(BaseModel):
     explanation: List[WordExplanation]
 
 
-def make_explanation_api_call(prompt: str, request_id: uuid.UUID) -> Dict[str, Any]:
+async def make_explanation_api_call(
+    prompt: str, request_id: uuid.UUID
+) -> Dict[str, Any]:
     client = get_global_gemini_client()
-    response = client.generate_content(
+    response = await client.generate_content(
         prompt=prompt, response_schema=ExplanationResult, request_id=request_id
     )
 
@@ -172,19 +173,27 @@ def tokenize_sentence(language: str, sentence: str) -> List[Dict[str, Any]]:
     return word_tokens
 
 
-def get_explanation_for_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
+async def get_explanation_for_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
     sentence = entry["sourceText"]
     language = entry["sourceLanguage"]
     translation_language = entry["translationLanguage"]
 
     word_tokens = tokenize_sentence(language, sentence)
-    token_str = " ".join(f"{t['id']}: {t['value']}" for t in word_tokens)
+    token_str = ", ".join(f"{t['id']}: {t['value']}" for t in word_tokens)
 
     acceptable_ids = {t["id"] for t in word_tokens}
 
-    prompt = f"{SYSTEM_PROMPT.format(language=translation_language)}\n{EXAMPLES[language]}\n\nInput: {token_str}\n\nOutput:"
-    request_id = uuid.uuid5(uuid.NAMESPACE_DNS, f'explain-sentence-{sentence}-{language}-{translation_language}')
-    result = make_explanation_api_call(prompt, request_id)
+    prompt = f"""{SYSTEM_PROMPT.format(language=translation_language)}
+{EXAMPLES[language]}
+
+Input: {token_str}
+
+Output:"""
+    request_id = uuid.uuid5(
+        uuid.NAMESPACE_DNS,
+        f"explain-sentence-{sentence}-{language}-{translation_language}",
+    )
+    result = await make_explanation_api_call(prompt, request_id)
 
     id_to_start_index = {t["id"]: t["startIndex"] for t in word_tokens}
     explanations = result["explanation"]
@@ -192,7 +201,6 @@ def get_explanation_for_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
         if exp["id"] not in acceptable_ids:
             raise InvalidWordIDError(exp["id"], acceptable_ids)
         exp["startIndex"] = id_to_start_index[exp["id"]]
-        del exp["id"]
 
     entry["sourceWordExplanations"] = explanations
     return entry
@@ -227,9 +235,7 @@ def load_entries(filepath: str) -> List[Dict[str, Any]]:
     return data["sentences"]
 
 
-def write_results(
-    results: Dict[str, List[Dict[str, Any]]], output: str
-) -> None:
+def write_results(results: Dict[str, List[Dict[str, Any]]], output: str) -> None:
     """Write results to output file or stdout."""
     if output == "-":
         print(json.dumps(results, ensure_ascii=False, indent=2))
@@ -242,21 +248,29 @@ def write_results(
 
 def main(filepath: str, output: str) -> None:
     """Main function to process language entries and generate explanations."""
-    all_entries = load_entries(filepath)
-
-    explained_entries = []
-    for entry in all_entries:
+    async def process_entry(entry):
         try:
-            explained_entries.append(get_explanation_for_entry(entry))
-        except InvalidWordIDError as e:
-            logger.error(
-                "Error processing entry %s: %s",
-                entry["sourceText"],
-                str(e),
-            )
-            continue
+            result = await get_explanation_for_entry(entry)
+            return result
+        except Exception as e:
+            logger.error("Error processing entry '%s': %s", entry['sourceText'], str(e))
 
-    write_results({"sentences": explained_entries}, output)
+    async def async_main():
+        all_entries = load_entries(filepath)
+        tasks = [process_entry(entry) for entry in all_entries]
+        results = await asyncio.gather(*tasks, return_exceptions=False)
+
+        explained_entries = [result for result in results if result is not None]
+        # Remove ID from sourceWordExplanations now because removing it earlier can interfere
+        # with Gemini client's cache.
+        for entry in explained_entries:
+            for exp in entry["sourceWordExplanations"]:
+                del exp["id"]
+
+        write_results({"sentences": explained_entries}, output)
+        logger.info("Processing complete. Successfully processed %d out of %d entries.", len(explained_entries), len(all_entries))
+
+    asyncio.run(async_main())
 
 
 if __name__ == "__main__":
