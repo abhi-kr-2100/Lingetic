@@ -3,6 +3,7 @@ package com.munetmo.lingetic.LanguageTestService.UseCases;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.munetmo.lingetic.LanguageTestService.Entities.Questions.TranslationQuestion;
@@ -15,6 +16,7 @@ import com.munetmo.lingetic.LanguageTestService.Entities.Questions.Question;
 import com.munetmo.lingetic.LanguageTestService.Repositories.QuestionRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.SentenceReviewRepository;
 import com.munetmo.lingetic.LanguageTestService.Repositories.SentenceRepository;
+import org.jspecify.annotations.Nullable;
 
 public class TakeRegularTestUseCase {
     public static final int limit = 10;
@@ -42,13 +44,14 @@ public class TakeRegularTestUseCase {
             .map(this::getQuestionForSentenceReview)
             .toList();
 
-        var questionList = new ArrayList<Question>(sentencesToReviewNow);
+        var questionList = new ArrayList<>(sentencesToReviewNow);
 
         int remainingCount = limit - questionList.size();
 
         var unreviewedSentences = sentenceRepository.getUnreviewedSentences(userId, language, remainingCount);
         var unreviewedQuestions = unreviewedSentences.stream()
             .map(this::getQuestionForSentence)
+            .filter(Objects::nonNull)
             .limit(remainingCount)
             .toList();
 
@@ -82,13 +85,18 @@ public class TakeRegularTestUseCase {
             );
         }
 
-        return getQuestionForSentence(sentence);
+        var question = getQuestionForSentence(sentence);
+        if (question == null) {
+            throw new IllegalStateException("No question found for sentence review: " + r.id);
+        }
+        return question;
     }
 
+    @Nullable
     private Question getQuestionForSentence(Sentence sentence) {
         var questions = questionRepository.getQuestionsBySentenceID(sentence.id().toString());
         if (questions.isEmpty()) {
-            throw new IllegalStateException("No questions found for sentence " + sentence.id());
+            return null;
         }
         return questions.getFirst();
     }
