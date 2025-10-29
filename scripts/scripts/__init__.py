@@ -9,9 +9,11 @@ from . import japanese_to_romaji
 from . import combine_sentences
 from . import enrich_sentences
 from . import local_s3_server
+from . import deduplicate_sentences
 
 __all__ = [
     "combine_sentences",
+    "deduplicate_sentences",
     "enrich_sentences",
     "explanations",
     "questions",
