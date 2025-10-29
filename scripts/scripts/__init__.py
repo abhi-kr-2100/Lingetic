@@ -8,6 +8,7 @@ from . import insert_questions_into_db
 from . import japanese_to_romaji
 from . import combine_sentences
 from . import enrich_sentences
+from . import local_s3_server
 
 __all__ = [
     "combine_sentences",
@@ -20,4 +21,5 @@ __all__ = [
     "insert_sentences_into_db",
     "insert_questions_into_db",
     "japanese_to_romaji",
+    "local_s3_server",
 ]
