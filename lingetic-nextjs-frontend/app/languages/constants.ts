@@ -33,11 +33,12 @@ export const languages: LanguageProperty[] = [
   //   isSupported: false,
   // },
   // {
-  //   id: "German",
-  //   name: "German",
-  //   image: "/img/languages/german-flag.png",
-  //   isSupported: false,
-  // },
+  {
+    id: "German",
+    name: "German",
+    image: "/img/languages/german-flag.png",
+    isSupported: true,
+  },
   // {
   //   id: "Italian",
   //   name: "Italian",
@@ -100,6 +101,7 @@ export const languageNameToCode: Record<Language, string> = {
   Swedish: "sv",
   Turkish: "tr",
   JapaneseModifiedHepburn: "ja-hepburn",
+  German: "de",
 };
 
 export const languageIDToName: Record<string, string> = Object.fromEntries(
