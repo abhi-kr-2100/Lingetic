@@ -1,6 +1,5 @@
 package com.munetmo.lingetic.infra.auth;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,13 +20,16 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     private final ClerkAuthenticationFilter clerkAuthenticationFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Value("${spring.web.cors.allowed-origins}")
     @Nullable
     private String allowedOrigins;
 
-    public SecurityConfig(ClerkAuthenticationFilter clerkAuthenticationFilter) {
+    public SecurityConfig(ClerkAuthenticationFilter clerkAuthenticationFilter,
+                          CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
         this.clerkAuthenticationFilter = clerkAuthenticationFilter;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
@@ -40,9 +41,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/language-service/**").permitAll()
                         .requestMatchers("/health-service/wakeup").permitAll()
-                        .requestMatchers("/language-test-service/questions/review").permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler()))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .addFilterBefore(clerkAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -62,13 +62,5 @@ public class SecurityConfig {
         var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    private AuthenticationEntryPoint unauthorizedHandler() {
-        return (request, response, authException) -> {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Unauthorized\"}");
-        };
     }
 }
