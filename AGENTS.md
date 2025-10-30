@@ -13,8 +13,6 @@
 - Repositories are manually coded to map from rows to objects
 - PostgreSQL with Flyway for migrations
 - Docker for containerized PostgreSQL and RabbitMQ
-- JUnit Jupiter for unit tests
-- Testcontainers for testing with real PostgreSQL and RabbitMQ
 - No ORM
 - No mocking
 - NullAway ensures that @Nullable attributes are checked for null before being used.
@@ -28,7 +26,6 @@
 - Tailwind CSS
 - Lucide
 - Clerk is used for authentication
-- jest for testing
 
 ### Asynchronous Task Workers
 
@@ -53,8 +50,6 @@
 
   - Spring Boot config: `lingetic-spring-backend/config/application.properties`
   - Main backend source files: `lingetic-spring-backend/src/main/java/com/munetmo/lingetic`
-  - Main backend test files: `lingetic-spring-backend/src/test/java/com/munetmo/lingetic`
-  - Tests for file `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/X/Y.java` are in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/X/YTest.java`
   - Migrations: `lingetic-spring-backend/src/main/resources/db/migration`
   - Language models: `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageService/Entities/LanguageModels`
   - Supported languages: `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageService/Entities/Language.java`
@@ -73,8 +68,6 @@
 
 ## Commands
 
-- Test backend: `./gradlew test` inside `lingetic-spring-backend/`
-- Test frontend: `pnpm test` inside `lingetic-nextjs-frontend/`
 - Load docker and ollama processes: `devenv up -d` inside the root directory
 - Run a script: `uv run python main.py script_name script_args...` inside `scripts/`
 - Run the frontend: `pnpm dev` inside `lingetic-nextjs-frontend/`
@@ -95,20 +88,15 @@
 
 - Add it to `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageService/Entities/Language.java`
 - Add a new language model in `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageService/Entities/LanguageModels`
-- Add tests for the new language model in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageService/LanguageServiceTest.java`
 - Add a migration file to support the new language in `lingetic-spring-backend/src/main/resources/db/migration`
 - Enable the new language in `lingetic-nextjs-frontend/app/languages/constants.ts`
 
 ## Supporting a new question type
 
 - Add a new question type in `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/Entities/Questions`
-- Add new tests for the new question type in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/Entities/Questions`
 - Add new DTOs, AttemptResponse, and AttemptRequest types in `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/DTOs/Question`, `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/DTOs/Attempt/AttemptRequests`, and `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/DTOs/Attempt/AttemptResponses`
-- Add new tests for the new DTOs in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/DTOs/Question`, `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/DTOs/Attempt/AttemptRequests`, and `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/DTOs/Attempt/AttemptResponses`
 - Update AttemptQuestionUseCase: `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/UseCases/AttemptQuestionUseCase.java`
-- Update tests for AttemptQuestionUseCase in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/UseCases/AttemptQuestionUseCaseTest.java`
 - Update QuestionPostgresRepository: `lingetic-spring-backend/src/main/java/com/munetmo/lingetic/LanguageTestService/infra/Repositories/Postgres/QuestionPostgresRepository.java`
-- Update tests for QuestionPostgresRepository in `lingetic-spring-backend/src/test/java/com/munetmo/lingetic/LanguageTestService/infra/Repositories/Postgres/QuestionPostgresRepositoryTest.java`
 - Update `scripts/scripts/questions.py` to support the new question type.
 - Update `lingetic-nextjs-frontend/utilities/api-types.ts` to include the new question type. The types should match whatever is defined in the backend.
 - Implement the UI for the question type inside `lingetic-nextjs-frontend/app/components/questions/` directory.
