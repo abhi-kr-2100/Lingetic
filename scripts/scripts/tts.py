@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-from typing import Dict, List, Any
-import json
-import sys
 import argparse
+import json
 import os
+import sys
+from typing import Any, Dict, List
+
 from gtts import gTTS
 from pydub import AudioSegment
-
 
 LANGUAGE_TO_CODE = {
     "English": "en",
@@ -15,6 +15,7 @@ LANGUAGE_TO_CODE = {
     "Turkish": "tr",
     "Swedish": "sv",
     "JapaneseModifiedHepburn": "ja",
+    "German": "de",
 }
 
 

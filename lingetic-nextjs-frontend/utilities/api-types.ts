@@ -1,7 +1,13 @@
 export type QuestionType = "FillInTheBlanks" | "Translation";
 export type AssetType = "audio";
 export type AttemptStatus = "Success" | "Failure";
-export type Language = "English" | "French" | "Turkish" | "Swedish" | "JapaneseModifiedHepburn";
+export type Language =
+  | "English"
+  | "French"
+  | "Turkish"
+  | "Swedish"
+  | "JapaneseModifiedHepburn"
+  | "German";
 
 export interface QuestionDTO {
   sentenceID: string;
