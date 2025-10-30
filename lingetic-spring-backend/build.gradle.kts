@@ -6,7 +6,6 @@ plugins {
 	id("org.springframework.boot") version "3.4.2"
 	id("org.graalvm.buildtools.native") version "0.10.6"
 	id("io.spring.dependency-management") version "1.1.7"
-	jacoco
 	id("net.ltgt.errorprone") version "4.1.0"
 	id("io.sentry.jvm.gradle") version "5.3.0"
 }
@@ -54,10 +53,6 @@ buildscript {
 
 extra["sentryVersion"] = "8.3.0"
 
-ext {
-	set("testcontainers.version", "1.20.6")
-}
-
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
@@ -67,12 +62,6 @@ dependencies {
 	implementation("com.clerk:backend-api:1.5.0")
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	runtimeOnly("org.postgresql:postgresql")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:postgresql")
-	testImplementation("org.testcontainers:rabbitmq")
 	errorprone("com.google.errorprone:error_prone_core:2.36.0")
 	errorprone("com.uber.nullaway:nullaway:0.12.3")
 	api("org.jspecify:jspecify:1.0.0")
@@ -81,19 +70,6 @@ dependencies {
 dependencyManagement {
 	imports {
 		mavenBom("io.sentry:sentry-bom:${property("sentryVersion")}")
-	}
-}
-
-
-tasks.withType<Test> {
-	useJUnitPlatform()
-	finalizedBy(tasks.jacocoTestReport)
-}
-
-tasks.jacocoTestReport {
-	dependsOn(tasks.test)
-	reports {
-		html.required.set(true)
 	}
 }
 
