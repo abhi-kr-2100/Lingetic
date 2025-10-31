@@ -53,10 +53,14 @@ async def process_page(page_text: str, semaphore: asyncio.Semaphore) -> List[Sen
         """
 
         try:
+                request_id = uuid.uuid5(
+                    uuid.NAMESPACE_DNS,
+                    f"book2sentences-{page_text}",
+                )
             response = await gemini_client.generate_content(
                 prompt=prompt,
                 response_schema=SentenceList.model_json_schema(),
-                request_id=uuid.uuid4(),
+                    request_id=request_id,
             )
             # Assuming the response is a dict that can be unpacked into the Pydantic model
             return SentenceList(**response).sentences
