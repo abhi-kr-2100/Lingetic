@@ -1,8 +1,8 @@
-import os
-import json
 import asyncio
+import json
+import os
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 from google import genai
@@ -14,7 +14,11 @@ class GeminiClient:
     Handles API key management and provides methods to make API calls.
     """
 
-    def __init__(self, api_key: Optional[str] = None, cache_path: str = ".gemini_cache.json"):
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        cache_path: str = ".gemini_cache.json",
+    ):
         """
         Initialize the Gemini client.
 
@@ -52,7 +56,9 @@ class GeminiClient:
             with open(self.cache_path, "w", encoding="utf-8") as f:
                 json.dump(cache_to_save, f, ensure_ascii=False, indent=2)
 
-    async def generate_content(self, prompt: str, response_schema, request_id: UUID, **kwargs) -> dict:
+    async def generate_content(
+        self, prompt: str, response_schema, request_id: UUID, **kwargs
+    ) -> dict:
         """
         Generate content using the Gemini API asynchronously.
 
@@ -91,7 +97,7 @@ class GeminiClient:
             }
 
             response = await self.client.aio.models.generate_content(
-                model="gemini-1.5-flash-8b",
+                model="gemini-2.0-flash-lite",
                 contents=prompt,
                 config=config,
             )
