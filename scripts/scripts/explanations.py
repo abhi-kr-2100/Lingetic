@@ -86,6 +86,20 @@ Output:
     ]
 }
 """,
+    "German": """
+Example:
+
+Input: 1: Ich, 2: liebe, 3: dich
+
+Output:
+{
+    "explanation": [
+        {"id": 1, "word": "Ich", "properties": ["pronoun", "first-person", "singular", "nominative"], "comment": "Subject pronoun meaning 'I'."},
+        {"id": 2, "word": "liebe", "properties": ["verb", "present", "first-person", "singular"], "comment": "Present tense, first-person singular of 'lieben' (to love)."},
+        {"id": 3, "word": "dich", "properties": ["pronoun", "second-person", "singular", "accusative"], "comment": "Object pronoun meaning 'you' (singular, informal, accusative case)."}
+    ]
+}
+""",
 }
 
 
