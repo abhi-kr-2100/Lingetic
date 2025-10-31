@@ -3,14 +3,25 @@ import json
 import uuid
 from pathlib import Path
 import asyncio
+import logging
+import sys
 from typing import List
+from textwrap import dedent
 
 from pydantic import BaseModel
 from pypdf import PdfReader
 
 from library.gemini_client import get_global_gemini_client
 
-def get_parser(parser: argparse.ArgumentParser):
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stderr)],
+)
+logger = logging.getLogger(__name__)
+
+def get_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Extract sentences from a PDF textbook")
     parser.add_argument(
         "--book-path",
         required=True,
@@ -34,10 +45,10 @@ class SentenceList(BaseModel):
     sentences: List[Sentence]
 
 
-async def process_page(page_text: str, semaphore: asyncio.Semaphore) -> List[Sentence]:
+async def process_page(page_number: int, page_text: str, semaphore: asyncio.Semaphore) -> List[Sentence]:
     async with semaphore:
         gemini_client = get_global_gemini_client()
-        prompt = f"""
+        prompt = dedent(f"""
         You are an expert in language learning.
         You will be given a page from a textbook for learning a language.
         Your task is to extract the exemplary sentences from the textbook page.
@@ -50,22 +61,22 @@ async def process_page(page_text: str, semaphore: asyncio.Semaphore) -> List[Sen
 
         Textbook page content:
         {page_text}
-        """
+        """)
 
         try:
-                request_id = uuid.uuid5(
-                    uuid.NAMESPACE_DNS,
-                    f"book2sentences-{page_text}",
-                )
+            request_id = uuid.uuid5(
+                uuid.NAMESPACE_DNS,
+                f"book2sentences-{page_text}",
+            )
             response = await gemini_client.generate_content(
                 prompt=prompt,
                 response_schema=SentenceList.model_json_schema(),
-                    request_id=request_id,
+                request_id=request_id,
             )
             # Assuming the response is a dict that can be unpacked into the Pydantic model
             return SentenceList(**response).sentences
-        except Exception:
-            # If any page fails, return an empty list for that page
+        except Exception as e:
+            logger.warning("Skipping page %d due to error: %s", page_number, e)
             return []
 
 async def main(book_path: Path, output_path: Path):
@@ -76,10 +87,10 @@ async def main(book_path: Path, output_path: Path):
 
     semaphore = asyncio.Semaphore(5) # Limit to 5 concurrent requests
     tasks = []
-    for page in reader.pages:
+    for i, page in enumerate(reader.pages):
         page_text = page.extract_text()
         if page_text:
-            tasks.append(process_page(page_text, semaphore))
+            tasks.append(process_page(i + 1, page_text, semaphore))
 
     pages_sentences = await asyncio.gather(*tasks)
 
@@ -91,7 +102,6 @@ async def main(book_path: Path, output_path: Path):
         json.dump(final_output.model_dump(), f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    get_parser(parser)
+    parser = get_parser()
     args = parser.parse_args()
     asyncio.run(main(args.book_path, args.output_path))
