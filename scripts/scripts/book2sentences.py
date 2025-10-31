@@ -7,7 +7,7 @@ import sys
 import uuid
 from pathlib import Path
 from textwrap import dedent
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 from pypdf import PdfReader
@@ -43,11 +43,18 @@ def get_parser() -> argparse.ArgumentParser:
         default="-",
         help="The path to the output JSON file",
     )
+    parser.add_argument(
+        "-t",
+        "--translation-language",
+        default="English",
+        help="Language of the translation, if available in the text.",
+    )
     return parser
 
 
 class Sentence(BaseModel):
     text: str
+    translation: Optional[str] = None
 
 
 class SentenceList(BaseModel):
@@ -81,10 +88,11 @@ def write_sentences(sentences: SentenceList, output_path: str):
 
 
 async def process_page(
-    language: str,
     page_number: int,
     page_text: str,
     semaphore: asyncio.Semaphore,
+    language: str,
+    translation_language: str,
 ) -> List[Sentence]:
     async with semaphore:
         gemini_client = get_global_gemini_client()
@@ -92,7 +100,12 @@ async def process_page(
         You are an expert in language learning.
         You will be given a page from a textbook for learning {language}.
         Your task is to extract the exemplary sentences from the textbook page.
-        The output should be a JSON object with a single key, "sentences", which is a list of objects, each with a single key, "text", which is the sentence in {language}.
+        For each sentence, you should also extract its translation into {translation_language} if it is provided on the same page.
+
+        The output should be a JSON object with a single key, "sentences", which is a list of objects.
+        Each object in the list should have two keys:
+        1. "text": The sentence in {language}.
+        2. "translation": The translation of the sentence in {translation_language}. If the translation is not available on the page, this field must be null. Do not generate a translation yourself.
 
         Ensure that the sentence is complete and grammatically correct.
 
@@ -116,12 +129,16 @@ async def process_page(
             return []
 
 
-async def async_main(filepath: str, output: str, language: str):
+async def async_main(
+    filepath: str, output: str, language: str, translation_language: str
+):
     page_texts = extract_text_from_pdf(filepath)
 
     semaphore = asyncio.Semaphore(5)
     tasks = [
-        process_page(language, i + 1, page_text, semaphore)
+        process_page(
+            i + 1, page_text, semaphore, language, translation_language
+        )
         for i, page_text in enumerate(page_texts)
     ]
 
@@ -137,11 +154,13 @@ async def async_main(filepath: str, output: str, language: str):
     write_sentences(final_output, output)
 
 
-def main(filepath: str, output: str, language: str):
-    asyncio.run(async_main(filepath, output, language))
+def main(
+    filepath: list[str], output: str, language: str, translation_language: str
+):
+    asyncio.run(async_main(filepath[0], output, language, translation_language))
 
 
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
-    main(args.filepath, args.output, args.language)
+    main(args.filepath, args.output, args.language, args.translation_language)
