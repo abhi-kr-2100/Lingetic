@@ -8,10 +8,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Literal
 
 import requests
-from library.gemini_client import get_global_gemini_client
 from pydantic import BaseModel
 
 from library.errors import InvalidWordIDError
+from library.gemini_client import get_global_gemini_client
 
 logging.basicConfig(
     level=logging.INFO,
@@ -235,7 +235,9 @@ def load_entries(filepath: str) -> List[Dict[str, Any]]:
     return data["sentences"]
 
 
-def write_results(results: Dict[str, List[Dict[str, Any]]], output: str) -> None:
+def write_results(
+    results: Dict[str, List[Dict[str, Any]]], output: str
+) -> None:
     """Write results to output file or stdout."""
     if output == "-":
         print(json.dumps(results, ensure_ascii=False, indent=2))
@@ -248,16 +250,21 @@ def write_results(results: Dict[str, List[Dict[str, Any]]], output: str) -> None
 
 def main(filepath: str, output: str) -> None:
     """Main function to process language entries and generate explanations."""
-    async def process_entry(entry):
+
+    async def process_entry(entry, semaphore: asyncio.Semaphore):
         try:
-            result = await get_explanation_for_entry(entry)
-            return result
+            async with semaphore:
+                result = await get_explanation_for_entry(entry)
+                return result
         except Exception as e:
-            logger.error("Error processing entry '%s': %s", entry['sourceText'], str(e))
+            logger.error(
+                "Error processing entry '%s': %s", entry["sourceText"], str(e)
+            )
 
     async def async_main():
         all_entries = load_entries(filepath)
-        tasks = [process_entry(entry) for entry in all_entries]
+        semaphore = asyncio.Semaphore(5)
+        tasks = [process_entry(entry, semaphore) for entry in all_entries]
         results = await asyncio.gather(*tasks, return_exceptions=False)
 
         explained_entries = [result for result in results if result is not None]
@@ -268,7 +275,11 @@ def main(filepath: str, output: str) -> None:
                 exp.pop("id", None)
 
         write_results({"sentences": explained_entries}, output)
-        logger.info("Processing complete. Successfully processed %d out of %d entries.", len(explained_entries), len(all_entries))
+        logger.info(
+            "Processing complete. Successfully processed %d out of %d entries.",
+            len(explained_entries),
+            len(all_entries),
+        )
 
     asyncio.run(async_main())
 
