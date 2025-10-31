@@ -17,7 +17,7 @@ class GeminiClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        cache_path: str = ".gemini_cache.json",
+        cache_path: str = ".gemini_cache.jsonl",
     ):
         """
         Initialize the Gemini client.
@@ -42,19 +42,23 @@ class GeminiClient:
         self.cache = self._load_cache()
 
     def _load_cache(self) -> Dict[str, Any]:
-        """Loads the cache from the file."""
+        """Loads the cache from a JSONL file."""
         if not self.cache_path.exists():
             return {}
+        cache = {}
         with open(self.cache_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            for line in f:
+                entry = json.loads(line)
+                key = next(iter(entry))
+                cache[key] = entry[key]
+        return cache
 
-    async def _save_cache(self):
-        """Saves the cache to the file."""
-        async with self.cache_dictionary_lock:
-            cache_to_save = self.cache.copy()
+    async def _append_to_cache(self, request_id: str, result: dict):
+        """Appends a new entry to the JSONL cache file."""
         async with self.cache_file_lock:
-            with open(self.cache_path, "w", encoding="utf-8") as f:
-                json.dump(cache_to_save, f, ensure_ascii=False, indent=2)
+            with open(self.cache_path, "a", encoding="utf-8") as f:
+                json.dump({request_id: result}, f, ensure_ascii=False)
+                f.write("\n")
 
     async def generate_content(
         self, prompt: str, response_schema, request_id: UUID, **kwargs
@@ -106,7 +110,7 @@ class GeminiClient:
                 result = response.parsed.model_dump()
                 async with self.cache_dictionary_lock:
                     self.cache[request_id_str] = result
-                await self._save_cache()
+                await self._append_to_cache(request_id_str, result)
                 return result
 
             raise ValueError("Gemini response structure unexpected or empty")
