@@ -53,12 +53,21 @@ def get_parser() -> argparse.ArgumentParser:
 
 
 class Sentence(BaseModel):
-    text: str
-    translation: Optional[str] = None
+    sourceText: str
+    translationText: Optional[str] = None
+
+
+class SentenceWithLanguages(Sentence):
+    sourceLanguage: str
+    targetLanguage: str
 
 
 class SentenceList(BaseModel):
     sentences: List[Sentence]
+
+
+class SentenceWithLanguagesList(BaseModel):
+    sentences: List[SentenceWithLanguages]
 
 
 def extract_text_from_pdf(filepath: str) -> List[str]:
@@ -75,7 +84,7 @@ def extract_text_from_pdf(filepath: str) -> List[str]:
     return page_texts
 
 
-def write_sentences(sentences: SentenceList, output_path: str):
+def write_sentences(sentences: SentenceWithLanguagesList, output_path: str):
     """Writes the sentences to a JSON file or stdout."""
     model_dump = sentences.model_dump()
     if output_path == "-":
@@ -87,13 +96,24 @@ def write_sentences(sentences: SentenceList, output_path: str):
             json.dump(model_dump, f, ensure_ascii=False, indent=2)
 
 
+def get_sentence_with_languages(
+    sentence: dict, source_language: str, translation_language: str
+) -> SentenceWithLanguages:
+    return SentenceWithLanguages(
+        sourceText=sentence["sourceText"],
+        sourceLanguage=source_language,
+        translationText=sentence["translationText"],
+        targetLanguage=translation_language,
+    )
+
+
 async def process_page(
     page_number: int,
     page_text: str,
     semaphore: asyncio.Semaphore,
     language: str,
     translation_language: str,
-) -> List[Sentence]:
+) -> List[SentenceWithLanguages]:
     async with semaphore:
         gemini_client = get_global_gemini_client()
         prompt = dedent(f"""
@@ -104,8 +124,8 @@ async def process_page(
 
         The output should be a JSON object with a single key, "sentences", which is a list of objects.
         Each object in the list should have two keys:
-        1. "text": The sentence in {language}.
-        2. "translation": The translation of the sentence in {translation_language}. If the translation is not available on the page, this field must be null. Do not generate a translation yourself.
+        1. "sourceText": The sentence in {language}.
+        2. "translationText": The translation of the sentence in {translation_language}. If the translation is not available on the page, this field must be null. Do not generate a translation yourself.
 
         Ensure that the sentence is complete and grammatically correct.
 
@@ -123,7 +143,13 @@ async def process_page(
                 response_schema=SentenceList,
                 request_id=request_id,
             )
-            return response["sentences"]
+            sentences = response["sentences"]
+            return [
+                get_sentence_with_languages(
+                    sentence, language, translation_language
+                )
+                for sentence in sentences
+            ]
         except Exception as e:
             logger.warning("Skipping page %d due to error: %s", page_number, e)
             return []
@@ -150,7 +176,7 @@ async def async_main(
         for sentence in page_sentences
     ]
 
-    final_output = SentenceList(sentences=all_sentences)
+    final_output = SentenceWithLanguagesList(sentences=all_sentences)
     write_sentences(final_output, output)
 
 
