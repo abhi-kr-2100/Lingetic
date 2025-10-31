@@ -10,8 +10,10 @@ from . import combine_sentences
 from . import enrich_sentences
 from . import local_s3_server
 from . import deduplicate_sentences
+from . import book2sentences
 
 __all__ = [
+    "book2sentences",
     "combine_sentences",
     "deduplicate_sentences",
     "enrich_sentences",
