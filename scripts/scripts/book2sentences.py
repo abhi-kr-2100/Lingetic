@@ -78,7 +78,7 @@ def extract_text_from_pdf(filepath: str) -> List[str]:
     reader = PdfReader(filepath)
     page_texts = []
     for page in reader.pages:
-        page_text = page.extract_text()
+        page_text = " ".join(page.extract_text().split())
         if page_text:
             page_texts.append(page_text)
     return page_texts
