@@ -458,6 +458,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pypdf"
+version = "6.1.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/13/3d/b6ead84ee437444f96862beb68f9796da8c199793bed08e9397b77579f23/pypdf-6.1.3.tar.gz", hash = "sha256:8d420d1e79dc1743f31a57707cabb6dcd5b17e8b9a302af64b30202c5700ab9d", size = 5076271, upload_time = "2025-10-22T16:13:46.061Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fa/ed/494fd0cc1190a7c335e6958eeaee6f373a281869830255c2ed4785dac135/pypdf-6.1.3-py3-none-any.whl", hash = "sha256:eb049195e46f014fc155f566fa20e09d70d4646a9891164ac25fa0cbcfcdbcb5", size = 323863, upload_time = "2025-10-22T16:13:44.174Z" },
+]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -545,6 +554,7 @@ dependencies = [
     { name = "gtts" },
     { name = "psycopg2-binary" },
     { name = "pydub" },
+    { name = "pypdf" },
     { name = "requests" },
     { name = "ruff" },
     { name = "unidic-lite" },
@@ -560,6 +570,7 @@ requires-dist = [
     { name = "gtts", specifier = ">=2.5.4" },
     { name = "psycopg2-binary", specifier = ">=2.9.9" },
     { name = "pydub", specifier = ">=0.25.1" },
+    { name = "pypdf", specifier = ">=6.1.3" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "ruff", specifier = ">=0.9.9" },
     { name = "unidic-lite", specifier = ">=1.0.8" },
